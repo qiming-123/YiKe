@@ -1,0 +1,15 @@
+{
+  "version": "1.0.2",
+  "inputSha256": "fac0e9991c2d77db1ddfb1279a5ee0f4fb8af1dc019bbd04b8a3ad14963a9701",
+  "sdk": "10.0.402",
+  "sourceZipRestore": true,
+  "sourceZipBuild": true,
+  "coreTestsPassed": 60,
+  "sourceZipPublish": true,
+  "sourceZipInstallerCompiled": true,
+  "originalAppSha256": "e6963748a170701d86a871d92813aa24b5ff48caa289abc1f5d0fa3c9e874d36",
+  "rebuiltAppSha256": "9e79e22fa792c855954cbbac4bf0ab246fc6ade134909cd82836bff3d4a8ffed",
+  "byteIdenticalApplication": false,
+  "independentMachine": false,
+  "testedUtc": "2026-10-23T05:24:01.3230194Z"
+}

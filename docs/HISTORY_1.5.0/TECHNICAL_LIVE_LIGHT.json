@@ -1,0 +1,71 @@
+{
+  "model": "Qwen3-0.6B-Q4_0",
+  "simulatedHardware": true,
+  "modelSupplementationEnabled": false,
+  "glossaryGroups": 219,
+  "noExternalEndpoint": true,
+  "oneRequestPerSelection": true,
+  "delimiterNeverDisplayed": true,
+  "cases": [
+    {
+      "source": "chmod 755 script.sh",
+      "smart": true,
+      "stream": true,
+      "expected": "dictionary",
+      "translation": "chmod 755 script.sh",
+      "notes": "\u672C\u673A\u8BCD\u5E93 \u00B7 \u5E38\u89C1\u7528\u9014\uFF08\u4E2D\u6587\uFF1B\u5177\u4F53\u542B\u4E49\u9700\u7ED3\u5408\u8BED\u5883\uFF09\n\nchmod \u00B7 \u4FEE\u6539\u6743\u9650\u4F4D\nLinux / Unix\uFF1A\u6539\u53D8\u6587\u4EF6\u6A21\u5F0F\u4F4D\u3002\u5E38\u89C1\u516B\u8FDB\u5236\u4F4D r=4\u3001w=2\u3001x=1\uFF1B755 \u4E3A\u6240\u6709\u8005 rwx\u3001\u7EC4\u548C\u5176\u4ED6\u4EBA r-x\uFF0C644 \u4E3A rw- / r-- / r--\u3002-R \u9012\u5F52\uFF0C\u4E0D\u5E94\u4E00\u5F8B\u7ED9\u6240\u6709\u6587\u4EF6 777\u3002\n\u8FD9\u91CC\u53EA\u89E3\u91CA\u6240\u9009\u6587\u5B57\uFF0C\u4E0D\u6267\u884C\u547D\u4EE4\u3002",
+      "providerCalls": 1,
+      "totalMs": 453
+    },
+    {
+      "source": "DNS",
+      "smart": true,
+      "stream": false,
+      "expected": "dictionary",
+      "translation": "DNS",
+      "notes": "\u672C\u673A\u8BCD\u5E93 \u00B7 \u5E38\u89C1\u7528\u9014\uFF08\u4E2D\u6587\uFF1B\u5177\u4F53\u542B\u4E49\u9700\u7ED3\u5408\u8BED\u5883\uFF09\n\nDNS \u00B7 \u57DF\u540D\u7CFB\u7EDF\n\u5206\u5E03\u5F0F\u540D\u79F0\u7CFB\u7EDF\uFF0C\u5E38\u5C06\u57DF\u540D\u89E3\u6790\u4E3A IP\uFF0C\u4E5F\u652F\u6301 MX\u3001TXT \u7B49\u5176\u4ED6\u8BB0\u5F55\u3002\u7F13\u5B58\u4E0E TTL \u5F71\u54CD\u66F4\u65B0\u4F20\u64AD\uFF1BDNS \u67E5\u8BE2\u6210\u529F\u4E0D\u4EE3\u8868\u5E94\u7528\u670D\u52A1\u53EF\u7528\u3002",
+      "providerCalls": 1,
+      "totalMs": 283
+    },
+    {
+      "source": "memoization",
+      "smart": true,
+      "stream": true,
+      "expected": "model",
+      "translation": "memoization",
+      "notes": "",
+      "providerCalls": 1,
+      "totalMs": 301
+    },
+    {
+      "source": "Linux uses copy-on-write when fork creates a child process.",
+      "smart": true,
+      "stream": false,
+      "expected": "dictionary",
+      "translation": "Linux \u4F7F\u7528 copy-on-write \u5F53 fork \u521B\u5EFA\u5B50\u8FDB\u7A0B\u3002",
+      "notes": "\u672C\u673A\u8BCD\u5E93 \u00B7 \u5E38\u89C1\u7528\u9014\uFF08\u4E2D\u6587\uFF1B\u5177\u4F53\u542B\u4E49\u9700\u7ED3\u5408\u8BED\u5883\uFF09\n\nLinux \u00B7 \u64CD\u4F5C\u7CFB\u7EDF\u5185\u6838\nLinux \u4E25\u683C\u8BF4\u662F\u5185\u6838\uFF1B\u5E38\u89C1\u53D1\u884C\u7248\u8FD8\u5305\u542B\u7528\u6237\u7A7A\u95F4\u5DE5\u5177\u3001\u5E93\u548C\u8F6F\u4EF6\u7BA1\u7406\u4F53\u7CFB\u3002\u53D1\u884C\u7248\u3001\u5185\u6838\u7248\u672C\u4E0E\u547D\u4EE4\u5B9E\u73B0\u4E0D\u540C\uFF0C\u9009\u9879\u53EF\u80FD\u6709\u5DEE\u5F02\u3002\n\ncopy-on-write / COW \u00B7 \u5199\u65F6\u590D\u5236\n\u5148\u5171\u4EAB\u53EF\u8BFB\u53D6\u7684\u6570\u636E\uFF0C\u4EC5\u5728\u9700\u8981\u4FEE\u6539\u65F6\u624D\u5EFA\u7ACB\u76F8\u5E94\u79C1\u6709\u526F\u672C\u3002Linux fork \u540E\uFF0C\u7236\u5B50\u8FDB\u7A0B\u53EF\u5148\u5171\u4EAB\u7269\u7406\u9875\uFF0C\u5728\u9996\u6B21\u5199\u5165\u76F8\u5173\u9875\u65F6\u6309\u9700\u590D\u5236\uFF1B\u5E76\u975E\u6BCF\u6B21\u8D4B\u503C\u90FD\u590D\u5236\u6574\u4E2A\u8FDB\u7A0B\uFF0C\u4E5F\u4E0D\u8868\u793A\u7236\u5B50\u8FDB\u7A0B\u7684\u4FEE\u6539\u4F1A\u81EA\u52A8\u4E92\u76F8\u540C\u6B65\u3002\n\nfork / exec / wait \u00B7 \u8FDB\u7A0B\u751F\u547D\u5468\u671F\nUnix \u4E2D fork \u521B\u5EFA\u5B50\u8FDB\u7A0B\uFF1Bexec \u7CFB\u5217\u4EE5\u65B0\u7A0B\u5E8F\u66FF\u6362\u5F53\u524D\u8FDB\u7A0B\u6620\u50CF\uFF0C\u901A\u5E38\u4E0D\u65B0\u5EFA PID\uFF1Bwait / waitpid \u7528\u4E8E\u7B49\u5F85\u548C\u56DE\u6536\u5B50\u8FDB\u7A0B\u72B6\u6001\u3002\n\nprocess / PID \u00B7 \u8FDB\u7A0B\n\u8FDB\u7A0B\u662F\u8FD0\u884C\u7A0B\u5E8F\u53CA\u5176\u8D44\u6E90\u7684\u5B9E\u4F8B\uFF0C\u901A\u5E38\u62E5\u6709\u72EC\u7ACB\u865A\u62DF\u5730\u5740\u7A7A\u95F4\uFF1BPID \u662F\u8FDB\u7A0B\u6807\u8BC6\u4E14\u53EF\u80FD\u88AB\u7CFB\u7EDF\u91CD\u7528\u3002\u4E00\u4E2A\u8FDB\u7A0B\u53EF\u5305\u542B\u591A\u4E2A\u7EBF\u7A0B\u3002",
+      "providerCalls": 1,
+      "totalMs": 514
+    },
+    {
+      "source": "The meeting starts at nine tomorrow morning.",
+      "smart": true,
+      "stream": true,
+      "expected": "none",
+      "translation": "\u660E\u5929\u65E9\u4E0A\u4E5D\u70B9\u4F1A\u8BAE\u5F00\u59CB\u3002",
+      "notes": "",
+      "providerCalls": 1,
+      "totalMs": 417
+    },
+    {
+      "source": "memoization",
+      "smart": false,
+      "stream": true,
+      "expected": "none",
+      "translation": "memoization",
+      "notes": "",
+      "providerCalls": 1,
+      "totalMs": 299
+    }
+  ]
+}

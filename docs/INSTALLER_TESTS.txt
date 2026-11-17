@@ -1,0 +1,8 @@
+Seeded synthetic installer data; automatic translation disabled.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+Removed only the synthetic QA fixture.
+PASS installation, running upgrade, repeat install, downgrade rejection, uninstall, reinstall, startup and data preservation.

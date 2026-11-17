@@ -1,0 +1,9 @@
+{
+  "version": "1.6.0.0",
+  "running": true,
+  "offlineRuntimeFiles": 32,
+  "offlineRuntimeIntegrity": true,
+  "engineOwnedByInstalledApp": true,
+  "listenerLoopbackOnly": true,
+  "signer": "CN=opens"
+}

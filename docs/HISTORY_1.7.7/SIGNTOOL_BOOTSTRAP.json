@@ -1,0 +1,9 @@
+{
+  "version": "10.0.26100.9169",
+  "url": "https://api.nuget.org/v3-flatcontainer/microsoft.windows.sdk.buildtools/10.0.26100.9169/microsoft.windows.sdk.buildtools.10.0.26100.9169.nupkg",
+  "sha512Hex": "84ea4d87b6c2cc938e9b686f2aea1daf53542877aaa14871740cd39a13bfabebbf13ee453b284af931e13615147ca2db5a74ac959fe6df9770821992d81cda5a",
+  "signtoolSha256": "92a5751c292c7d3c41619ca0f0a28d1121cf55ef55d75dcce394bf01f0194193",
+  "publisher": "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+  "nugetAuthorAndRepositoryVerified": true,
+  "status": "Valid"
+}

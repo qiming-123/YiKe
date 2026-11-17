@@ -1,0 +1,19 @@
+{
+  "version": "1.7.5.0",
+  "model": "Qwen3-1.7B-Q4_K_M",
+  "simulatedLightHardware": false,
+  "warmModel": true,
+  "firstVisibleTranslationMs": 358,
+  "paragraphCompleteMs": 1198,
+  "repeatedSelections": 5,
+  "paragraphTranslationRequests": 1,
+  "noExternalEndpoint": true,
+  "translation": "\u4F1A\u8BAE\u660E\u5929\u4E0A\u5348\u4E5D\u70B9\u5F00\u59CB\u3002\u8BF7\u5728\u5173\u95ED\u7A97\u53E3\u524D\u4FDD\u5B58\u66F4\u6539\u3002\u4FDD\u6301\u6587\u4EF6\u6253\u5F00\u76F4\u5230\u5907\u4EFD\u5B8C\u6210\u3002",
+  "notesPreemption": {
+    "cancelToCompletedTranslationMs": 3,
+    "CanceledNotes": true,
+    "Maximum": 1,
+    "text": "n. \u8FDB\u5165\uFF1B\uFF08\u8BCD\u5178\u6240\u5217\u7684\uFF09\u8BCD\u76EE\uFF08entry\u7684\u590D\u6570\u5F62\u5F0F\uFF09"
+  },
+  "semanticAccuracyNotCertified": true
+}

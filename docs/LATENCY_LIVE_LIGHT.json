@@ -1,0 +1,14 @@
+{
+  "version": "1.7.8.0",
+  "model": "Qwen3-0.6B-Q4_0",
+  "simulatedLightHardware": true,
+  "warmModel": true,
+  "firstVisibleTranslationMs": 703,
+  "paragraphCompleteMs": 1634,
+  "repeatedSelections": 5,
+  "paragraphTranslationRequests": 1,
+  "noExternalEndpoint": true,
+  "translation": "\u4F1A\u8BAE\u5C06\u5728\u660E\u5929\u65E9\u4E0A\u4E5D\u70B9\u5F00\u59CB\u3002\u8BF7\u5728\u5173\u95ED\u7A97\u53E3\u524D\u4FDD\u5B58\u66F4\u6539\u3002\u4FDD\u6301\u6587\u4EF6\u6253\u5F00\u76F4\u5230\u5907\u4EFD\u5B8C\u6210\u3002",
+  "notesPreemption": null,
+  "semanticAccuracyNotCertified": true
+}

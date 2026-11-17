@@ -1,0 +1,11 @@
+{
+  "from": "1.2.1.0",
+  "to": "1.2.2.0",
+  "installDirectory": "D:\\YiKe",
+  "installerExitCode": 0,
+  "dataFiles": 3,
+  "userDataByteIdentical": true,
+  "startupEnabledPreserved": true,
+  "startupValueUnchanged": true,
+  "installedAppMatchesReceipt": true
+}

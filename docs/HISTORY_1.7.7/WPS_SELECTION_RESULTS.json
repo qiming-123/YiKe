@@ -1,0 +1,36 @@
+{
+  "checkedUtc": "2026-10-23T17:42:36.8167537+00:00",
+  "syntheticTextOnly": true,
+  "cases": [
+    {
+      "format": "DOCX",
+      "sample": "汉字和表情 😀 keep the complete selection.\n",
+      "exactText": true,
+      "elapsedMs": 511
+    },
+    {
+      "format": "DOCX",
+      "sample": "pair programmer\n",
+      "exactText": true,
+      "elapsedMs": 489
+    },
+    {
+      "format": "DOCX",
+      "sample": "First paragraph for a multiple paragraph selection.\nSecond paragraph remains complete.\n",
+      "exactText": true,
+      "elapsedMs": 529
+    },
+    {
+      "format": "RTF",
+      "sample": "The meeting starts at nine tomorrow morning.\n",
+      "exactText": true,
+      "elapsedMs": 466
+    }
+  ],
+  "desktopScalePercent": 150,
+  "passed": 4,
+  "version": "1.2.2",
+  "productionSelectionReader": true,
+  "preReadAccessibilityTree": false,
+  "wpsVersion": "12.1.0.28488"
+}

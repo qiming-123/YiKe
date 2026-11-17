@@ -1,0 +1,8 @@
+{
+  "subject": "CN=opens",
+  "publicCertificateContainsPrivateKey": false,
+  "currentUserStoreHasPrivateKey": true,
+  "privateKeyExportPolicy": "None",
+  "opensTrustedRootInstalled": false,
+  "notAfterUtc": "2028-10-23T06:11:21.0000000Z"
+}

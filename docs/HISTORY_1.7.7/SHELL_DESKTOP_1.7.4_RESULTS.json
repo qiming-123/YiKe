@@ -1,0 +1,13 @@
+{
+  "version": "1.7.4",
+  "clientDate": "2026-10-25",
+  "clientTimeZone": "America/Denver",
+  "coreShellPolicyChecksPassed": 4,
+  "realExplorerDragVerified": false,
+  "uiFileMoveActionSubmitted": false,
+  "windowsInventoryReturnedNoTargets": true,
+  "appsInventoryReturnedNoExplorerTarget": true,
+  "explorerLaunchResult": "Computer Use app approval timed out",
+  "productionUiaSelectedWpfTextReadPassed": true,
+  "limitation": "Policy, transport and owned WPF checks are not a real Explorer or desktop icon drag test. No user files were moved for the UI test."
+}

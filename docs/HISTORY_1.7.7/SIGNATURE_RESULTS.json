@@ -1,0 +1,72 @@
+{
+  "version": "1.7.6",
+  "passed": 9,
+  "failed": 0,
+  "opensTrustedRootInstalled": false,
+  "artifacts": [
+    {
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "sha256": "2e333a05bda50b3e0fd044b990af6f299ebddfdf156e4485a1c6b7f412d7970d",
+      "file": "YiKe.exe",
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      }
+    },
+    {
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "sha256": "111d3fb1ac621082bdb2dd5966068fcacf64b779cf79d1b6075ab2ebfc15d47d",
+      "file": "YiKe-Setup-1.7.6-win-x64.exe",
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      }
+    },
+    {
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "sha256": "abc456a227a7f473267995c49d19325ed28d2da24ab17721b3e0b8a763f53f2f",
+      "file": "unins000.exe",
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      }
+    }
+  ],
+  "testedUtc": "2026-10-26T01:56:43.4046388Z"
+}

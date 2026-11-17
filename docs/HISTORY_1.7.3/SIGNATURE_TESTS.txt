@@ -1,0 +1,10 @@
+PASS opens identity, file integrity and SHA256/RFC3161 timestamp: YiKe.exe
+PASS opens identity, file integrity and SHA256/RFC3161 timestamp: YiKe-Setup-1.7.3-win-x64.exe
+PASS opens identity, file integrity and SHA256/RFC3161 timestamp: unins000.exe
+PASS Self-signed identity requires explicit opt-in
+PASS A different pinned certificate is rejected
+PASS Modified executable digest is rejected
+PASS Private-key archives cannot be packaged
+PASS opens is not installed as a trusted root
+PASS signed self-contained app starts its production UIA worker and exits cleanly
+SIGNATURE RESULT 9 passed, 0 failed

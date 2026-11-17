@@ -1,0 +1,47 @@
+{
+  "version": "1.3.0",
+  "fixtureAppId": "YiKe.Installer.ModelSmoke",
+  "passed": 9,
+  "failed": 0,
+  "userDataByteIdentical": true,
+  "productionInstallRegistrationUnchanged": true,
+  "checks": [
+    {
+      "check": "skip models installs no GGUF",
+      "passed": true
+    },
+    {
+      "check": "reuse verified light model and save light preference",
+      "passed": true
+    },
+    {
+      "check": "light-only installation translates on real high-memory hardware",
+      "passed": true
+    },
+    {
+      "check": "reuse verified standard model and save standard preference",
+      "passed": true
+    },
+    {
+      "check": "reuse both models with automatic hardware selection",
+      "passed": true
+    },
+    {
+      "check": "skip during upgrade preserves installed models and preference",
+      "passed": true
+    },
+    {
+      "check": "invalid silent model selection is rejected",
+      "passed": true
+    },
+    {
+      "check": "wrong download SHA-256 is rejected before installing files",
+      "passed": true
+    },
+    {
+      "check": "real user data and production install registration preserved",
+      "passed": true
+    }
+  ],
+  "checkedUtc": "2026-10-23T18:33:11.6212583+00:00"
+}

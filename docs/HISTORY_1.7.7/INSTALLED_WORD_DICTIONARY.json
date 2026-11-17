@@ -1,0 +1,11 @@
+{
+  "version": null,
+  "dictionaryVerified": true,
+  "dictionaryEntries": 764830,
+  "reviewedOverrides": 165,
+  "profileAndModelsPreserved": true,
+  "selectionWorkerPrewarmed": true,
+  "automaticFailuresSilent": true,
+  "onlineApiProfilesSupported": 32,
+  "onlineApiBehaviorEvidence": "ONLINE_API_1.7.7_RESULTS.json"
+}

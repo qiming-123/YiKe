@@ -1,0 +1,28 @@
+{
+  "version": "1.0.1",
+  "appSha256": "726eb650964d6377b410b3a9bbdae25f20d350de303c8fdc7eaf09df87bb0809",
+  "apiConfigured": false,
+  "translationNetworkRequests": 0,
+  "edge": {
+    "version": "155.0.4283.62",
+    "page": "https://learn.microsoft.com/en-us/dotnet/core/introduction",
+    "doubleClick": true,
+    "paragraphDrag": true,
+    "selectedParagraphRenderedLines": 4,
+    "popupShown": true,
+    "originalSelectionRetained": true,
+    "ordinaryClickDismissed": true
+  },
+  "notepad": {
+    "version": "11.2607.14.0",
+    "syntheticSampleCharacters": 94,
+    "syntheticSampleLines": 2,
+    "mouseDrag": true,
+    "popupShown": true,
+    "originalSelectionRetained": true
+  },
+  "clipboardContentsCompared": false,
+  "applicationPersistedSelectionHistory": false,
+  "installerVisual": "not executed: Computer Use app approval timed out",
+  "note": "Manual observations using native Computer Use, independent of WPF layout fixtures; missing-key popup does not certify online translation."
+}

@@ -1,0 +1,8 @@
+PASS complete checksums, archive safety, source integrity, executable input identity and signature status.
+Seeded synthetic installer data; automatic translation disabled.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PASS installer upgrade/reinstall preserved synthetic settings and DPAPI credential.
+PORTABLE RESULT 4 passed, 0 failed
+Removed only the synthetic QA fixture.

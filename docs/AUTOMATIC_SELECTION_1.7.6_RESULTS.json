@@ -1,0 +1,13 @@
+{
+  "version": "1.7.6",
+  "coreChecks": 161,
+  "coreFailures": 0,
+  "automaticPolicyChecks": 6,
+  "unconfirmedAutomaticStates": "silent",
+  "nonEmptySelectedTextRequired": true,
+  "pointerDragThresholdDips": 6,
+  "doubleClickUsesPressTimes": true,
+  "automaticReadingCardRemoved": true,
+  "explicitManualErrorsPreserved": true,
+  "actualApplicationUiClicksNotVerified": true
+}

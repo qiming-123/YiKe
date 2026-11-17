@@ -1,0 +1,35 @@
+{
+  "version": "1.0.1",
+  "appSha256": "726eb650964d6377b410b3a9bbdae25f20d350de303c8fdc7eaf09df87bb0809",
+  "passed": 4,
+  "failed": 0,
+  "results": [
+    {
+      "case": "Extracted ZIP in Chinese/space path, different working directory, invalid DOTNET_ROOT",
+      "passed": true,
+      "inputIdleMs": 247,
+      "workingSetBytes": 61677568
+    },
+    {
+      "case": "Whole portable directory moved",
+      "passed": true,
+      "inputIdleMs": 171,
+      "workingSetBytes": 61378560
+    },
+    {
+      "case": "Read-only older portable copy retains the newer same-ID user revision",
+      "passed": true,
+      "inputIdleMs": 156,
+      "workingSetBytes": 61333504
+    },
+    {
+      "case": "Only EXE copied without portable.flag, current user fallback remains valid",
+      "passed": true,
+      "inputIdleMs": 234,
+      "workingSetBytes": 61648896
+    }
+  ],
+  "realApiTested": false,
+  "cleanMachine": false,
+  "testedUtc": "2026-10-23T00:53:38.8571072Z"
+}

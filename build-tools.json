@@ -1,0 +1,15 @@
+{
+  "innoVersion": "7.1.0",
+  "sdkSha512": "ae4fd528cb7e9f6af6aaf7de36715a69f761f183744f1bb3025d19f5a92447090ec561410e46266c1d10a63781ed6f3de771760bc76c876d87daabc367b898cd",
+  "sdkUrl": "https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.402/dotnet-sdk-10.0.402-win-x64.zip",
+  "innoSha256": "0362A383ED217D4C4239B5933866DD96D3EB2102737DA92F80F6057A4B40DF2F",
+  "innoUrl": "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe",
+  "sdkVersion": "10.0.402",
+  "signingTools": {
+    "version": "10.0.26100.9169",
+    "url": "https://api.nuget.org/v3-flatcontainer/microsoft.windows.sdk.buildtools/10.0.26100.9169/microsoft.windows.sdk.buildtools.10.0.26100.9169.nupkg",
+    "sha512": "84ea4d87b6c2cc938e9b686f2aea1daf53542877aaa14871740cd39a13bfabebbf13ee453b284af931e13615147ca2db5a74ac959fe6df9770821992d81cda5a",
+    "signtoolSha256": "92a5751c292c7d3c41619ca0f0a28d1121cf55ef55d75dcce394bf01f0194193",
+    "mssign32Sha256": "8e8667ab09456006d9d0582dda340f2c887b1f1d8d33fb8b89a49533cdc768f9"
+  }
+}

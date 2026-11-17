@@ -1,0 +1,97 @@
+PASS complete checksums, archive safety, source integrity, executable input identity and signature status.
+✔ matching mouse gesture reads only the selected range (1.0242ms)
+✔ unfocused window, another editor, changed version and changed selection never read text (0.647ms)
+✔ missing mouse event, malformed nonce and expired request never read text (0.1558ms)
+✔ old mouse selection or an event after the request cannot be reused (0.1198ms)
+✔ a long held drag remains valid when its last selection event is inside the press/release interval (0.0986ms)
+✔ empty and whitespace ranges do not become a translation (0.0846ms)
+✔ 2000 Unicode scalars succeed; 2001 fail without returning text (0.1647ms)
+✔ oversized selection is rejected before asking the editor for text (0.085ms)
+✔ multiple selections join in editor order; excess range count is bounded (0.1681ms)
+✔ extension invalidates mouse metadata on keyboard, command, editor, focus and document changes (1.4959ms)
+✔ focus gain keeps a current gesture while focus loss invalidates the previous gesture (0.6974ms)
+✔ excess cursor count is rejected before capturing selection signatures (0.8368ms)
+✔ local pipe request handles fragmented JSON and rejects malformed or oversized frames (0.6734ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.6063
+  Determining projects to restore...
+  Restored C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\tests\YiKe.Tests\YiKe.Tests.csproj (in 156 ms).
+  Restored C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\src\YiKe\YiKe.csproj (in 156 ms).
+  YiKe -> C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\src\YiKe\bin\Release\net10.0-windows\win-x64\YiKe.dll
+  YiKe.Tests -> C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\tests\YiKe.Tests\bin\Release\net10.0-windows\win-x64\YiKe.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.89
+PASS HTTPS endpoint validation and path
+PASS Unicode scalar limit without truncation
+PASS DPAPI save/reload/update and endpoint binding
+PASS Failed configuration commit preserves previous credential and revision
+PASS Ordinary export excludes key; import creates fresh credential binding
+PASS Portable reconciliation selects newer local revision
+PASS Portable unwritable copy commits durable user fallback
+PASS Portable-only load establishes EXE-only move fallback
+PASS Password migration roundtrip
+PASS Wrong password/tampering never touches saved config
+PASS SSE arbitrary UTF8 boundaries, empty delta, multiline event, DONE
+PASS SSE disconnect marks incomplete
+PASS Truncation/refusal/empty responses rejected
+PASS Nonstream completion and request prompt isolation
+PASS HTTP error taxonomy and redirect denial
+PASS First-response timeout cancels once without retry
+PASS A/B/C bounded queue and late A isolation
+PASS Close/invalidate cannot reopen via late provider update
+PASS Failure contracts discard stale text, including serialized worker results
+PASS Window minimum sizes shrink to a high-DPI work area instead of hiding footer controls
+PASS Whitespace-only SSE output is not accepted as a completed translation
+PASS A foreign read-only portable config gives an explicit next-start warning
+PASS Migration rejects an excessive password and invalid secret before deriving a key
+PASS Popup placement handles negative monitors, edge flips and integer extremes
+PASS Model and target language reject embedded control characters
+PASS Session pin/unpin cannot revive a previous selection lease
+PASS Pause invalidates active selection even when persistence fails
+PASS Foreground dismissal respects pin, own windows, and manual translation
+PASS Whitespace target and malformed process exclusions are rejected
+PASS Secret validation rejects control characters without echoing the key
+PASS Corrupt ordinary JSON import leaves valid settings untouched
+PASS Oversized DPAPI blobs fail before allocation and are preserved
+PASS SSE BOM, CR-only delimiters, comments and fragmented Unicode
+PASS Oversized SSE line is rejected while streaming rather than after EOF
+PASS SSE multiline event and cumulative heartbeat limits
+PASS Premature DONE and unterminated SSE finish are incomplete
+PASS A valid stop does not wait on a connection that never sends DONE
+PASS Malformed response objects and explicit refusals are classified safely
+PASS Malformed HTTP error code cannot hide the HTTP authentication status
+PASS Connection checks bypass the translation cache
+PASS Starting a UIA helper cannot synchronously block its caller
+PASS Mouse release requires a matching left press and source window
+PASS Right or middle click cancels pending left coordinates and click history
+PASS Double click uses monotonic time and a matching window, excluding an earlier drag
+PASS Pointer distance arithmetic does not overflow at extreme coordinates
+PASS The production UIA worker exits after its exact parent exits
+PASS The production UIA worker rejects a reused PID with a different start time
+PASS A UIA logical timeout disposes the stalled transport and uses a fresh worker next time
+PASS A worker EOF is reset instead of being reused indefinitely
+PASS Malformed worker JSON and oversize selections do not return cached text
+PASS Closing during worker startup does not block shutdown or adopt an orphan transport
+PASS Canceling a queued read never creates another helper
+PASS A termination failure retains the owned helper and never starts an unbounded replacement
+PASS A real owned helper is terminated on timeout, without killing the caller
+PASS A real helper EOF recovers into a new process with the current sequence
+PASS A real helper is cleaned up when its caller cancels the request
+PASS VS Code adapter rejects other processes, ancestry cycles and unrelated trees
+PASS VS Code pipe response requires protocol version, exact nonce and a known status
+PASS VS Code responses preserve text and bound Unicode scalars without leaking failure text
+PASS Embedded VSIX contains exact extension resources and matching identity
+RESULT 60 passed, 0 failed
+  YiKe -> C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\src\YiKe\bin\Release\net10.0-windows\win-x64\YiKe.dll
+  YiKe -> C:\Users\liu\Desktop\Programming\codex\YiKe\artifacts\source-rebuild-e1d6158d54c54f6b8055664e870577ca\源码 重建\artifacts\publish-1.0.2\
+PASS source ZIP restore, build, 60 tests, self-contained publish and installer compilation.

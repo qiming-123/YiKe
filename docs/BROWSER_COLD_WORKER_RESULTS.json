@@ -1,0 +1,12 @@
+{
+  "version": "1.2.1",
+  "elapsedMs": 233,
+  "checkedUtc": "2026-10-23T17:01:03.5882647+00:00",
+  "exactSelectedText": true,
+  "desktopScalePercent": 150,
+  "syntheticTextOnly": true,
+  "status": 0,
+  "preReadAccessibilityTree": false,
+  "isolatedBrowserProcess": true,
+  "sample": "Fixed synthetic text for selection testing."
+}

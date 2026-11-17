@@ -1,0 +1,10 @@
+.tools/
+**/bin/
+**/obj/
+artifacts/
+local-runtime/
+dist/
+**/data/
+*.user
+tmp/
+*.log

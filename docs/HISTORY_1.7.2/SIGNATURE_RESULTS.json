@@ -1,0 +1,72 @@
+{
+  "version": "1.7.2",
+  "passed": 9,
+  "failed": 0,
+  "opensTrustedRootInstalled": false,
+  "artifacts": [
+    {
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      },
+      "sha256": "73c2cafb973a05a502a37e16841969c66e3b9a0cd97be6af97d1620cbb3824b8",
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "file": "YiKe.exe"
+    },
+    {
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      },
+      "sha256": "d3028564de213fe38b5f9e105bc986fbac9c1c96ff6ccfce0e24791e36414544",
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "file": "YiKe-Setup-1.7.2-win-x64.exe"
+    },
+    {
+      "identity": {
+        "status": "UnknownError",
+        "trust": "self-signed-untrusted",
+        "subject": "CN=opens",
+        "certificateSha256": "c94ffb6fd7b4c36281683e8b20a5cc51bf73c61377033dcfe66ee8359203c51f",
+        "thumbprint": "06019D3F63B3F2B084126B9C3EB883283E376FEE",
+        "timestamped": true,
+        "nativeResult": "0x800B0109"
+      },
+      "sha256": "9f94104281e097ea2c70c44107d3555fd85a658d0914f6b55b153f536fc9dda1",
+      "algorithms": {
+        "fileDigest": "SHA256",
+        "timestampProtocol": "RFC3161",
+        "timestampDigest": "SHA256",
+        "timestampSubject": "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+        "timestampBoundToSignature": true,
+        "cmsSignaturesVerified": true
+      },
+      "file": "unins000.exe"
+    }
+  ],
+  "testedUtc": "2026-10-24T09:43:22.9565014Z"
+}

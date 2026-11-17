@@ -1,0 +1,80 @@
+PASS HTTPS endpoint validation and path
+PASS Unicode scalar limit without truncation
+PASS DPAPI save/reload/update and endpoint binding
+PASS Failed configuration commit preserves previous credential and revision
+PASS Ordinary export excludes key; import creates fresh credential binding
+PASS Portable reconciliation selects newer local revision
+PASS Portable unwritable copy commits durable user fallback
+PASS Portable-only load establishes EXE-only move fallback
+PASS Password migration roundtrip
+PASS Wrong password/tampering never touches saved config
+PASS SSE arbitrary UTF8 boundaries, empty delta, multiline event, DONE
+PASS SSE disconnect marks incomplete
+PASS Truncation/refusal/empty responses rejected
+PASS Nonstream completion and request prompt isolation
+PASS HTTP error taxonomy and redirect denial
+PASS First-response timeout cancels once without retry
+PASS A/B/C bounded queue and late A isolation
+PASS Close/invalidate cannot reopen via late provider update
+PASS Failure contracts discard stale text, including serialized worker results
+PASS Window minimum sizes shrink to a high-DPI work area instead of hiding footer controls
+PASS Whitespace-only SSE output is not accepted as a completed translation
+PASS A foreign read-only portable config gives an explicit next-start warning
+PASS Migration rejects an excessive password and invalid secret before deriving a key
+PASS Popup placement handles negative monitors, edge flips and integer extremes
+PASS Model and target language reject embedded control characters
+PASS Session pin/unpin cannot revive a previous selection lease
+PASS Pause invalidates active selection even when persistence fails
+PASS Foreground dismissal respects pin, own windows, and manual translation
+PASS Whitespace target and malformed process exclusions are rejected
+PASS Secret validation rejects control characters without echoing the key
+PASS Corrupt ordinary JSON import leaves valid settings untouched
+PASS Oversized DPAPI blobs fail before allocation and are preserved
+PASS SSE BOM, CR-only delimiters, comments and fragmented Unicode
+PASS Oversized SSE line is rejected while streaming rather than after EOF
+PASS SSE multiline event and cumulative heartbeat limits
+PASS Premature DONE and unterminated SSE finish are incomplete
+PASS A valid stop does not wait on a connection that never sends DONE
+PASS Malformed response objects and explicit refusals are classified safely
+PASS Malformed HTTP error code cannot hide the HTTP authentication status
+PASS Connection checks bypass the translation cache
+PASS An asynchronously published selection is read once more with the same worker
+PASS Cancellation during selection settling prevents a second query or stale reply
+PASS Selection failures report a useful visible fallback without inventing a text value
+PASS Starting a UIA helper cannot synchronously block its caller
+PASS Mouse release requires a matching left press and source window
+PASS Right or middle click cancels pending left coordinates and click history
+PASS Double click uses monotonic time and a matching window, excluding an earlier drag
+PASS Pointer distance arithmetic does not overflow at extreme coordinates
+PASS The production UIA worker exits after its exact parent exits
+PASS The production UIA worker rejects a reused PID with a different start time
+PASS A UIA logical timeout disposes the stalled transport and uses a fresh worker next time
+PASS A worker EOF is reset instead of being reused indefinitely
+PASS Malformed worker JSON and oversize selections do not return cached text
+PASS Closing during worker startup does not block shutdown or adopt an orphan transport
+PASS Canceling a queued read never creates another helper
+PASS A termination failure retains the owned helper and never starts an unbounded replacement
+PASS A real owned helper is terminated on timeout, without killing the caller
+PASS A real helper EOF recovers into a new process with the current sequence
+PASS A real helper is cleaned up when its caller cancels the request
+PASS VS Code adapter rejects other processes, ancestry cycles and unrelated trees
+PASS VS Code pipe response requires protocol version, exact nonce and a known status
+PASS VS Code responses preserve text and bound Unicode scalars without leaking failure text
+PASS Embedded VSIX contains exact extension resources and matching identity
+PASS Model discovery uses authenticated GET at the normalized API root
+PASS Model discovery rejects unsafe endpoints before sending credentials
+PASS Model HTTP errors are safe and do not retry or expose response bodies
+PASS Model lists reject malformed schemas, excessive entries and oversized streamed bodies
+PASS Model discovery timeout and caller cancellation remain distinct
+PASS Empty model list succeeds without inventing account access
+PASS Language defaults to Chinese and presets and custom languages reach the translation prompt
+PASS Changing translation language cannot reuse a cached result in the previous language
+PASS Hardware policy selects light or standard and protects low-memory and low-CPU devices
+PASS Unsupported hardware and temporary memory pressure are rejected before runtime files or engine startup
+PASS Changing the actual local model cannot reuse another model's cached translation
+PASS Fresh and legacy settings default to local translation without an API key or model name
+PASS Local translation is isolated from online credentials and never falls back to the network
+PASS Local package verification rejects tampering, missing files, path escapes and unexpected DLLs
+PASS Local and online results use separate cache entries
+PASS Local engine listener checks reject unrelated ports
+RESULT 79 passed, 0 failed

@@ -1,0 +1,8 @@
+{
+  "authenticated": false,
+  "selectedTextSent": false,
+  "configurationChanged": false,
+  "result": "ConnectionFailed",
+  "errorType": "AuthenticationException",
+  "testedUtc": "2026-10-23T05:26:36.5268979Z"
+}

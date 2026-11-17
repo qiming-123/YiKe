@@ -1,0 +1,9 @@
+PASS complete checksums, archive safety, source integrity, executable input identity and signature status.
+PASS unmodified release
+PASS Missing checksum rejected
+PASS ZIP traversal rejected despite updated outer checksum
+PASS Changed source rejected despite updated outer checksum
+PASS Reindexed changed source rejected by build identity
+PASS Changed offline identity rejected despite updated checksum
+PASS PackageOnly rejects changed executable inputs
+RELEASE RESULT 7 passed, 0 failed

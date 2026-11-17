@@ -1,0 +1,30 @@
+{
+  "version": "1.2.2",
+  "checkedUtc": "2026-10-24T01:46:23.4086236+08:00",
+  "application": "WPS Office Writer",
+  "wpsVersion": "12.1.0.28488",
+  "installDirectory": "D:\\YiKe",
+  "appSha256": "5fc4996b6c7b5e45095fe8ea3a3a5a171843b80baa647cec258c171b1e82b54c",
+  "syntheticTextOnly": true,
+  "format": "DOCX",
+  "gesture": "drag",
+  "sample": "The meeting starts at nine tomorrow morning.",
+  "observedTranslation": "会议明天上午九点开始。",
+  "translationComplete": true,
+  "automaticPopupObserved": true,
+  "selectionPreserved": true,
+  "preReadAccessibilityTree": false,
+  "localTranslation": true,
+  "desktopScalePercent": 150,
+  "limitations": [
+    "Only this WPS version and ordinary DOCX / RTF text; no PDF, spreadsheet or presentation claim.",
+    "No exact mouse-to-completed-translation latency measured."
+  ],
+  "phraseCheck": {
+    "observedTranslation": "配对编程",
+    "sample": "pair programmer",
+    "automaticPopupObserved": true,
+    "translationComplete": true,
+    "selectionPreserved": true
+  }
+}

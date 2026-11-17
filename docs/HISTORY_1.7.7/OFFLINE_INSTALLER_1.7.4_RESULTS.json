@@ -1,0 +1,192 @@
+{
+  "version": "1.7.4",
+  "passed": 13,
+  "failed": 0,
+  "testAppId": "YiKe.Installer.ModelSmoke",
+  "productionUserDataByteIdentical": true,
+  "productionRegistrationAndStartupUnchanged": true,
+  "noExternalModelDownload": true,
+  "physicalNetworkAdapterNotDisabled": true,
+  "runtimeChecksUseRealModels": true,
+  "lightHardwareSnapshotSimulated": true,
+  "extractedModelHashesVerified": true,
+  "checks": [
+    {
+      "passed": true,
+      "check": "no-model install includes a usable word dictionary without GGUF or preference"
+    },
+    {
+      "passed": true,
+      "check": "invalid model argument rejected before installation"
+    },
+    {
+      "passed": true,
+      "check": "light model extracted directly from installer and SHA-256 verified"
+    },
+    {
+      "passed": true,
+      "check": "reinstall repairs a corrupted existing model using bundled data"
+    },
+    {
+      "passed": true,
+      "check": "extracted light runtime performs real local translation without external endpoint"
+    },
+    {
+      "passed": true,
+      "check": "extracted offline uninstaller has opens signature and valid integrity"
+    },
+    {
+      "passed": true,
+      "check": "standard model extracted directly from installer and SHA-256 verified"
+    },
+    {
+      "passed": true,
+      "check": "extracted standard runtime performs real local translation without external endpoint"
+    },
+    {
+      "passed": true,
+      "check": "both models extracted with automatic hardware preference"
+    },
+    {
+      "passed": true,
+      "check": "verified existing models are reused without recopying"
+    },
+    {
+      "passed": true,
+      "check": "skip on upgrade preserves existing models and model preference"
+    },
+    {
+      "passed": true,
+      "check": "real installed app registration, startup and user settings/credentials preserved"
+    },
+    {
+      "passed": true,
+      "check": "no model download code or external GGUF source; installer logs show no download"
+    }
+  ],
+  "localLight": {
+    "model": "Qwen3-0.6B-Q4_0",
+    "profile": "轻量",
+    "threads": 2,
+    "context": 4096,
+    "batch": 128,
+    "microBatch": 64,
+    "processPriority": "BelowNormal",
+    "pollingDisabled": true,
+    "simulatedHardware": true,
+    "memoryPressureSimulated": true,
+    "engineReleasedOnMemoryPressure": true,
+    "reloadWithoutFullRehash": true,
+    "startupMs": 1163,
+    "noExternalEndpoint": true,
+    "appLocalCrt": true,
+    "cancellationAndRetry": true,
+    "engineStoppedOnDispose": true,
+    "engineStoppedOnParentCrash": true,
+    "cases": [
+      {
+        "source": "The meeting starts at nine tomorrow morning.",
+        "target": "简体中文",
+        "stream": true,
+        "translation": "明天早上九点会议开始。",
+        "firstTokenMs": 312,
+        "totalMs": 451
+      },
+      {
+        "source": "明天上午九点开会。",
+        "target": "英语（English）",
+        "stream": true,
+        "translation": "Meeting will be held at 9 a.m. tomorrow.",
+        "firstTokenMs": 273,
+        "totalMs": 517
+      },
+      {
+        "source": "Please save your changes before closing the window.",
+        "target": "日语（日本語）",
+        "stream": true,
+        "translation": "お手元に記録を保存してください。",
+        "firstTokenMs": 277,
+        "totalMs": 502
+      },
+      {
+        "source": "Thank you for your help.",
+        "target": "法语（Français）",
+        "stream": true,
+        "translation": "Merci pour votre aide.",
+        "firstTokenMs": 278,
+        "totalMs": 401
+      },
+      {
+        "source": "Connection timeout.\nRetry after 10 seconds.\nDo not close the window.",
+        "target": "简体中文",
+        "stream": false,
+        "translation": "連接超時。後續10秒重試。不應關閉視窗。",
+        "firstTokenMs": 713,
+        "totalMs": 713
+      }
+    ]
+  },
+  "localStandard": {
+    "model": "Qwen3-1.7B-Q4_K_M",
+    "profile": "标准",
+    "threads": 6,
+    "context": 6144,
+    "batch": 256,
+    "microBatch": 128,
+    "processPriority": "BelowNormal",
+    "pollingDisabled": true,
+    "simulatedHardware": false,
+    "memoryPressureSimulated": true,
+    "engineReleasedOnMemoryPressure": true,
+    "reloadWithoutFullRehash": true,
+    "startupMs": 1939,
+    "noExternalEndpoint": true,
+    "appLocalCrt": true,
+    "cancellationAndRetry": true,
+    "engineStoppedOnDispose": true,
+    "engineStoppedOnParentCrash": true,
+    "cases": [
+      {
+        "source": "The meeting starts at nine tomorrow morning.",
+        "target": "简体中文",
+        "stream": true,
+        "translation": "会议明天上午九点开始。",
+        "firstTokenMs": 320,
+        "totalMs": 595
+      },
+      {
+        "source": "明天上午九点开会。",
+        "target": "英语（English）",
+        "stream": true,
+        "translation": "Meeting will take place at 9 o'clock in the morning tomorrow.",
+        "firstTokenMs": 287,
+        "totalMs": 832
+      },
+      {
+        "source": "Please save your changes before closing the window.",
+        "target": "日语（日本語）",
+        "stream": true,
+        "translation": "閉じる前に変更を保存してください。",
+        "firstTokenMs": 290,
+        "totalMs": 679
+      },
+      {
+        "source": "Thank you for your help.",
+        "target": "法语（Français）",
+        "stream": true,
+        "translation": "Merci pour votre aide.",
+        "firstTokenMs": 289,
+        "totalMs": 519
+      },
+      {
+        "source": "Connection timeout.\nRetry after 10 seconds.\nDo not close the window.",
+        "target": "简体中文",
+        "stream": false,
+        "translation": "连接超时。\n10秒后重试。\n不关闭窗口。",
+        "firstTokenMs": 923,
+        "totalMs": 923
+      }
+    ]
+  },
+  "testedUtc": "2026-10-25T16:48:37.0383563Z"
+}

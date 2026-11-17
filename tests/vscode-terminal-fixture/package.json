@@ -1,0 +1,7 @@
+{
+  "name": "terminal-fixture", "publisher": "yike-local", "version": "1.0.0",
+  "engines": { "vscode": "^1.85.0" }, "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"], "extensionKind": ["ui"],
+  "extensionDependencies": ["yike-local.yike-selection"],
+  "capabilities": { "untrustedWorkspaces": { "supported": true } }
+}

@@ -1,0 +1,28 @@
+{
+  "version": "1.2.1",
+  "checkedUtc": "2026-10-24T01:02:04.5503812+08:00",
+  "syntheticTextOnly": true,
+  "appSha256": "867ad028a3e1158f4b1258b7bb35aea5bbd4d17ae4c7beee438c306f1bd78e5f",
+  "application": "Microsoft Edge",
+  "isolatedBrowserProcess": true,
+  "preReadAccessibilityTree": false,
+  "gesture": "drag",
+  "sample": "Fixed synthetic text for selection testing.",
+  "observedTranslation": "固定合成文本用于选择测试。",
+  "popupObserved": true,
+  "translationComplete": true,
+  "selectionPreserved": true,
+  "localTranslation": true,
+  "desktopScalePercent": 150,
+  "limitations": [
+    "One local HTML page on this Windows computer; no all-app or multi-monitor claim.",
+    "The UIA WPF fixture was skipped because the owned fixture could not obtain foreground; the real Edge worker and installed automatic popup were separately verified.",
+    "No exact gesture-to-completed-translation latency measured."
+  ],
+  "doubleClickCheck": {
+    "observedTranslation": "会议",
+    "sample": "meeting",
+    "translationComplete": true,
+    "selectionPreserved": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "from": "1.0.1.0",
+  "to": "1.0.2.0",
+  "installerExitCode": 0,
+  "userDataFiles": 2,
+  "userDataByteIdentical": true,
+  "startupUnchanged": true,
+  "installedApplicationMatchesReceipt": true,
+  "testedUtc": "2026-10-23T05:20:49.0083980Z"
+}

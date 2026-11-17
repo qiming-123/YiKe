@@ -1,0 +1,14 @@
+{
+  "name": "yike-selection",
+  "displayName": "译刻 · VS Code 划词适配",
+  "description": "编辑区自动划词；终端选区按 Ctrl+Alt+Y 复制并翻译 / 解释（会更新剪贴板）。无需读屏模式。",
+  "version": "1.1.0",
+  "publisher": "yike-local",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "license": "MIT",
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "extensionKind": ["ui"],
+  "capabilities": { "untrustedWorkspaces": { "supported": true }, "virtualWorkspaces": { "supported": true } }
+}

@@ -1,0 +1,10 @@
+{
+  "seconds": 224.6596128,
+  "bytes": 428970080,
+  "sha256": "da2572f16c06133561ce56accaa822216f2391ef4d37fba427801cd6736417d4",
+  "lightExists": true,
+  "installerExitCode": 0,
+  "version": "1.3.0",
+  "model": "Qwen3-0.6B-Q4_0",
+  "source": "https://huggingface.co/ggml-org/Qwen3-0.6B-GGUF/resolve/13ac06624948e4d8589cb4b6f90100837342fcb8/Qwen3-0.6B-Q4_0.gguf?download=true"
+}

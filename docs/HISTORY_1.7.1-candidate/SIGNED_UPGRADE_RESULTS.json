@@ -1,0 +1,12 @@
+{
+  "from": "1.7.0.0",
+  "to": "1.7.1.0",
+  "installDirectory": "C:\\Users\\liu\\AppData\\Local\\Programs\\YiKe",
+  "installerExitCode": 0,
+  "dataFiles": 3,
+  "userDataByteIdentical": true,
+  "startupEnabledPreserved": true,
+  "startupValueUnchanged": true,
+  "installedAppMatchesReceipt": true,
+  "modelPreferencePreserved": true
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.7.7",
+  "coreChecks": 170,
+  "coreProfileChecks": 9,
+  "uiChecks": 37,
+  "uiProfileChecks": 6,
+  "uiSkipped": 1,
+  "maxOnlineProfiles": 32,
+  "sameEndpointMultipleAccounts": true,
+  "independentEncryptedKeys": true,
+  "unsavedProfileDraftsRetained": true,
+  "lateModelResultsIsolated": true,
+  "batchFailureKeepsOldKeys": true,
+  "allProfileEncryptedMigration": true,
+  "plainExportExcludesKeys": true,
+  "trayPausePreservedOnSave": true,
+  "liveOnlineApiCallsMade": false
+}

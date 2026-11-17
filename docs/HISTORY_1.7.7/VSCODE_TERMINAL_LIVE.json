@@ -1,0 +1,16 @@
+{
+  "codeVersion": "1.143.1",
+  "nativeCopyAndAuthenticatedPipe": true,
+  "selected": "grep -n -i \u0027error\u0027 ./demo/app.log",
+  "selectedScalars": 53,
+  "clipboardSequenceChanged": true,
+  "selectedArgumentsExplained": true,
+  "noSelectionStatus": "NoSelection",
+  "oldClipboardNotReused": true,
+  "oversizeStatus": "TooLong",
+  "foregroundPreserved": true,
+  "syntheticPseudoterminalOnly": true,
+  "noShellProcess": true,
+  "noSelectedCommandExecuted": true,
+  "nativeHotkeyReceived": true
+}

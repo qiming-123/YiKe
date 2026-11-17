@@ -1,0 +1,26 @@
+{
+  "version": "1.2.0",
+  "checkedUtc": "2026-10-23T16:11:36.148Z",
+  "syntheticTextOnly": true,
+  "applications": [
+    {
+      "application": "Microsoft Edge",
+      "sample": "The meeting starts at nine tomorrow morning.",
+      "observedTranslation": "会议明天上午九点开始。",
+      "popupObserved": true
+    },
+    {
+      "application": "Visual Studio Code",
+      "gesture": "double-click",
+      "sample": "changes",
+      "observedTranslation": "更改",
+      "popupObserved": true,
+      "screenReaderModeEnabled": false
+    }
+  ],
+  "limitations": [
+    "VS Code drag selection was not certified in this run; double-click was observed.",
+    "No exact gesture-to-popup latency was measured."
+  ],
+  "passed": 2
+}

@@ -1,0 +1,7 @@
+{
+  "result": "ConnectionFailed",
+  "errorType": "AuthenticationException",
+  "authenticated": "false",
+  "selectedTextSent": "false",
+  "certificateValidationBypassed": "false"
+}

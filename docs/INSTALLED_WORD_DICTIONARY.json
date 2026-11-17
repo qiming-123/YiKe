@@ -1,0 +1,12 @@
+{
+  "selectionWorkerPrewarmed": true,
+  "automaticFailuresSilent": true,
+  "dictionaryVerified": true,
+  "onlineApiBehaviorEvidence": "HISTORY_1.7.7/ONLINE_API_1.7.7_RESULTS.json",
+  "profileAndModelsPreserved": true,
+  "wpsPdfFreshCopyObserved": true,
+  "reviewedOverrides": 165,
+  "onlineApiProfilesSupported": 32,
+  "dictionaryEntries": 764830,
+  "version": "1.7.8.0"
+}

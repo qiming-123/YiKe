@@ -1,0 +1,8 @@
+{
+  "control": "Microsoft Learn public HTTPS",
+  "httpStatus": 200,
+  "serviceProbe": "TLS AuthenticationException",
+  "proxyEnvironmentPresent": false,
+  "authenticatedProbe": false,
+  "certificateValidationBypassed": false
+}

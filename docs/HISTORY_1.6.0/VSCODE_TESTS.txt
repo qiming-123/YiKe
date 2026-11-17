@@ -1,0 +1,21 @@
+✔ matching mouse gesture reads only the selected range (1.0038ms)
+✔ unfocused window, another editor, changed version and changed selection never read text (0.154ms)
+✔ missing mouse event, malformed nonce and expired request never read text (0.6282ms)
+✔ old mouse selection or an event after the request cannot be reused (0.1158ms)
+✔ a long held drag remains valid when its last selection event is inside the press/release interval (0.097ms)
+✔ empty and whitespace ranges do not become a translation (0.0816ms)
+✔ 2000 Unicode scalars succeed; 2001 fail without returning text (0.1654ms)
+✔ oversized selection is rejected before asking the editor for text (0.0711ms)
+✔ multiple selections join in editor order; excess range count is bounded (0.113ms)
+✔ extension invalidates mouse metadata on keyboard, command, editor, focus and document changes (1.3871ms)
+✔ focus gain keeps a current gesture while focus loss invalidates the previous gesture (1.5609ms)
+✔ excess cursor count is rejected before capturing selection signatures (0.8624ms)
+✔ local pipe request handles fragmented JSON and rejects malformed or oversized frames (0.6995ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 57.0834

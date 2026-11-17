@@ -1,0 +1,9 @@
+{
+  "from": "1.2.0.0",
+  "to": "1.2.1.0",
+  "installerExitCode": 0,
+  "dataFiles": 3,
+  "userDataByteIdentical": true,
+  "startupUnchanged": true,
+  "installedAppMatchesReceipt": true
+}

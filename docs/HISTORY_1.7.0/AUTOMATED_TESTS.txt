@@ -1,0 +1,127 @@
+PASS HTTPS endpoint validation and path
+PASS Unicode scalar limit without truncation
+PASS DPAPI save/reload/update and endpoint binding
+PASS Failed configuration commit preserves previous credential and revision
+PASS Ordinary export excludes key; import creates fresh credential binding
+PASS Portable reconciliation selects newer local revision
+PASS Portable unwritable copy commits durable user fallback
+PASS Portable-only load establishes EXE-only move fallback
+PASS Password migration roundtrip
+PASS Wrong password/tampering never touches saved config
+PASS SSE arbitrary UTF8 boundaries, empty delta, multiline event, DONE
+PASS SSE disconnect marks incomplete
+PASS Truncation/refusal/empty responses rejected
+PASS Nonstream completion and request prompt isolation
+PASS HTTP error taxonomy and redirect denial
+PASS First-response timeout cancels once without retry
+PASS A/B/C bounded queue and late A isolation
+PASS Close/invalidate cannot reopen via late provider update
+PASS Failure contracts discard stale text, including serialized worker results
+PASS Window minimum sizes shrink to a high-DPI work area instead of hiding footer controls
+PASS Whitespace-only SSE output is not accepted as a completed translation
+PASS A foreign read-only portable config gives an explicit next-start warning
+PASS Migration rejects an excessive password and invalid secret before deriving a key
+PASS Popup placement handles negative monitors, edge flips and integer extremes
+PASS Model and target language reject embedded control characters
+PASS Session pin/unpin cannot revive a previous selection lease
+PASS Pause invalidates active selection even when persistence fails
+PASS Foreground dismissal respects pin, own windows, and manual translation
+PASS Whitespace target and malformed process exclusions are rejected
+PASS Secret validation rejects control characters without echoing the key
+PASS Corrupt ordinary JSON import leaves valid settings untouched
+PASS Oversized DPAPI blobs fail before allocation and are preserved
+PASS SSE BOM, CR-only delimiters, comments and fragmented Unicode
+PASS Oversized SSE line is rejected while streaming rather than after EOF
+PASS SSE multiline event and cumulative heartbeat limits
+PASS Premature DONE and unterminated SSE finish are incomplete
+PASS A valid stop does not wait on a connection that never sends DONE
+PASS Malformed response objects and explicit refusals are classified safely
+PASS Malformed HTTP error code cannot hide the HTTP authentication status
+PASS Connection checks bypass the translation cache
+PASS An initially unavailable web accessibility provider is queried once again without another worker
+PASS An asynchronously published selection is read once more with the same worker
+PASS Cancellation during selection settling prevents a second query or stale reply
+PASS Selection failures report a useful visible fallback without inventing a text value
+PASS Starting a UIA helper cannot synchronously block its caller
+PASS Mouse release requires a matching left press and source window
+PASS Right or middle click cancels pending left coordinates and click history
+PASS Double click uses monotonic time and a matching window, excluding an earlier drag
+PASS Pointer distance arithmetic does not overflow at extreme coordinates
+PASS The production UIA worker exits after its exact parent exits
+PASS The production UIA worker rejects a reused PID with a different start time
+PASS A UIA logical timeout disposes the stalled transport and uses a fresh worker next time
+PASS A worker EOF is reset instead of being reused indefinitely
+PASS Malformed worker JSON and oversize selections do not return cached text
+PASS Closing during worker startup does not block shutdown or adopt an orphan transport
+PASS Canceling a queued read never creates another helper
+PASS A termination failure retains the owned helper and never starts an unbounded replacement
+PASS A real owned helper is terminated on timeout, without killing the caller
+PASS A real helper EOF recovers into a new process with the current sequence
+PASS A real helper is cleaned up when its caller cancels the request
+PASS Legacy selected-text fallback reads only explicit positive selection offsets
+PASS Legacy fallback rejects whole-document sentinels, invalid ranges, oversize and ambiguous multiple selections before reading
+PASS Legacy fallback cannot accept a nearby partial paragraph or selection elsewhere on screen
+PASS Legacy collapsed or absent selections return no text and never query control values
+PASS Legacy fallback rejects embedded-object placeholders and counts Unicode scalars without truncation
+PASS Failure feedback names the actual source and limits editor advice to Code
+PASS WPS adapter attaches only to Writer and preserves selected paragraph boundaries
+PASS WPS insertion points cannot leak the character next to the caret
+PASS WPS column, table, shape and malformed selection ranges are rejected before text access
+PASS WPS stale selection away from either mouse endpoint is not read
+PASS WPS missing or invalid range geometry prevents unbounded selection access
+PASS WPS foreground, window, document or selection changes prevent stale text from escaping
+PASS WPS rejects surrounding-text responses, object placeholders and null characters
+PASS WPS has a pre-read size bound and does not truncate 2000-scalar Unicode selections
+PASS WPS whitespace selections do not manufacture a translation request
+PASS VS Code adapter rejects other processes, ancestry cycles and unrelated trees
+PASS VS Code pipe response requires protocol version, exact nonce and a known status
+PASS VS Code responses preserve text and bound Unicode scalars without leaking failure text
+PASS Embedded VSIX contains exact extension resources and matching identity
+PASS Model discovery uses authenticated GET at the normalized API root
+PASS Model discovery rejects unsafe endpoints before sending credentials
+PASS Model HTTP errors are safe and do not retry or expose response bodies
+PASS Model lists reject malformed schemas, excessive entries and oversized streamed bodies
+PASS Model discovery timeout and caller cancellation remain distinct
+PASS Empty model list succeeds without inventing account access
+PASS Language defaults to Chinese and presets and custom languages reach the translation prompt
+PASS Changing translation language cannot reuse a cached result in the previous language
+PASS Hardware policy selects light or standard and protects low-memory and low-CPU devices
+PASS Unsupported hardware and temporary memory pressure are rejected before runtime files or engine startup
+PASS Changing the actual local model cannot reuse another model's cached translation
+PASS Fresh and legacy settings default to local translation without an API key or model name
+PASS Local translation is isolated from online credentials and never falls back to the network
+PASS Local package verification rejects tampering, missing files, path escapes and unexpected DLLs
+PASS Local and online results use separate cache entries
+PASS Local engine listener checks reject unrelated ports
+PASS Installer recommendation uses memory, free memory, CPU count and compatibility without loading a model
+PASS A light-only installation uses its available model on a powerful computer
+PASS An explicit light installation remains light even when the standard model is also present
+PASS Explicit standard models remain subject to permanent and current-memory limits
+PASS Automatic selection cannot promote an 8 GB computer to its only installed heavy model
+PASS Skipping models produces a specific missing-model result before any engine or API request
+PASS Model preference parsing is bounded, scoped to its section and rejects arbitrary values
+PASS Model changes and single-model availability produce distinct cache identities
+PASS Programming keywords expose distinct cross-language semantics offline
+PASS Glossary identifies code, marked terms and programming prose without ordinary sentence noise
+PASS Glossary respects identifier boundaries, keyword case, deduplication and output bounds
+PASS Programming preference defaults on for legacy configs and roundtrips disabled
+PASS Glossary stays separate from translation, adds no requests and refreshes on cached results
+PASS Glossary remains readable on provider failure without claiming translation completion
+PASS Linux commands describe options and effects without executing selected text
+PASS Computer glossary covers OS networking databases security hardware algorithms and AI
+PASS Expanded terms retain ordinary sentence and identifier boundaries
+PASS Technical stream delimiter is separated at every byte-independent string boundary
+PASS Unknown technical terms receive a single isolated request and cache explanations separately
+PASS Disabling smart supplementation preserves glossary and uses a separate request cache
+PASS Interrupted model notes are marked incomplete and never cached
+PASS Providers without technical generation keep dictionary explanations and ordinary translation
+PASS Model repetitions of bundled definitions are omitted while new terms are retained
+PASS Every bundled computer term includes a bounded use case and outcome
+PASS Examples follow the matching explanation and retain language and effect context
+PASS Known model definitions also omit their examples without removing a new term's example
+PASS Terminal command catalogue provides offline syntax, parameters, examples and effects
+PASS Selected command flags and quoted values are explained using their command's semantics
+PASS Terminal prompts, pipes and redirection preserve command boundaries
+PASS Terminal copy acknowledgements require exact protocol nonce and status
+PASS Terminal clipboard gate rejects stale, unrelated and ownerless data
+RESULT 126 passed, 0 failed

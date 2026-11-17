@@ -1,0 +1,29 @@
+PASS Mouse listener owns a separate message loop from a busy UI dispatcher
+PASS Low hardware disables local testing and save without writing config or making requests
+PASS Settings import refreshes visible fields and preserves migrated secret on save
+PASS Unedited encrypted key remains untouched and is never used as a mask string
+PASS Settings write failure retains old credentials and unsaved replacement input
+PASS Connection cancellation blocks late completion feedback
+PASS Editing endpoint cancels the test and cannot send the saved key to the new host
+PASS Repeated explicit connection checks make two requests and do not save settings
+PASS Closing settings isolates a late connection error
+PASS Repeated navigation keeps one owner for every settings control
+PASS The settings footer remains reachable in a constrained window
+PASS Fresh local mode needs no API fields, key, save or model discovery
+PASS Local mode keeps the portable write failure notice while saving the user fallback
+PASS Switching to local mode cancels an online test and ignores its late reply
+PASS Local mode save preserves the previous cloud endpoint model and encrypted key
+PASS Closing settings does not dispose a provider shared with the application
+PASS Model inputs debounce into one request for the latest address and explicit key
+PASS Model discovery never reuses a saved credential at a changed endpoint
+PASS Late model discovery cannot replace the latest list or a manually entered model
+PASS Unsupported model APIs preserve manual input and allow explicit refresh
+PASS Closing settings isolates late model errors
+PASS Language selector defaults to Chinese and saves preset and custom input
+PASS Compiled control templates preserve dropdown, selection and expansion contracts
+SKIP Production UIA transport reads a real selected WPF range without clipboard access / The execution desktop did not allow the owned test window to become foreground.
+PASS An automatic popup preserves the foreground focus
+PASS Presenting and updating a popup preserves the clipboard sequence
+PASS Selection failure names the source, explains translation has not started and disables empty-source actions
+PASS Popup pin and close events invalidate selection leases without reviving late text
+UI RESULT 27 passed, 0 failed, 1 skipped

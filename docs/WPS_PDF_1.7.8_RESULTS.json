@@ -1,0 +1,28 @@
+{
+  "version": "1.7.8",
+  "scannedPdfOcrSupported": false,
+  "nativeRead": {
+    "phase": "copied",
+    "status": "Success",
+    "exactText": true,
+    "scalars": 44,
+    "clipboardOwnerProcessId": 7668,
+    "rootProcessId": 33956,
+    "syntheticPdfOnly": true,
+    "clipboardNotWrittenByYiKe": true,
+    "realNativeReader": true,
+    "checkedUtc": "2026-10-26T19:15:54.8745842-06:00"
+  },
+  "translationCompleted": true,
+  "wpsVersion": "12.1.0.28488",
+  "workflow": "mouse selection then Ctrl+C",
+  "testPdf": "tests/fixtures/wps-selection-test.pdf",
+  "syntheticPdfOnly": true,
+  "copyTranslationEnabled": true,
+  "verifiedUtc": "2026-10-27T01:29:23.8277972Z",
+  "blankClickNoErrorObserved": true,
+  "directUiaTimedOut": true,
+  "installedPopupObserved": true,
+  "installedAppSha256": "00b6b4d1bda3f8e75afe8ade32daed1b7275223979d64526636dd143a1283d02",
+  "observedTranslation": "会议明天上午九点开始。"
+}

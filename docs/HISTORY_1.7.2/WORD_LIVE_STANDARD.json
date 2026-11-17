@@ -1,0 +1,145 @@
+{
+  "model": "Qwen3-1.7B-Q4_K_M",
+  "probe": false,
+  "dictionaryEntries": 764830,
+  "reviewedOverrides": 165,
+  "lightHardwareSnapshotSimulated": false,
+  "knownLightSentenceContentFailures": [],
+  "cases": [
+    {
+      "source": "how",
+      "text": "\u5982\u4F55\uFF1B\u600E\u6837\uFF1B\u591A\u4E48",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 33
+    },
+    {
+      "source": "unmark",
+      "text": "\u53D6\u6D88\u6807\u8BB0",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "squares",
+      "text": "\u6B63\u65B9\u5F62\uFF1B\u65B9\u683C\uFF08\u590D\u6570\uFF09\uFF1B\u5E73\u65B9\u6570\uFF1B\u6C42\u5E73\u65B9\uFF08\u52A8\u8BCD\u7B2C\u4E09\u4EBA\u79F0\u5355\u6570\uFF09",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "square",
+      "text": "\u6B63\u65B9\u5F62\uFF1B\u65B9\u683C\uFF1B\u5E73\u65B9\uFF1B\u5E7F\u573A",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "neighboring",
+      "text": "\u76F8\u90BB\u7684\uFF1B\u90BB\u8FD1\u7684",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "uncover",
+      "text": "\u7FFB\u5F00\uFF1B\u63ED\u5F00\uFF1B\u663E\u9732\uFF1B\u53D1\u73B0",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "diagonally",
+      "text": "\u6CBF\u5BF9\u89D2\u7EBF\u5730\uFF1B\u659C\u5411\u5730",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "randomly",
+      "text": "\u968F\u673A\u5730\uFF1B\u4EFB\u610F\u5730",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "surrounding",
+      "text": "n. \u73AF\u5883\na. \u5468\u56F4\u7684",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "suspected",
+      "text": "a. \u6709\u5ACC\u7591\u7684",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "approximately",
+      "text": "adv. \u5927\u7EA6, \u5927\u81F4, \u8FD1\u4E8E\n[\u7ECF] \u5927\u7EA6, \u8FD1\u4F3C",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "demonstrates",
+      "text": "v. \u4E3E\u884C\u793A\u5A01\u6E38\u884C\uFF08\u6216\u96C6\u4F1A\uFF09( demonstrate\u7684\u7B2C\u4E09\u4EBA\u79F0\u5355\u6570 ); \u793A\u8303\u3002\u5C55\u793A; \u663E\u793A; \u8BBA\u8BC1",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "entries",
+      "text": "n. \u8FDB\u5165\uFF1B\uFF08\u8BCD\u5178\u6240\u5217\u7684\uFF09\u8BCD\u76EE\uFF08entry\u7684\u590D\u6570\u5F62\u5F0F\uFF09",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "bundled-dictionary",
+      "calls": 1,
+      "totalMs": 0
+    },
+    {
+      "source": "Press F to mark or unmark a suspected mine.",
+      "text": "\u6309 F \u952E\u6807\u8BB0\u6216\u53D6\u6D88\u6807\u8BB0\u7591\u4F3C\u77FF\u85CF\u3002",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "local-model",
+      "calls": 1,
+      "totalMs": 767
+    },
+    {
+      "source": "The board has 9 \u00D7 9 squares, with 10 randomly placed mines hidden inside.",
+      "text": "\u68CB\u76D8\u67099\u00D79\u4E2A\u65B9\u683C\uFF0C\u5176\u4E2D10\u4E2A\u5730\u96F7\u968F\u673A\u5730\u9690\u85CF\u5728\u5176\u4E2D\u3002",
+      "notes": "",
+      "checkedContentPreserved": true,
+      "origin": "local-model",
+      "calls": 1,
+      "totalMs": 1148
+    }
+  ]
+}

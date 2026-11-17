@@ -1,0 +1,10 @@
+{
+  "version": "1.7.8.0",
+  "running": true,
+  "offlineRuntimeFiles": 32,
+  "offlineRuntimeIntegrity": true,
+  "engineOwnedByInstalledApp": true,
+  "listenerLoopbackOnly": true,
+  "selectionWorkerPrewarmed": true,
+  "signer": "CN=opens"
+}

@@ -1,0 +1,62 @@
+{
+  "model": "Qwen3-0.6B-Q4_0",
+  "profile": "\u8F7B\u91CF",
+  "threads": 2,
+  "context": 4096,
+  "batch": 128,
+  "microBatch": 64,
+  "processPriority": "BelowNormal",
+  "pollingDisabled": true,
+  "simulatedHardware": true,
+  "memoryPressureSimulated": true,
+  "engineReleasedOnMemoryPressure": true,
+  "reloadWithoutFullRehash": true,
+  "startupMs": 2580,
+  "noExternalEndpoint": true,
+  "appLocalCrt": true,
+  "cancellationAndRetry": true,
+  "engineStoppedOnDispose": true,
+  "engineStoppedOnParentCrash": true,
+  "cases": [
+    {
+      "source": "The meeting starts at nine tomorrow morning.",
+      "target": "\u7B80\u4F53\u4E2D\u6587",
+      "stream": true,
+      "translation": "\u660E\u5929\u65E9\u4E0A\u4E5D\u70B9\u4F1A\u8BAE\u5F00\u59CB\u3002",
+      "firstTokenMs": 1642,
+      "totalMs": 2030
+    },
+    {
+      "source": "\u660E\u5929\u4E0A\u5348\u4E5D\u70B9\u5F00\u4F1A\u3002",
+      "target": "\u82F1\u8BED\uFF08English\uFF09",
+      "stream": true,
+      "translation": "Meeting will be held at 9 a.m. tomorrow.",
+      "firstTokenMs": 1573,
+      "totalMs": 2219
+    },
+    {
+      "source": "Please save your changes before closing the window.",
+      "target": "\u65E5\u8BED\uFF08\u65E5\u672C\u8A9E\uFF09",
+      "stream": true,
+      "translation": "\u304A\u624B\u5143\u306B\u8A18\u9332\u3092\u4FDD\u5B58\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+      "firstTokenMs": 1639,
+      "totalMs": 2208
+    },
+    {
+      "source": "Thank you for your help.",
+      "target": "\u6CD5\u8BED\uFF08Fran\u00E7ais\uFF09",
+      "stream": true,
+      "translation": "Merci pour votre aide.",
+      "firstTokenMs": 1606,
+      "totalMs": 1947
+    },
+    {
+      "source": "Connection timeout.\nRetry after 10 seconds.\nDo not close the window.",
+      "target": "\u7B80\u4F53\u4E2D\u6587",
+      "stream": false,
+      "translation": "\u9023\u63A5\u8D85\u6642\u3002\u5F8C\u7E8C10\u79D2\u91CD\u8A66\u3002\u4E0D\u61C9\u95DC\u9589\u8996\u7A97\u3002",
+      "firstTokenMs": 2851,
+      "totalMs": 2851
+    }
+  ]
+}

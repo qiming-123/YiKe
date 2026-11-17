@@ -1,0 +1,15 @@
+{
+  "version": "1.7.0.0",
+  "adapterVersion": "1.1.0",
+  "actualInstalledApplication": true,
+  "nativeHotkeyUsed": true,
+  "selectionDiagnostic": "VS Code 终端 · 显式复制选区 · Success",
+  "diagnosticObservedInOwnSettingsUI": true,
+  "syntheticPseudoterminalOnly": true,
+  "noShellProcess": true,
+  "noCommandExecuted": true,
+  "popupLayoutVerifiedSeparately": true,
+  "installedPopupVisualNotCertified": true,
+  "settingsClosedWithoutSaving": true,
+  "testedUtc": "2026-10-24T06:45:59.5196052Z"
+}
