@@ -53,6 +53,11 @@ static class PdfCopyChecks
                 Assert(PdfCopyPolicy.CanWait(status) == (status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout or ReadStatus.NotTextSelection));
             return Task.CompletedTask;
         });
+        await check("PDF automatic copy excludes confirmed nontext controls, denied reads and completed text", () =>
+        {
+            foreach (var status in Enum.GetValues<ReadStatus>()) Assert(PdfCopyPolicy.CanAutoCopy(status) == (status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout));
+            return Task.CompletedTask;
+        });
         await check("PDF copy text preserves complete paragraphs Unicode and the 2000-scalar limit without fabrication", () =>
         {
             Assert(PdfCopyPolicy.ValidateText(" \n\t ").Status == ReadStatus.NoSelection);

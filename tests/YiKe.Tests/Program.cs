@@ -26,14 +26,17 @@ if(args.Length==3&&args[0]=="--word-probe")return await WordTranslationLiveCheck
 if(args.Length==3&&args[0]=="--local-parent-fixture")return await LocalModelLiveCheck.ParentFixture(args[1], args[2]);
 if(args.Length==3&&args[0]=="--local-parent-light")return await LocalModelLiveCheck.ParentFixture(args[1], args[2], true);
 if(args.Contains("--visual"))return VisualChecks.Run();
-if(args.Contains("--ui-regression"))return UiRegressionChecks.Run();
+if(args.Contains("--ui-regression"))return UiRegressionChecks.Run(args.ElementAtOrDefault(1));
 if(args.Length==2&&args[0]=="--pdf-copy-live")return PdfCopyLiveCheck.Run(args[1]);
 if(args.Length==2&&args[0]=="--install-data")return InstallDataFixture.Run(args[1]);
 if(args.Length==2&&args[0]=="--desktop-data")return DesktopDataFixture.Run(args[1]);
+if(args.Length==3 && args[0]=="--memory-180") return await Upgrade180Checks.Memory(args[1],args[2]);
+if(args.Length==2 && args[0]=="--nmt-180") return await Upgrade180Checks.Nmt(args[1]);
 int passed = 0, failed = 0;
 async Task Check(string name, Func<Task> test) { try { await test(); Console.WriteLine("PASS " + name); passed++; } catch (Exception e) { Console.WriteLine("FAIL " + name + " / " + e); failed++; } }
 void Assert(bool value, string why = "assertion failed") { if (!value) throw new Exception(why); }
 void Throws<T>(Action action) where T : Exception { try { action(); } catch (T) { return; } throw new Exception("expected " + typeof(T).Name); }
+await Upgrade180Checks.Run(Check);
 var s = new AppSettings { TranslationMode = "online", Model = "test-model" };
 var req = new TranslationRequest(1, "Hello\n\n42", "auto", "简体中文", s.ConfigId, s.ServiceId, s.Model);
 await Check("HTTPS endpoint validation and path", () => { Assert(Endpoint.Completions("https://example.test/v1/").AbsolutePath == "/v1/chat/completions"); foreach (var u in new[] { "http://localhost", "https://a@b/v1", "https://x/v1?key=x", "https://x/#frag", "https://x/v1/chat/completions" }) Throws<ArgumentException>(() => Endpoint.Normalize(u)); return Task.CompletedTask; });
@@ -94,4 +97,3 @@ sealed class ControlledProvider : ITranslationProvider
 }
 static class JsonNodeHelper {public static byte[] Tamper(byte[] bytes){var o=System.Text.Json.Nodes.JsonNode.Parse(bytes)!;var cipher=Convert.FromBase64String(o["Ciphertext"]!.GetValue<string>());cipher[0]^=1;o["Ciphertext"]=Convert.ToBase64String(cipher);return Encoding.UTF8.GetBytes(o.ToJsonString());}}
 sealed class SlowHttp:HttpMessageHandler{public int Calls;protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,CancellationToken token){Calls++;await Task.Delay(Timeout.Infinite,token);return new(HttpStatusCode.OK);}}
-

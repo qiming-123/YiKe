@@ -1,3 +1,11 @@
+PASS Prism titlebar maximizes restores minimizes and closes the settings window
+PASS PDF automatically copies once after direct reading fails and does not copy for known controls
+PASS PDF automatic copy never publishes after cancellation focus change pause or a new selection
+PASS Native clipboard snapshot restores Unicode HTML and RTF without overwriting a newer copy
+PASS Native clipboard snapshot preserves image and file-drop contents
+PASS Selection icon waits for a click and consumes its source exactly once
+PASS Saved DeepL preset survives reopen and does not request AI model lists
+PASS English learning exposes word speech but never sentence speech
 PASS Mouse listener owns a separate message loop from a busy UI dispatcher
 PASS Low hardware disables local testing and save without writing config or making requests
 PASS Settings import refreshes visible fields and preserves migrated secret on save
@@ -7,7 +15,7 @@ PASS Batch save failure keeps both saved keys and pending profile edits for a su
 PASS Removing one API commits its deletion without removing another credential
 PASS Encrypted multi API import binds every key and tests the selected saved account
 PASS Saving local mode preserves keys staged for inactive online API profiles
-PASS WPS PDF copy reads only a new sequence after failed selection reading and expires its intent
+PASS WPS PDF copy accepts fresh text during UIA reading and expires its intent
 PASS WPS PDF copy ignores denied canceled and late reads while allowing the newest gesture
 PASS WPS PDF copy rechecks an overlapping clipboard update and rejects a changed source
 PASS WPS PDF copy preference saves and reloads independently from API credentials
@@ -31,7 +39,7 @@ PASS Unsupported model APIs preserve manual input and allow explicit refresh
 PASS Closing settings isolates late model errors
 PASS Language selector defaults to Chinese and saves preset and custom input
 PASS Compiled control templates preserve dropdown, selection and expansion contracts
-SKIP Production UIA transport reads a real selected WPF range without clipboard access / The execution desktop did not allow the owned test window to become foreground.
+PASS Production UIA transport reads a real selected WPF range without clipboard access
 PASS An automatic popup preserves the foreground focus
 PASS Presenting and updating a popup preserves the clipboard sequence
 PASS Selection failure names the source, explains translation has not started and disables empty-source actions
@@ -40,4 +48,4 @@ PASS Programming panel scrolls separately from source and resets between selecti
 PASS Unselected pointer activity stays hidden and hiding for re-selection does not signal an explicit close
 PASS Completed translation remains copyable while any-word notes are pending
 PASS Popup pin and close events invalidate selection leases without reviving late text
-UI RESULT 41 passed, 0 failed, 1 skipped
+UI RESULT 50 passed, 0 failed, 0 skipped

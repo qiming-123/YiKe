@@ -66,6 +66,8 @@ public static class VsCodeIntegration
         foreach (string name in new[] { "Code", "Code - Insiders" })
             foreach (var process in Process.GetProcessesByName(name))
                 using (process) { try { if (process.MainModule?.FileName is string path) paths.Add(path); } catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException) { } }
+        foreach (string bin in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries))
+            paths.Add(Path.GetFullPath(Path.Combine(bin.Trim('"'), "..", "Code.exe")));
         return paths.Distinct(StringComparer.OrdinalIgnoreCase).Where(File.Exists);
     }
 }

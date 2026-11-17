@@ -35,7 +35,7 @@ static class AnyWordNotesChecks
                 if (update.Complete && update.ExplanationPending) early.TrySetResult(update);
                 if (update.Complete && !update.ExplanationPending) final.TrySetResult(update);
             });
-            var settings = new AppSettings();
+            var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true };
             coordinator.Submit("how", settings, "");
             var ready = await early.Task.WaitAsync(TimeSpan.FromSeconds(3));
             await provider.NotesStarted.Task.WaitAsync(TimeSpan.FromSeconds(3));
@@ -57,7 +57,7 @@ static class AnyWordNotesChecks
             {
                 var provider = new Probe { FailNotes = !empty, EmptyNotes = empty }; var done = Done();
                 using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete && !update.ExplanationPending) done.TrySetResult(update); });
-                coordinator.Submit("how", new AppSettings { TranslationMode = "online", Model = "fixture" }, "");
+                coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true, TranslationMode = "online", Model = "fixture" }, "");
                 var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
                 Assert(result.Complete && result.Error is null && result.Text == "如何" && result.ProgrammingNotes.Contains("暂不可用"));
                 Assert(!result.ProgrammingNotes.Contains("模型补充") && provider.Requests.Count == 2 && provider.Requests.Count(request => !request.NotesOnly) == 1);
@@ -67,9 +67,9 @@ static class AnyWordNotesChecks
         {
             var provider = new Probe { HoldNotes = true }; var final = Done(); var completed = new List<string>();
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete && !update.ExplanationPending) { completed.Add(update.Text); final.TrySetResult(update); } });
-            coordinator.Submit("how", new AppSettings(), ""); await provider.NotesStarted.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, ""); await provider.NotesStarted.Task.WaitAsync(TimeSpan.FromSeconds(3));
             coordinator.Invalidate();
-            coordinator.Submit("hello", new AppSettings { SupplementTechnicalTerms = false }, "");
+            coordinator.Submit("hello", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = false }, "");
             var result = await final.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Text == "你好" && completed.SequenceEqual(new[] { "你好" }) && provider.Requests.Count == 3);
         });
@@ -77,7 +77,7 @@ static class AnyWordNotesChecks
         {
             using var local = new LocalTranslationProvider("C:\\YiKe-no-model-for-notes", () => new(2 * LocalHardware.GiB, LocalHardware.GiB, 2, true));
             var done = Done(); using var coordinator = new TranslationCoordinator(local, update => { if (update.Complete || update.Error is not null) done.TrySetResult(update); });
-            coordinator.Submit("how", new AppSettings(), "");
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
             var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Complete && result.Text == "如何；怎样；多么" && result.ProgrammingNotes.Contains("how to") && !result.ExplanationPending);
             Assert(local.EngineProcessId == 0 && local.VerificationPasses == 0);
@@ -86,7 +86,7 @@ static class AnyWordNotesChecks
         {
             var handler = new Handler(); using var online = new OpenAiCompatibleProvider(handler);
             var done = Done(); using var coordinator = new TranslationCoordinator(online, update => { if (update.Complete && !update.ExplanationPending) done.TrySetResult(update); });
-            coordinator.Submit("how", new AppSettings { TranslationMode = "online", Model = "fixture", Stream = false }, "fixture-key-123");
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true, TranslationMode = "online", Model = "fixture", Stream = false }, "fixture-key-123");
             var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Text == "如何" && result.ProgrammingNotes.Contains("模型补充") && handler.Prompts.Count == 2);
             Assert(handler.Prompts[0].Contains("只输出译文") && handler.Prompts[1].Contains("普通英语也要说明") && handler.Users.All(value => value == "how"));
@@ -95,7 +95,7 @@ static class AnyWordNotesChecks
         {
             var provider = new Probe { Oversized = true }; var done = Done();
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete && !update.ExplanationPending) done.TrySetResult(update); });
-            coordinator.Submit("how", new AppSettings(), ""); var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, ""); var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Text == "如何" && result.ProgrammingNotes.Length < 7000 && provider.Requests.Count == 2);
         });
     }

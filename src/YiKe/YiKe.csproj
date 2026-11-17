@@ -6,13 +6,15 @@
     <SelfContained>true</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile><IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PublishTrimmed>false</PublishTrimmed><DebugType>embedded</DebugType>
-    <Version>1.7.8</Version><Company>opens</Company><Authors>opens</Authors><AssemblyName>YiKe</AssemblyName><RootNamespace>YiKe</RootNamespace>
+    <Version>1.8.3</Version><Company>opens</Company><Authors>opens</Authors><AssemblyName>YiKe</AssemblyName><RootNamespace>YiKe</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest><ApplicationIcon>../../assets/yike.ico</ApplicationIcon>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
   <ItemGroup><EmbeddedResource Include="../../assets/yike.ico" LogicalName="YiKe.icon" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="../../assets/prism-glyph.json" LogicalName="YiKe.prism-glyph" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="../../assets/local-package.json" LogicalName="YiKe.local-package" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="../../assets/word-dictionary.dat" LogicalName="YiKe.word-dictionary" /></ItemGroup>
   <ItemGroup><EmbeddedResource Include="../YiKe.VSCode/package.json;../YiKe.VSCode/extension.js;../YiKe.VSCode/selection.js;../YiKe.VSCode/README.md;../../LICENSE" LogicalName="YiKe.VSCode.%(Filename)%(Extension)" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="../../assets/nmt-package.json" LogicalName="YiKe.nmt-package" /><Content Include="../../translation-runtime/**/*" Link="translation-runtime/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" /></ItemGroup>
 </Project>

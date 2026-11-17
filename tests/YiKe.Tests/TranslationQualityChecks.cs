@@ -45,7 +45,7 @@ static class TranslationQualityChecks
             using var local = new LocalTranslationProvider("C:\\YiKe-nonexistent-test-runtime", () => throw new Exception("Word dictionary attempted to inspect model hardware"));
             var request = new TranslationRequest(1, "unmark", "auto", "简体中文", Guid.NewGuid(), Guid.NewGuid(), "");
             var value = new System.Text.StringBuilder();
-            await foreach (string delta in local.TranslateAsync(request, new AppSettings(), "", default)) value.Append(delta);
+            await foreach (string delta in local.TranslateAsync(request, new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "", default)) value.Append(delta);
             Assert(value.ToString() == "取消标记" && local.EngineProcessId == 0 && local.VerificationPasses == 0);
         });
         await check("Large embedded word index performs bounded exact lookups without loading the full dictionary", () =>
@@ -63,7 +63,7 @@ static class TranslationQualityChecks
         await check("A local echoed word is hidden, repaired once with translation-only instructions, then cached", async () =>
         {
             var probe = new Probe((request, _) => request.RefineTranslation ? "如何" : "how");
-            var updates = new List<TranslationUpdate>(); var done = Completion(); var settings = new AppSettings();
+            var updates = new List<TranslationUpdate>(); var done = Completion(); var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true };
             using var coordinator = new TranslationCoordinator(probe, update => { lock (updates) updates.Add(update); if (update.Complete || update.Error is not null) done.TrySetResult(update); });
             coordinator.Submit("how", settings, "");
             var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
@@ -80,14 +80,14 @@ static class TranslationQualityChecks
             {
                 var probe = new Probe((request, _) => request.RefineTranslation ? "记忆化" : TechnicalOutput.Marker + "\nmemoization：复用结果。\n示例：缓存计算值。\n效果：减少重复计算。") { ThrowFirstEmpty = throws };
                 var done = Completion(); using var coordinator = new TranslationCoordinator(probe, update => { if (update.Complete || update.Error is not null) done.TrySetResult(update); });
-                coordinator.Submit("memoization", new AppSettings(), "");
+                coordinator.Submit("memoization", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
                 var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
                 Assert(result.Complete && result.Text == "记忆化" && probe.Calls == 2 && !probe.Requests[1].ExplainTechnical);
             }
         });
         await check("A second invalid local result fails visibly, is never cached, and cannot loop", async () =>
         {
-            var probe = new Probe((_, _) => "how"); var done = Completion(); var settings = new AppSettings();
+            var probe = new Probe((_, _) => "how"); var done = Completion(); var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true };
             using var coordinator = new TranslationCoordinator(probe, update => { if (update.Complete || update.Error is not null) done.TrySetResult(update); });
             for (int attempt = 0; attempt < 2; attempt++)
             {
@@ -99,7 +99,7 @@ static class TranslationQualityChecks
         {
             var probe = new Probe((_, _) => "how"); var done = Completion();
             using var coordinator = new TranslationCoordinator(probe, update => { if (update.Complete || update.Error is not null) done.TrySetResult(update); });
-            coordinator.Submit("how", new AppSettings { TranslationMode = "online", Model = "fixture" }, "fake");
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true, TranslationMode = "online", Model = "fixture" }, "fake");
             var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Error is not null && !result.Complete && result.Text == "" && probe.Calls == 1);
         });
@@ -108,8 +108,8 @@ static class TranslationQualityChecks
             var probe = new Probe((request, _) => request.Text == "hello" ? "你好" : "how") { WaitDuringRepair = true };
             var done = Completion(); var completed = new List<string>();
             using var coordinator = new TranslationCoordinator(probe, update => { if (update.Complete) { completed.Add(update.Text); done.TrySetResult(update); } });
-            coordinator.Submit("how", new AppSettings(), ""); await probe.RepairStarted.Task.WaitAsync(TimeSpan.FromSeconds(3));
-            coordinator.Invalidate(); coordinator.Submit("hello", new AppSettings(), "");
+            coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, ""); await probe.RepairStarted.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            coordinator.Invalidate(); coordinator.Submit("hello", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
             var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(result.Text == "你好" && completed.SequenceEqual(new[] { "你好" }) && probe.Calls == 3);
         });

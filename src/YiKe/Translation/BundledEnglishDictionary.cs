@@ -14,7 +14,7 @@ internal static class BundledEnglishDictionary
     static Stream Open() => typeof(BundledEnglishDictionary).Assembly.GetManifestResourceStream("YiKe.word-dictionary") ?? throw new InvalidDataException("Missing word dictionary");
     static uint Header(BinaryReader reader)
     {
-        if (Encoding.ASCII.GetString(reader.ReadBytes(8)) != "YIKEDIC1") throw new InvalidDataException("Invalid word dictionary format");
+        if (Encoding.ASCII.GetString(reader.ReadBytes(8)) is not ("YIKEDIC1" or "YIKEDIC2")) throw new InvalidDataException("Invalid word dictionary format");
         uint count = reader.ReadUInt32();
         if (count == 0 || count > 2_000_000 || 12L + 4L * (count + 1) >= reader.BaseStream.Length) throw new InvalidDataException("Invalid word dictionary index");
         return count;
@@ -24,6 +24,22 @@ internal static class BundledEnglishDictionary
         get { using var stream = Open(); using var reader = new BinaryReader(stream, Utf8); return checked((int)Header(reader)); }
     }
     internal static string? Find(string source)
+    {
+        string? value = Lookup(source);
+        if (value is null || !value.StartsWith("{", StringComparison.Ordinal)) return value;
+        using var json = System.Text.Json.JsonDocument.Parse(value);
+        return json.RootElement.GetProperty("translation").GetString();
+    }
+    internal static string? Details(string source)
+    {
+        string? value = Lookup(source);
+        if (value is null || !value.StartsWith("{", StringComparison.Ordinal)) return value;
+        using var json = System.Text.Json.JsonDocument.Parse(value);
+        var entry = json.RootElement;
+        string phonetic = entry.GetProperty("phonetic").GetString() ?? "";
+        return (phonetic.Length > 0 ? "/" + phonetic + "/\n" : "") + entry.GetProperty("translation").GetString() + "\n" + entry.GetProperty("definition").GetString();
+    }
+    static string? Lookup(string source)
     {
         string key = source.Trim().ToLowerInvariant();
         if (!Key.IsMatch(key)) return null;

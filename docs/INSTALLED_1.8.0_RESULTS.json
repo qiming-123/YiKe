@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-15T08:59:41.7466965Z",
+  "version": "1.8.0.0",
+  "installedDirectory": "E:\\translator\\YiKe",
+  "installerExitCode": 0,
+  "appSha256": "cce5cca76178647dc0553f7cc4af0cbf5efb3350684e3772948d4402b5e4a45f",
+  "signature": "NotSigned",
+  "preservedFiles": 5,
+  "settingsAndCredentialsUnchanged": true,
+  "existingModelsAndPreferenceUnchanged": true,
+  "nmtFilesVerified": 1014,
+  "checks": [
+    {
+      "exitCode": 0,
+      "milliseconds": 69,
+      "check": "--verify-dictionary"
+    },
+    {
+      "exitCode": 0,
+      "milliseconds": 956,
+      "check": "--verify-nmt"
+    }
+  ],
+  "appRunning": true,
+  "processId": 32608,
+  "mainWorkingBytes": 101289984,
+  "mainPrivateBytes": 41381888
+}

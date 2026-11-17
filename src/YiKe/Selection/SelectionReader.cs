@@ -34,14 +34,14 @@ public sealed class SelectionReader : IDisposable
         try { token.ThrowIfCancellationRequested(); _ = GetWorker(); }
         finally { serial.Release(); }
     }, token);
-    public async Task<SelectionReadResult> ReadSettledAsync(Gesture gesture, CancellationToken token)
+    public async Task<SelectionReadResult> ReadSettledAsync(Gesture gesture, CancellationToken token, bool pdf = false)
     {
         // Accessibility providers may publish a selection over several UI turns.
         // Recheck this exact gesture, never the clipboard, within one total deadline.
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(token);
-        budget.CancelAfter(SettleBudgetMilliseconds);
+        budget.CancelAfter(pdf ? 350 : SettleBudgetMilliseconds);
         var last = new SelectionReadResult(ReadStatus.NoSelection);
-        int[] delays = { 0, 80, 140, 220, 320, 480 };
+        int[] delays = pdf ? new[] { 0, 80 } : new[] { 0, 80, 140, 220, 320, 480 };
         try
         {
             foreach (int delay in delays)

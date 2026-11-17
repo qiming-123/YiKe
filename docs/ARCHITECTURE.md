@@ -24,3 +24,15 @@
 PdfCopyFallback 使用消息窗口接收剪贴板变化；仅在 WPS PDF 的真实鼠标划选、直接接口不可用后等待本次复制。15 秒限时、当前窗口 / 标题 / 进程、起点命中及新序列共同绑定来源。允许持有窗口的原进程 / 所有者窗口，或同安装目录、晚于主进程启动且属于其进程树的 wpspdf.exe。其他进程、文件复制和旧剪贴板不会读取。后台以 OpenClipboard / CF_UNICODETEXT 有界读取，40 ms 合并变更并有限重试延迟数据，读取前后核对序列及来源，异步回调核对代次。不会发送复制快捷键，不使用 SetClipboardData、EmptyClipboard 或恢复剪贴板。
 
 前台轮询使切换窗口、过期和停用失效；新手势、关闭、固定或暂停清理候选。结果保持原始段落，不截断，2,000 Unicode 码点上限。TranslateCopiedPdf 默认开启，普通设置导出 / 导入及迁移均保留该偏好。自建 PDF 位于 tests/fixtures/wps-selection-test.pdf；人工操作配合 --pdf-copy-live，仅对该夹具记录状态与精确相符标记，不写真实原文。
+
+## 1.8.0
+
+选区确认后由 Program.PresentSelection 分流为自动翻译或 SelectionIcon；图标只持有有时效的选区快照，点击并复核前台来源后才 Submit。PDF快照保留OriginalText，PdfText仅整理翻译输入。浮窗临时设置覆盖当前选区，设置窗口负责持久默认值。
+
+TranslationProvider 按本地引擎/在线预设选择 NMT、原 Qwen、DeepL或兼容AI协议；不做并行多源调用。NMT通过受管子进程stdin/stdout传递一次请求，没有监听端口、历史库或系统环境依赖。NMT不支持生成解释，技术解释复用本地术语；英语资料复用ECDICT按需读取。单一Theme统一深色资源，保留高对比度系统辅助模式。
+
+## 1.8.1
+
+WPS PDF直接读取预算350ms，失败后PdfCopyFallback调度单次PdfAutomaticCopy。NativeClipboardSnapshot只复制常用HGLOBAL格式，在剪贴板锁内检查序列号后恢复，异步复制结束前抑制同一观察器的重复读。取消/新手势以原有generation隔离结果，同时完成已经开始的剪贴板事务。
+
+CyberPrism/PrismPanel只应用于SettingsWindow和SelectionIcon。窗口使用WindowChrome保留系统拖动与缩放，切角和光轨由固定矢量绘制；无UI动画循环或常驻图形进程。Theme及PopupWindow保持原样。

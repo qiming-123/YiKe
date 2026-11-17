@@ -8,11 +8,13 @@ static class ResponseLatencyLiveCheck
 {
     public static async Task<int> Run(string directory, string output, bool light)
     {
+        if (!light && !LiveModelRequirement.StandardAvailable(directory, output)) return 77;
         using var local = new LocalTranslationProvider(directory, light ? () => new(8 * LocalHardware.GiB, 3 * LocalHardware.GiB, 4, true) : null);
         var provider = new Counted(local);
         try
         {
             await local.PrepareAsync(default);
+            if (!light && !LiveModelRequirement.LoadedStandard(local, output)) return 77;
             var first = Done(); var complete = Done(); var watch = Stopwatch.StartNew();
             using var coordinator = new TranslationCoordinator(provider, update =>
             {
@@ -20,7 +22,7 @@ static class ResponseLatencyLiveCheck
                 if (update.Complete && !update.ExplanationPending) complete.TrySetResult(update);
             }, useCache: false);
             const string paragraph = "The meeting starts at nine tomorrow morning. Please save your changes before closing the window. Keep the file open until the backup finishes.";
-            var settings = new AppSettings { ExplainProgrammingTerms = false };
+            var settings = new AppSettings { SupplementTechnicalTerms = true, ExplainProgrammingTerms = false };
             long sequence = coordinator.Submit(paragraph, settings, "");
             await first.Task.WaitAsync(TimeSpan.FromSeconds(45)); long firstMs = watch.ElapsedMilliseconds;
             for (int i = 0; i < 5; i++) if (coordinator.Submit(paragraph, settings, "") != sequence) throw new Exception("An in-flight repeated paragraph was restarted");
@@ -29,10 +31,10 @@ static class ResponseLatencyLiveCheck
             object? notesPreemption = null;
             if (!light)
             {
-                first = Done(); complete = Done(); coordinator.Submit("how", new AppSettings(), "");
+                first = Done(); complete = Done(); coordinator.Submit("how", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
                 await provider.NotesStreaming.Task.WaitAsync(TimeSpan.FromSeconds(45));
                 first = Done(); complete = Done(); watch.Restart();
-                coordinator.Submit("entries", new AppSettings { SupplementTechnicalTerms = false }, "");
+                coordinator.Submit("entries", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = false }, "");
                 var next = await complete.Task.WaitAsync(TimeSpan.FromSeconds(5));
                 notesPreemption = new { cancelToCompletedTranslationMs = watch.ElapsedMilliseconds, provider.CanceledNotes, provider.Maximum, text = next.Text };
                 if (!provider.CanceledNotes || next.Error is not null || next.Text.Length == 0 || provider.Maximum != 1) throw new Exception("Old notes blocked the new dictionary selection");

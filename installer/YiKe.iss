@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.7.8"
+  #define AppVersion "1.8.3"
 #endif
 #ifndef PublishDir
   #define PublishDir "..\artifacts\publish-" + AppVersion
@@ -35,7 +35,7 @@ OutputDir=..\dist
 OutputBaseFilename=YiKe-Setup-{#AppVersion}-win-x64
 #endif
 SetupIconFile=..\assets\yike.ico
-UninstallDisplayIcon={app}\YiKe.exe
+UninstallDisplayIcon={app}\YiKe-Prism.ico
 UninstallDisplayName=译刻
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -65,17 +65,19 @@ SignedUninstallerDir={#SignedUninstallerPath}
 Name: "zhcn"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 [Messages]
 zhcn.WelcomeLabel1=让理解，自然发生。
-zhcn.WelcomeLabel2=译刻 {#AppVersion} · Windows AI 划词翻译%n%n选中文字，松开鼠标，在原处读懂。%n%n本地模型可选下载：安装时按电脑配置推荐，下载后无需额外环境即可离线使用。%n%n也可跳过模型下载，稍后补装或自行配置在线 API。
+zhcn.WelcomeLabel2=译刻 {#AppVersion} · Windows 划词翻译%n%n选中文字，在原处读懂。%n%n已内置英译中节能引擎与免费词库，无需另外安装运行环境。%n%n其他语言可选下载通用模型，或自行配置在线 API。
 zhcn.ButtonNext=继续(&N) >
 zhcn.ButtonInstall=开始安装(&I)
 zhcn.FinishedHeadingLabel=译刻已安装
-zhcn.FinishedLabel=现在可以开始使用译刻。%n%n已下载模型可直接离线翻译，第一次加载时请稍候。%n%n若跳过模型下载，可在设置中配置在线 API，或重新运行安装包补充模型。
+zhcn.FinishedLabel=现在可以开始使用译刻。%n%n内置节能引擎可直接离线英译中。%n%n其他语言可在设置切换通用模型或配置在线 API。
 [Tasks]
 Name: "desktopicon"; Description: "创建桌面快捷方式"; Flags: unchecked
 Name: "startup"; Description: "登录 Windows 时启动译刻"; Flags: unchecked
 Name: "vscode"; Description: "安装 VS Code 编辑区与终端选区适配（无需读屏模式）"; Flags: unchecked
 [Files]
+Source: "{#PublishDir}\translation-runtime\*"; DestDir: "{app}\translation-runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#PublishDir}\YiKe.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\assets\yike.ico"; DestDir: "{app}"; DestName: "YiKe-Prism.ico"; Flags: ignoreversion
 Source: "..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\opens-codesign.cer"; DestDir: "{app}"; Flags: ignoreversion
@@ -89,8 +91,8 @@ Filename: "{app}\local-model.ini"; Section: "LocalModel"; Key: "Selection"; Stri
 [UninstallDelete]
 Type: files; Name: "{app}\local-model.ini"
 [Icons]
-Name: "{group}\译刻"; Filename: "{app}\YiKe.exe"
-Name: "{autodesktop}\译刻"; Filename: "{app}\YiKe.exe"; Tasks: desktopicon
+Name: "{group}\译刻"; Filename: "{app}\YiKe.exe"; IconFilename: "{app}\YiKe-Prism.ico"
+Name: "{autodesktop}\译刻"; Filename: "{app}\YiKe.exe"; IconFilename: "{app}\YiKe-Prism.ico"; Tasks: desktopicon
 [Run]
 Filename: "{app}\YiKe.exe"; Description: "启动译刻"; Flags: nowait postinstall skipifsilent
 [Code]

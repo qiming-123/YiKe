@@ -1,1 +1,1 @@
-PASS real local CPU translations, app-local CRT, cancellation/retry and normal/crash engine cleanup
+SKIP explicit unchanged generic Qwen live suite; see build manifest.

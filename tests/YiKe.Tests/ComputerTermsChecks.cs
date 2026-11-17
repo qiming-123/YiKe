@@ -57,7 +57,7 @@ public static class ComputerTermsChecks
             var http = new FakeHttp(HttpStatusCode.OK, response, false, 3); using var provider = new OpenAiCompatibleProvider(http);
             var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete) result.TrySetResult(update); });
-            var settings = new AppSettings { TranslationMode = "online", Model = "fixture", Stream = false };
+            var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true, TranslationMode = "online", Model = "fixture", Stream = false };
             for (int attempt = 0; attempt < 2; attempt++)
             {
                 result = new(TaskCreationOptions.RunContinuationsAsynchronously); coordinator.Submit("memoization", settings, "fake");
@@ -73,7 +73,7 @@ public static class ComputerTermsChecks
         {
             var provider = new SupplementProbe(); var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete) result.TrySetResult(update); });
-            var settings = new AppSettings();
+            var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true };
             foreach (bool smart in new[] { true, false, true })
             {
                 result = new(TaskCreationOptions.RunContinuationsAsynchronously); coordinator.Submit("Linux uses seqlock.", settings with { SupplementTechnicalTerms = smart }, "");
@@ -81,8 +81,8 @@ public static class ComputerTermsChecks
                 Assert(update.ProgrammingNotes.Contains("Linux ·") && update.ProgrammingNotes.Contains("模型补充") == smart && !update.Text.Contains(TechnicalOutput.Marker));
             }
             Assert(provider.Calls == 2 && provider.LastKnown.Contains("Linux"));
-            Assert(JsonSerializer.Deserialize<AppSettings>("{}")!.SupplementTechnicalTerms);
-            Assert(!JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(new AppSettings { SupplementTechnicalTerms = false }))!.SupplementTechnicalTerms);
+            Assert(!JsonSerializer.Deserialize<AppSettings>("{}")!.SupplementTechnicalTerms);
+            Assert(!JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = false }))!.SupplementTechnicalTerms);
         });
         await check("Interrupted model notes are marked incomplete and never cached", async () =>
         {
@@ -90,7 +90,7 @@ public static class ComputerTermsChecks
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Error is not null) result.TrySetResult(update); });
             for (int i = 0; i < 2; i++)
             {
-                result = new(TaskCreationOptions.RunContinuationsAsynchronously); coordinator.Submit("seqlock", new AppSettings(), "");
+                result = new(TaskCreationOptions.RunContinuationsAsynchronously); coordinator.Submit("seqlock", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
                 var update = await result.Task.WaitAsync(TimeSpan.FromSeconds(3));
                 Assert(!update.Complete && update.ProgrammingNotes.Contains("尚未完成") && !update.Text.Contains(TechnicalOutput.Marker));
             }
@@ -100,7 +100,7 @@ public static class ComputerTermsChecks
         {
             var provider = new SupplementProbe { Capable = false }; var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete) result.TrySetResult(update); });
-            coordinator.Submit("Linux uses seqlock.", new AppSettings(), ""); var update = await result.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            coordinator.Submit("Linux uses seqlock.", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, ""); var update = await result.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(update.ProgrammingNotes.Contains("Linux ·") && !update.ProgrammingNotes.Contains("模型补充") && !provider.WasAsked);
         });
         await check("Model repetitions of bundled definitions are omitted while new terms are retained", () =>

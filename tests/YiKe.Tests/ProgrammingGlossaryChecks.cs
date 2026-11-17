@@ -32,10 +32,10 @@ public static class ProgrammingGlossaryChecks
             Assert(ProgrammingGlossary.Explain(new string('x', 2001)) == "");
             return Task.CompletedTask;
         });
-        await check("Programming preference defaults on for legacy configs and roundtrips disabled", () =>
+        await check("Programming preference defaults off and roundtrips disabled", () =>
         {
-            Assert(JsonSerializer.Deserialize<AppSettings>("{}")!.ExplainProgrammingTerms);
-            var disabled = new AppSettings { ExplainProgrammingTerms = false };
+            Assert(!JsonSerializer.Deserialize<AppSettings>("{}")!.ExplainProgrammingTerms);
+            var disabled = new AppSettings { SupplementTechnicalTerms = true, ExplainProgrammingTerms = false };
             Assert(!JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(disabled))!.Validate().ExplainProgrammingTerms);
             return Task.CompletedTask;
         });
@@ -43,7 +43,7 @@ public static class ProgrammingGlossaryChecks
         {
             var provider = new Probe();
             var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var settings = new AppSettings();
+            var settings = new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true };
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Complete) result.TrySetResult(update); });
             foreach (bool enabled in new[] { true, false, true })
             {
@@ -59,7 +59,7 @@ public static class ProgrammingGlossaryChecks
             var provider = new Probe { Fail = true };
             var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
             using var coordinator = new TranslationCoordinator(provider, update => { if (update.Error is not null) result.TrySetResult(update); });
-            coordinator.Submit("const", new AppSettings(), "");
+            coordinator.Submit("const", new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
             var update = await result.Task.WaitAsync(TimeSpan.FromSeconds(3));
             Assert(!update.Complete && update.Text == "" && update.ProgrammingNotes.Contains("JavaScript") && provider.Calls == 1);
         });

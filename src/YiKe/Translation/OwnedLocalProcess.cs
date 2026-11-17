@@ -12,7 +12,7 @@ internal sealed class OwnedLocalProcess : IDisposable
 {
     readonly SafeFileHandle job;
     public Process Process { get; }
-    public OwnedLocalProcess(ProcessStartInfo start)
+    public OwnedLocalProcess(ProcessStartInfo start, Action<string>? output = null)
     {
         job = CreateJobObject(IntPtr.Zero, null);
         if (job.IsInvalid) throw new Win32Exception();
@@ -23,7 +23,7 @@ internal sealed class OwnedLocalProcess : IDisposable
             Process = Process.Start(start) ?? throw new InvalidOperationException();
             if (!AssignProcessToJobObject(job, Process.Handle)) { Process.Kill(true); Process.Dispose(); throw new Win32Exception(); }
             try { Process.PriorityClass = ProcessPriorityClass.BelowNormal; } catch (Win32Exception) { }
-            Process.OutputDataReceived += (_, _) => { }; Process.ErrorDataReceived += (_, _) => { };
+            Process.OutputDataReceived += (_, e) => { if (e.Data is not null) output?.Invoke(e.Data); }; Process.ErrorDataReceived += (_, _) => { };
             Process.BeginOutputReadLine(); Process.BeginErrorReadLine();
         }
         catch { job.Dispose(); throw; }

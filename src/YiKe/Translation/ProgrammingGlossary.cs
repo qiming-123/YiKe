@@ -96,6 +96,14 @@ public static partial class ProgrammingGlossary
     public sealed record Analysis(string Notes, bool RequestModelNotes, string KnownTerms = "");
 
     public static string Explain(string text) => Analyze(text).Notes;
+    internal static string? TranslateTerm(string text)
+    {
+        string selected=text.Trim();
+        var entry=Entries.Concat(ComputerEntries).FirstOrDefault(item=> {var match=item.Pattern.Match(selected);return match.Success&&match.Index==0&&match.Length==selected.Length;});
+        if(entry is null)return null;
+        int separator=entry.Name.IndexOf('·');
+        return separator>=0 ? entry.Name[(separator+1)..].Trim() : null;
+    }
     public static Analysis Analyze(string text)
     {
         if (string.IsNullOrWhiteSpace(text) || !Core.TextLimit.Allowed(text)) return new("", false);

@@ -1,0 +1,5076 @@
+{
+  "model": "OPUS-MT en-zh INT8",
+  "format": 1,
+  "files": [
+    {
+      "sha256": "c77de90cad749087a0c5dc5e19d78d24f6ef44e7e5ac19b8420cfc0cea62395d",
+      "path": "_asyncio.pyd",
+      "bytes": 74096
+    },
+    {
+      "sha256": "65f610646d10d5babea080e060d244b546ec52c54012e5e937dc72dcc2e2e7bc",
+      "path": "_bz2.pyd",
+      "bytes": 86896
+    },
+    {
+      "sha256": "0e56107a891100535f2da79d85a5ae65ff1227b4765bd108f8593ac1a1110d81",
+      "path": "_ctypes.pyd",
+      "bytes": 127480
+    },
+    {
+      "sha256": "aeacfead2befcc0768063a037bb64bd32109ae09cb144e5f571b04dd7965db9d",
+      "path": "_decimal.pyd",
+      "bytes": 262000
+    },
+    {
+      "sha256": "5009a9a53c03ef8387443b5cf6ce08e5c3a79727466a0b931c5bbca915bf89ca",
+      "path": "_elementtree.pyd",
+      "bytes": 135160
+    },
+    {
+      "sha256": "03d233dbace599168eaffec823de6ed7beec8c2a4ebfe9b8a3d8e042a59af3ba",
+      "path": "_hashlib.pyd",
+      "bytes": 68976
+    },
+    {
+      "sha256": "e3deecc1f59a3b811c608861decd84de1e8df8bafd5e2b39188861318c5a38cf",
+      "path": "_lzma.pyd",
+      "bytes": 161136
+    },
+    {
+      "sha256": "b49332bae154ebdd8c3d5e7ddfdde336d9c47f91ba028dc67bafb2420b3dbb5c",
+      "path": "_msi.pyd",
+      "bytes": 46584
+    },
+    {
+      "sha256": "2c636df7059cb0dd7e978dd735c7c5c8ddb09cf94754cf9e232296b96c5c545a",
+      "path": "_multiprocessing.pyd",
+      "bytes": 37368
+    },
+    {
+      "sha256": "662126ff80c3a1b4cedf74074029c12ae4743e6d3b37376e39ac70aacb7d4d3c",
+      "path": "_overlapped.pyd",
+      "bytes": 57336
+    },
+    {
+      "sha256": "48e76e0ad63f6932b4a77b5819f41c1e7595636ca8d9e824f0943a14b8bb5035",
+      "path": "_queue.pyd",
+      "bytes": 33784
+    },
+    {
+      "sha256": "3efa4636cf9e350856f6927d67a4c2564bf9bd2758a00bbf17d3aece5b60016d",
+      "path": "_socket.pyd",
+      "bytes": 85496
+    },
+    {
+      "sha256": "64b51df2805c58b023a875e8ae3be7ac7f61ef664f32ca6c90f6315da47ef0bc",
+      "path": "_sqlite3.pyd",
+      "bytes": 126184
+    },
+    {
+      "sha256": "0bc527d2dbc50009f43b2ed5d5982c4f63f4b647647ffa9eda612dcda80f6040",
+      "path": "_ssl.pyd",
+      "bytes": 179432
+    },
+    {
+      "sha256": "acce4f281d7ffb2dec0997527faf25b1df62ad7bd3032c568ddcf65c90edc867",
+      "path": "_uuid.pyd",
+      "bytes": 27128
+    },
+    {
+      "sha256": "a980f1e7a29842bd946863fc2693fbeb555a9dc0f9e1630dfed9a2fcdef3ece2",
+      "path": "_wmi.pyd",
+      "bytes": 40304
+    },
+    {
+      "sha256": "76f1439cda82ab6976df6ba505c4079444703f6d44d8b0259ce59c0ff4279fb4",
+      "path": "_zoneinfo.pyd",
+      "bytes": 49656
+    },
+    {
+      "sha256": "df7d989217aeee201c187b81ccf7006fa409f9e5e13a28b97f8f1d5784aafa93",
+      "path": "ATTRIBUTION.txt",
+      "bytes": 433
+    },
+    {
+      "sha256": "2405355f0a58067b258f8df33c327e3a3d716eaac5a3a5aebb757842d85bd376",
+      "path": "concrt140.dll",
+      "bytes": 324208
+    },
+    {
+      "sha256": "d3801eff9a2cc5a8692476b75c165401fe308ba5d7df6811f03e97ea9eb81840",
+      "path": "Lib/site-packages/_yaml/__init__.py",
+      "bytes": 1402
+    },
+    {
+      "sha256": "6479288eeb7f4e65511e5d1b2481a6d9bf70aabf7c18026ac4df6b949b50b21b",
+      "path": "Lib/site-packages/ctranslate2-4.8.4.dist-info/entry_points.txt",
+      "bytes": 466
+    },
+    {
+      "sha256": "c1bb7364dbb3e9f8c8af2de5331a6f85e5ed00ad0d583ae2212917c74234a86c",
+      "path": "Lib/site-packages/ctranslate2-4.8.4.dist-info/METADATA",
+      "bytes": 11526
+    },
+    {
+      "sha256": "81c7286895c6f7b03433167791b0d0953c6bc35a8761d33a97f1eceb26bf43be",
+      "path": "Lib/site-packages/ctranslate2-4.8.4.dist-info/RECORD",
+      "bytes": 3193
+    },
+    {
+      "sha256": "d6151a5b370522e4a8d81008507140dceb20b2ee92d608aad32e91a2cbfc1ce4",
+      "path": "Lib/site-packages/ctranslate2-4.8.4.dist-info/top_level.txt",
+      "bytes": 12
+    },
+    {
+      "sha256": "b2601f60075ce318a1cf4b08f2b52cc397e708f776ca360504cd2ea7a3a21031",
+      "path": "Lib/site-packages/ctranslate2-4.8.4.dist-info/WHEEL",
+      "bytes": 101
+    },
+    {
+      "sha256": "1caccf1074fceb46b75c1711851ff9d09af8d404d8a5b80a99510c67d1e75abf",
+      "path": "Lib/site-packages/ctranslate2/__init__.py",
+      "bytes": 3163
+    },
+    {
+      "sha256": "c60d877050bff4e93365ed2dd8f045f066d5cfa1573a75cf594768c5a4b0bcf9",
+      "path": "Lib/site-packages/ctranslate2/_ext.cp312-win_amd64.pyd",
+      "bytes": 804352
+    },
+    {
+      "sha256": "b9f6237177f6b0ae1f89701453ab482725a636e2e32857ff287dc658b5dee25b",
+      "path": "Lib/site-packages/ctranslate2/converters/__init__.py",
+      "bytes": 507
+    },
+    {
+      "sha256": "4246fc3462cb9a0a8c4fa1d9905abad73c1bc72ab736559c6b12d9e80a7e60e4",
+      "path": "Lib/site-packages/ctranslate2/converters/converter.py",
+      "bytes": 3601
+    },
+    {
+      "sha256": "930eb6b927e010ccadeb31348048a7e0add96ae9d10e5a17647d833959472c2f",
+      "path": "Lib/site-packages/ctranslate2/converters/drama3_codec.py",
+      "bytes": 6043
+    },
+    {
+      "sha256": "64a04f6b12afdb8b6c8cb0a65bb6baa2c0b9132920d6f79c63737d08382c3d7c",
+      "path": "Lib/site-packages/ctranslate2/converters/drama3_weights.py",
+      "bytes": 6452
+    },
+    {
+      "sha256": "b115ef3daae4f55fb8ba65e93313ee25541e90c2ecb72359ef1363c8016d86f8",
+      "path": "Lib/site-packages/ctranslate2/converters/eole_ct2.py",
+      "bytes": 12623
+    },
+    {
+      "sha256": "a2cb46678011565c20abd3f1ab21ea6c9bca40f72dec32a59df50cd491ebcdcd",
+      "path": "Lib/site-packages/ctranslate2/converters/fairseq.py",
+      "bytes": 13457
+    },
+    {
+      "sha256": "d7fecfdc46c80cf39dc896ed6ff2e9f8b0813c16fd03c13d3a1ce8c85c136fae",
+      "path": "Lib/site-packages/ctranslate2/converters/marian.py",
+      "bytes": 11274
+    },
+    {
+      "sha256": "d6b5ca3366544591d646fe17675df97cf9155a9338ad31beabb551ece0fa77e0",
+      "path": "Lib/site-packages/ctranslate2/converters/openai_gpt2.py",
+      "bytes": 3304
+    },
+    {
+      "sha256": "e85302c7da8612dd90125f6f2569f246be252698aee93862e702aaa61cf4ced2",
+      "path": "Lib/site-packages/ctranslate2/converters/opennmt_py.py",
+      "bytes": 13852
+    },
+    {
+      "sha256": "b81469db0cf9c6b89241c03f7344b47a463bc2ce91a515ffd0429e31174cefeb",
+      "path": "Lib/site-packages/ctranslate2/converters/opennmt_tf.py",
+      "bytes": 16222
+    },
+    {
+      "sha256": "e4a6cf693881861a2b3f33294ee8087c827c4a072a1df2546c9ad628137e0e3b",
+      "path": "Lib/site-packages/ctranslate2/converters/opus_mt.py",
+      "bytes": 1254
+    },
+    {
+      "sha256": "c2b86e636afd0b83064aabf5bfe6dbbe5cb50cd6b74381eebd5b54bbab71f536",
+      "path": "Lib/site-packages/ctranslate2/converters/transformers.py",
+      "bytes": 194416
+    },
+    {
+      "sha256": "c3b346dfd971fbd74e74be7b3aa2954dd0bffe8a64b8ff110028354cb9542703",
+      "path": "Lib/site-packages/ctranslate2/converters/utils.py",
+      "bytes": 3817
+    },
+    {
+      "sha256": "30e16517244907c60f97a09931e7bce282e86eb93011b55a343a652cb360eb06",
+      "path": "Lib/site-packages/ctranslate2/ctranslate2.dll",
+      "bytes": 61254144
+    },
+    {
+      "sha256": "90336dd07f4abdf3427373eb446cdf923f4592f9daf388b63b963eadabfa5245",
+      "path": "Lib/site-packages/ctranslate2/extensions.py",
+      "bytes": 21940
+    },
+    {
+      "sha256": "982233366b0afcda1e0f55a0b134097e35b779613f54ddb69e685e6cd06b755f",
+      "path": "Lib/site-packages/ctranslate2/libiomp5md.dll",
+      "bytes": 1614192
+    },
+    {
+      "sha256": "3fd7af1ddc6e331fe21efc098c401212afa3e74eb61fae0f979f9f263c44b879",
+      "path": "Lib/site-packages/ctranslate2/logging.py",
+      "bytes": 1221
+    },
+    {
+      "sha256": "131121920828abf5a7f6239e7526b0523c9b225ca94c236d788e21f0d303f015",
+      "path": "Lib/site-packages/ctranslate2/models/__init__.py",
+      "bytes": 589
+    },
+    {
+      "sha256": "8f09039cf3f2365be54bfdcdcc8ed9c428309987344b313d06c67bde32701eb0",
+      "path": "Lib/site-packages/ctranslate2/specs/__init__.py",
+      "bytes": 707
+    },
+    {
+      "sha256": "9cd4852cdde6680e79c9d3fe6480318aa545537ded3c088720a3838575fac5b7",
+      "path": "Lib/site-packages/ctranslate2/specs/attention_spec.py",
+      "bytes": 3791
+    },
+    {
+      "sha256": "7eb7930e140ccb93d8a1f06b8a3e3f14382b2a890c600a5648f2290126489497",
+      "path": "Lib/site-packages/ctranslate2/specs/common_spec.py",
+      "bytes": 1608
+    },
+    {
+      "sha256": "a971dfe77c7f831611c93112264973560bd55ea1330286d9a0aaef560b93b9d9",
+      "path": "Lib/site-packages/ctranslate2/specs/drama3_spec.py",
+      "bytes": 6643
+    },
+    {
+      "sha256": "a3b95d7d40de196b63c910ca9a86d455fa843fa02b5c4d7aa96515ea8cb673ec",
+      "path": "Lib/site-packages/ctranslate2/specs/model_spec.py",
+      "bytes": 26032
+    },
+    {
+      "sha256": "2e6b2188da435db2e0a65b48009fc6eab9af679c3d1b89cae7f98044f1b7d7cc",
+      "path": "Lib/site-packages/ctranslate2/specs/transformer_spec.py",
+      "bytes": 34894
+    },
+    {
+      "sha256": "3484ecb8eb9fd85e5b535f9a5e2b7cf9612d595f5f1f612aec0efce7b532621a",
+      "path": "Lib/site-packages/ctranslate2/specs/wav2vec2_spec.py",
+      "bytes": 2106
+    },
+    {
+      "sha256": "520b6c2560bd98c809edb9f84ffc60d6e5cad2ba80e3ef6d4f628c19580f2a7c",
+      "path": "Lib/site-packages/ctranslate2/specs/wav2vec2bert_spec.py",
+      "bytes": 3529
+    },
+    {
+      "sha256": "fef9b5b1ce723a8c0e2788b2bdcc4c5eb82df9470b26b653f0eb4fb1c5177104",
+      "path": "Lib/site-packages/ctranslate2/specs/whisper_spec.py",
+      "bytes": 2447
+    },
+    {
+      "sha256": "17fd60104acab1309454c6ee20a411cae671cb1c2dfab05a3247b6d2a88f1ac8",
+      "path": "Lib/site-packages/ctranslate2/version.py",
+      "bytes": 53
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy-2.2.6-cp312-cp312-win_amd64.whl",
+      "bytes": 0
+    },
+    {
+      "sha256": "513b04bcaa783e2cee07d76110f470d50fd5f12599006a93953588607f61c953",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/DELVEWHEEL",
+      "bytes": 446
+    },
+    {
+      "sha256": "e265c336124343d187a8c05e449f01dcf962c531669171aa537455b9a736d2ad",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/entry_points.txt",
+      "bytes": 172
+    },
+    {
+      "sha256": "14256cc3a2c9d32ac284da96b937feb44f72dd90bee2317ac3020166846ad99d",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/LICENSE.txt",
+      "bytes": 47709
+    },
+    {
+      "sha256": "229f3544b02805e0f6a12030e155d8a45fd3a4100b3291574175e6a76f20e1e1",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/METADATA",
+      "bytes": 60844
+    },
+    {
+      "sha256": "f9b5c4102ead068cf19db677d65d5fd8b24e6515ccf5b2aeb3f77b8b5ad838a7",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/RECORD",
+      "bytes": 82663
+    },
+    {
+      "sha256": "e743de01ba6503a3e4234858398a1e69c07d512d51e8482ec9f3a7b1c707d165",
+      "path": "Lib/site-packages/numpy-2.2.6.dist-info/WHEEL",
+      "bytes": 85
+    },
+    {
+      "sha256": "6547e9fb966e9773caee2755e91a8bf4d6f3a2f0eebf9646b0158f8675ea4ab5",
+      "path": "Lib/site-packages/numpy.libs/libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll",
+      "bytes": 20390912
+    },
+    {
+      "sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde",
+      "path": "Lib/site-packages/numpy.libs/msvcp140-263139962577ecda4cd9469ca360a746.dll",
+      "bytes": 575056
+    },
+    {
+      "sha256": "eb23e31078a9d648764f588cbc319076ada076097a6e91b5a1424590f7235a89",
+      "path": "Lib/site-packages/numpy/__config__.py",
+      "bytes": 5693
+    },
+    {
+      "sha256": "6f51401be4ce58bf7369a6b36681d6329d8ea2099c6524e7de69142793118770",
+      "path": "Lib/site-packages/numpy/__config__.pyi",
+      "bytes": 2479
+    },
+    {
+      "sha256": "6f0a990433a4b7935c7b612678777d995d5e1a82d34a872d9f69fe94258a5b17",
+      "path": "Lib/site-packages/numpy/__init__.cython-30.pxd",
+      "bytes": 48041
+    },
+    {
+      "sha256": "1d45de9a7e5017660652a3af266aa6158a5667ae113efe46c12eba2c6d5ebb98",
+      "path": "Lib/site-packages/numpy/__init__.pxd",
+      "bytes": 44591
+    },
+    {
+      "sha256": "ad238e76e8c6fbd56a19e6c894864cf466bd2ed76004cac89e78c019fa625607",
+      "path": "Lib/site-packages/numpy/__init__.py",
+      "bytes": 23016
+    },
+    {
+      "sha256": "d93a5961893d7eba7472e7855145aa030f87ae861dd64e18e5f37ff8cd34ff45",
+      "path": "Lib/site-packages/numpy/__init__.pyi",
+      "bytes": 217089
+    },
+    {
+      "sha256": "41dff6c7fa5440b741b673caa1d119cb665db3e4798b60ca41a70c98c5516919",
+      "path": "Lib/site-packages/numpy/_array_api_info.py",
+      "bytes": 10727
+    },
+    {
+      "sha256": "63b486770e72c61e0940679abf009a3767e947b0d1d0acd4f06a0e9fb48aa22c",
+      "path": "Lib/site-packages/numpy/_array_api_info.pyi",
+      "bytes": 5102
+    },
+    {
+      "sha256": "0a0743592bfd017e9734a2226c15c18acbee0aed1a52455529b36e7497c4448c",
+      "path": "Lib/site-packages/numpy/_configtool.py",
+      "bytes": 1046
+    },
+    {
+      "sha256": "2250b7f7987c4e5719e038925b98ba34140ef48ef81117d7a70498024b73a1a5",
+      "path": "Lib/site-packages/numpy/_configtool.pyi",
+      "bytes": 25
+    },
+    {
+      "sha256": "ce2570bfe792aeb1ba8c04181f779070fb4db1d459696067bf32828f832bb5b0",
+      "path": "Lib/site-packages/numpy/_core/__init__.py",
+      "bytes": 5792
+    },
+    {
+      "sha256": "0b93500c892d5e54753a8b06832bd8f3ba72a2d93226bdc28b674c5932e94a2e",
+      "path": "Lib/site-packages/numpy/_core/__init__.pyi",
+      "bytes": 88
+    },
+    {
+      "sha256": "4de56846901ba86e3a70bc0655ff8f44af9c22df6a8002acb4023e9c7b3c69b8",
+      "path": "Lib/site-packages/numpy/_core/_add_newdocs_scalars.py",
+      "bytes": 12992
+    },
+    {
+      "sha256": "aa00fd45478976fe9b9187b0bd03d75c2ccefeba1229b6ae7aaf4fcaf4bac120",
+      "path": "Lib/site-packages/numpy/_core/_add_newdocs_scalars.pyi",
+      "bytes": 589
+    },
+    {
+      "sha256": "790fd00ca4bc4ae6afba758b661f6bcf442d455b730edac8866737380828757c",
+      "path": "Lib/site-packages/numpy/_core/_add_newdocs.py",
+      "bytes": 215729
+    },
+    {
+      "sha256": "b6d3dcf4f949ea506466b06b8f3cd60f8fe3c66908c69a232fc45647e7777b57",
+      "path": "Lib/site-packages/numpy/_core/_add_newdocs.pyi",
+      "bytes": 171
+    },
+    {
+      "sha256": "df05256da08cf9a82d9b91d54730fa4f6c62a8da5a7dd67bed056481bf87080c",
+      "path": "Lib/site-packages/numpy/_core/_asarray.py",
+      "bytes": 4047
+    },
+    {
+      "sha256": "bee08c3bfa3444d78ad1abfc3b97efa3ddd839dc6327692015e6b0dc60e86e96",
+      "path": "Lib/site-packages/numpy/_core/_asarray.pyi",
+      "bytes": 1126
+    },
+    {
+      "sha256": "79b37d53f41bca648ffa899b60161ce05ec7b600b7562b9c356f7532aa4d86b3",
+      "path": "Lib/site-packages/numpy/_core/_dtype_ctypes.py",
+      "bytes": 3838
+    },
+    {
+      "sha256": "77906e75276d8fa9f4e3a397f5cfab5285f9cd51a085da0edb6c848648d54683",
+      "path": "Lib/site-packages/numpy/_core/_dtype_ctypes.pyi",
+      "bytes": 3765
+    },
+    {
+      "sha256": "8ad5e5a023a0967e6aaf998c16f180e78004a42d2e794037aa2107e99efdf0ed",
+      "path": "Lib/site-packages/numpy/_core/_dtype.py",
+      "bytes": 11108
+    },
+    {
+      "sha256": "7d56681ce4629b09be724fe92a2531d5126fb5266817b779431746648dde6d52",
+      "path": "Lib/site-packages/numpy/_core/_dtype.pyi",
+      "bytes": 2009
+    },
+    {
+      "sha256": "df977eb68e3c11132081c8caeb484acc7621649514031598d467095a1f5b3c91",
+      "path": "Lib/site-packages/numpy/_core/_exceptions.py",
+      "bytes": 5551
+    },
+    {
+      "sha256": "838379ac465fdb915ba6edc0280267f5ce4c4e58faef5cd9eb35aa3d37750e79",
+      "path": "Lib/site-packages/numpy/_core/_exceptions.pyi",
+      "bytes": 2219
+    },
+    {
+      "sha256": "7fb3cdb50232c0741883bac69cbed6828dbb5b0b307309758b9b6544a9e3826c",
+      "path": "Lib/site-packages/numpy/_core/_internal.py",
+      "bytes": 30127
+    },
+    {
+      "sha256": "b0aa2ce1348004b81aa0ad70fe5d3a0dec2a50b31040870d7d097a38f60128f9",
+      "path": "Lib/site-packages/numpy/_core/_internal.pyi",
+      "bytes": 2726
+    },
+    {
+      "sha256": "4d6956db238a540ed593eb3d82eb31460ba6be04dd09c00f2ffef693c49139de",
+      "path": "Lib/site-packages/numpy/_core/_machar.py",
+      "bytes": 11921
+    },
+    {
+      "sha256": "838379ac465fdb915ba6edc0280267f5ce4c4e58faef5cd9eb35aa3d37750e79",
+      "path": "Lib/site-packages/numpy/_core/_machar.pyi",
+      "bytes": 2219
+    },
+    {
+      "sha256": "41068be3404b05b582867995683f73619b41a9fc72b9f0cc7983f55f53131146",
+      "path": "Lib/site-packages/numpy/_core/_methods.py",
+      "bytes": 9725
+    },
+    {
+      "sha256": "27dc1b94013157ffce422a605f81db1bbe0338ae69e04735237d72370bf95968",
+      "path": "Lib/site-packages/numpy/_core/_methods.pyi",
+      "bytes": 580
+    },
+    {
+      "sha256": "21d2bc5b51d3e991a0aeac7ac92bf0c5292df07f70847a0e306947e1b8d27f1b",
+      "path": "Lib/site-packages/numpy/_core/_multiarray_tests.cp312-win_amd64.lib",
+      "bytes": 2418
+    },
+    {
+      "sha256": "24adbe4bbf7b2a6208aeb800d11b8b6957c925d3c796552b3a55e1b4e278754e",
+      "path": "Lib/site-packages/numpy/_core/_multiarray_tests.cp312-win_amd64.pyd",
+      "bytes": 64000
+    },
+    {
+      "sha256": "facabf798b47b18b40be9f48b4b4c50a5b5840a03863f1cbdd871af406192e03",
+      "path": "Lib/site-packages/numpy/_core/_multiarray_umath.cp312-win_amd64.lib",
+      "bytes": 2192
+    },
+    {
+      "sha256": "d98a8f4ce703bf7158f639d24ff4a55ece2753a306a3f7074b4fa670660afee5",
+      "path": "Lib/site-packages/numpy/_core/_multiarray_umath.cp312-win_amd64.pyd",
+      "bytes": 4178432
+    },
+    {
+      "sha256": "a7d161724fc5f6210894c5c4f3c94e16ad24fff73b4eff8f6526474f99f1c28f",
+      "path": "Lib/site-packages/numpy/_core/_operand_flag_tests.cp312-win_amd64.lib",
+      "bytes": 2228
+    },
+    {
+      "sha256": "11b8089e2de05a16725886f56ac4243135246f17c2e73e621d1f364466b26319",
+      "path": "Lib/site-packages/numpy/_core/_operand_flag_tests.cp312-win_amd64.pyd",
+      "bytes": 11776
+    },
+    {
+      "sha256": "55017c2091094a326bffc385309296ce2e97144eedd19bce29e86a7d20ac5ebb",
+      "path": "Lib/site-packages/numpy/_core/_rational_tests.cp312-win_amd64.lib",
+      "bytes": 2156
+    },
+    {
+      "sha256": "3b495f96eb0920cb2b2794e9b143cae658fda2f0ee6332f8c8611e7be3992f31",
+      "path": "Lib/site-packages/numpy/_core/_rational_tests.cp312-win_amd64.pyd",
+      "bytes": 40448
+    },
+    {
+      "sha256": "4a9dda280d1f7b79d0c4d38467a1ba58f1edd0f4b47ebeb227ede39e81b2f813",
+      "path": "Lib/site-packages/numpy/_core/_simd.cp312-win_amd64.lib",
+      "bytes": 1976
+    },
+    {
+      "sha256": "19769241976fca6b5a08de0ff3e1dfc0d746a81ed4a2d9b40d28fd08e8928b2c",
+      "path": "Lib/site-packages/numpy/_core/_simd.cp312-win_amd64.pyd",
+      "bytes": 2236928
+    },
+    {
+      "sha256": "44dfae6624e2de364d3a038e2a5bbdeccbb551f91bf23bcb5030c49da5bbecb7",
+      "path": "Lib/site-packages/numpy/_core/_simd.pyi",
+      "bytes": 694
+    },
+    {
+      "sha256": "caa8585e74b74a09cfff83ef3fb35462f609edce46785273f1af3323fb94d032",
+      "path": "Lib/site-packages/numpy/_core/_string_helpers.py",
+      "bytes": 2937
+    },
+    {
+      "sha256": "6d3847ee27211a5ae643a3b7f27ef541c27b3a2fe644f51ff8314c53985d614d",
+      "path": "Lib/site-packages/numpy/_core/_string_helpers.pyi",
+      "bytes": 370
+    },
+    {
+      "sha256": "8ff20b69ab906bb30a932ed0fdcb99d67cfddb27168b278db39ff452314d1076",
+      "path": "Lib/site-packages/numpy/_core/_struct_ufunc_tests.cp312-win_amd64.lib",
+      "bytes": 2228
+    },
+    {
+      "sha256": "59952c7bb0a09966b8e25cf5cceb3493b12223f4e70cf13a39c57b104f1668a6",
+      "path": "Lib/site-packages/numpy/_core/_struct_ufunc_tests.cp312-win_amd64.pyd",
+      "bytes": 13824
+    },
+    {
+      "sha256": "b940c2f2ab92af5d4b777311234fb8466d5f897d4616fbbfae7d4f5400eea0a1",
+      "path": "Lib/site-packages/numpy/_core/_type_aliases.py",
+      "bytes": 3608
+    },
+    {
+      "sha256": "614d57e8711598b731ab0b30a19fef75c9305dc34fbb23614716601c0b9b31d0",
+      "path": "Lib/site-packages/numpy/_core/_type_aliases.pyi",
+      "bytes": 2496
+    },
+    {
+      "sha256": "f3611b44ada938bb96f586516dea40d2ef3eff1cee61b0e2d98d2b1efe4bab59",
+      "path": "Lib/site-packages/numpy/_core/_ufunc_config.py",
+      "bytes": 15513
+    },
+    {
+      "sha256": "2f47ce9420e86a3cfe8e43df1436bbc68dbca3f1890c2b26e068e0a528b77bf6",
+      "path": "Lib/site-packages/numpy/_core/_ufunc_config.pyi",
+      "bytes": 1211
+    },
+    {
+      "sha256": "c2dcefe409be56b75d1e2f7a0d5de7601e224df738568ceba20725672845788e",
+      "path": "Lib/site-packages/numpy/_core/_umath_tests.cp312-win_amd64.lib",
+      "bytes": 2104
+    },
+    {
+      "sha256": "33a116e22bb9fc6b0045c33a757b72da8864b45925678ce80cafe8de56318b17",
+      "path": "Lib/site-packages/numpy/_core/_umath_tests.cp312-win_amd64.pyd",
+      "bytes": 34304
+    },
+    {
+      "sha256": "398d25e5ec77cc3b1ffec556d571b6fcb357dfbefd9ce2d68dc0d8efc7bb9f86",
+      "path": "Lib/site-packages/numpy/_core/arrayprint.py",
+      "bytes": 66568
+    },
+    {
+      "sha256": "0c62f675f021cd75cecce0887bf74412ba26d5c28c54e5be4c1ff5f169d07e1a",
+      "path": "Lib/site-packages/numpy/_core/arrayprint.pyi",
+      "bytes": 7163
+    },
+    {
+      "sha256": "1484afd5de11f75ec18b9c498ca2b2f0ba3a025164574d16bd2a01ee5dda700e",
+      "path": "Lib/site-packages/numpy/_core/cversions.py",
+      "bytes": 360
+    },
+    {
+      "sha256": "78e18c31dae4e2955bb86befdc40638dc18136eb16ac72b8b4d548a493b967b2",
+      "path": "Lib/site-packages/numpy/_core/defchararray.py",
+      "bytes": 39212
+    },
+    {
+      "sha256": "808bb727495e97259e85aa8fc14170c60c652edc122cc2564d572d18b4b5c9c9",
+      "path": "Lib/site-packages/numpy/_core/defchararray.pyi",
+      "bytes": 28058
+    },
+    {
+      "sha256": "6ec170aef21cbe49d5a10b9a4e4f75d76e4ef87029c9b488bc43da8500fc5711",
+      "path": "Lib/site-packages/numpy/_core/einsumfunc.py",
+      "bytes": 54319
+    },
+    {
+      "sha256": "7de7fb285e8a58b22198175bc835edd49ee0d42d50b0c7f43f4e49288ec5184e",
+      "path": "Lib/site-packages/numpy/_core/einsumfunc.pyi",
+      "bytes": 5114
+    },
+    {
+      "sha256": "d17f03ab077ad5ae1aa2f1deb4dd3fcf322c69cee95bb24ec3b50aed45eb0d52",
+      "path": "Lib/site-packages/numpy/_core/fromnumeric.py",
+      "bytes": 148176
+    },
+    {
+      "sha256": "af0a90ae78b1ebb8c227c23b62e22556aff3f8a83fdd4741aee2ef21d4c8e2f2",
+      "path": "Lib/site-packages/numpy/_core/fromnumeric.pyi",
+      "bytes": 42923
+    },
+    {
+      "sha256": "c77c8f380da6f6564c342d2a26b50d3bae5d77382821235eda6ab3809d012013",
+      "path": "Lib/site-packages/numpy/_core/function_base.py",
+      "bytes": 20279
+    },
+    {
+      "sha256": "db0c0ba77339e5577a0c23425b3824fc30a57ffd2d38ac98e536f234b13960ad",
+      "path": "Lib/site-packages/numpy/_core/function_base.pyi",
+      "bytes": 5925
+    },
+    {
+      "sha256": "7771bdf5048f118367ef7333c5a6febf5456c15cc1a7aed5fd3717bc9eb06c2b",
+      "path": "Lib/site-packages/numpy/_core/getlimits.py",
+      "bytes": 26859
+    },
+    {
+      "sha256": "deee796ed0d2564a5bb271719025aa458ecb6755a11a8a7f2c05278c97ce511f",
+      "path": "Lib/site-packages/numpy/_core/getlimits.pyi",
+      "bytes": 64
+    },
+    {
+      "sha256": "55ceb930ab97139efad6f548f6a75990fca0dc2e7f93f89c92e9b4434e0438e0",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/__multiarray_api.c",
+      "bytes": 13045
+    },
+    {
+      "sha256": "4b37318080d0f26e03b357ef94cf5f43c46e20d26970f2d12b3a5bf47143b69c",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/__multiarray_api.h",
+      "bytes": 62996
+    },
+    {
+      "sha256": "3684dcc8baab005f05dc01344c3be50c54bb0d7b85251a6820d11a0e7656872b",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/__ufunc_api.c",
+      "bytes": 1809
+    },
+    {
+      "sha256": "437e81ecd28df04e862f2b5e7e004e18b7e0467b7c6b23b50a89ebd905a5aa40",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/__ufunc_api.h",
+      "bytes": 13506
+    },
+    {
+      "sha256": "b394cad9a3e90a56f0e026d52428a3fff873a21e4880720864ad24e852ada9f7",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/_neighborhood_iterator_imp.h",
+      "bytes": 1947
+    },
+    {
+      "sha256": "9aa0cc16fe55864da71d735fe93216cf3ee8cebb5cf5a35a37cfcb2590588d7d",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/_numpyconfig.h",
+      "bytes": 902
+    },
+    {
+      "sha256": "e32946f2ce76919131fff40e0edffb0e8f108ad9a10d2bd3799ecb6abd1f3a0a",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/_public_dtype_api_table.h",
+      "bytes": 4660
+    },
+    {
+      "sha256": "8215b39683d491269591cb009c19e96ebc6d5de5cbfa69335462501071718e79",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/arrayobject.h",
+      "bytes": 211
+    },
+    {
+      "sha256": "e13aec8a5c5a5221f89950a412510f4ccfc2ffc73aecef51e16871fb74330c4e",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/arrayscalars.h",
+      "bytes": 4439
+    },
+    {
+      "sha256": "71f42e3dbd33ad5a9815d59ab8ea9b81d5d1f2bb66e038cdcf69db7d25af491a",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/dtype_api.h",
+      "bytes": 19718
+    },
+    {
+      "sha256": "a98817e6241f3735c80ac9ddd0c091ab910b8617c58e54469b5c571a29909b8e",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/halffloat.h",
+      "bytes": 2029
+    },
+    {
+      "sha256": "5796647f96bdbd6c95f1922706001c7819fb73d18ae1aaae8737864d6fd2825b",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/ndarrayobject.h",
+      "bytes": 12361
+    },
+    {
+      "sha256": "477085946746510363eeb128be2f3346426824c934cbcebcd9cbb5917d6ca000",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/ndarraytypes.h",
+      "bytes": 66986
+    },
+    {
+      "sha256": "7986d096a6fa9b326750ab957e5da69ab329bc1dc6376ac58076b314ef42293f",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_1_7_deprecated_api.h",
+      "bytes": 3858
+    },
+    {
+      "sha256": "571b115c0b437cb95792f1fe12b6514ae1f8f64f448dc1707125127d33d1cc05",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_2_compat.h",
+      "bytes": 8795
+    },
+    {
+      "sha256": "b96d2217ea8cc10367e0fbc87d60ab61c7ba6f83ab6143b8056bbe55860065a8",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_2_complexcompat.h",
+      "bytes": 885
+    },
+    {
+      "sha256": "755d3596d6f19ed3d8f1c37b5802f8317dca1dec822de4810d0ade0f1b34f5a4",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_3kcompat.h",
+      "bytes": 10022
+    },
+    {
+      "sha256": "de78c8e0b841c4c66f924746de72ead0d648ee536ac7d767bdc4df0a0116d2b2",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_common.h",
+      "bytes": 37621
+    },
+    {
+      "sha256": "152161cce43f96f7291b0fb842dceabb95bc7a20fa93f2b7e75ffd5a2239b938",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_cpu.h",
+      "bytes": 4837
+    },
+    {
+      "sha256": "3594a2fb909ba99f76014ced20b0c92c128feb5f9541ece601ab584cd2f046ef",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_endian.h",
+      "bytes": 2912
+    },
+    {
+      "sha256": "92c7622815c37e9107075b3d9b9ca29f286375c73487ecc971f5c4ba854701df",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_math.h",
+      "bytes": 19460
+    },
+    {
+      "sha256": "8c872310fd806e8bc34df804faab6f74fe75fdd5468d59c41815fceab94648a1",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_no_deprecated_api.h",
+      "bytes": 698
+    },
+    {
+      "sha256": "8f4e38bddd42d6809c5b9dabde1b6254d854689484a828caace0f0307ab74d4d",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/npy_os.h",
+      "bytes": 1298
+    },
+    {
+      "sha256": "cc3b9cce78f6c5b48e2263892e18d81e8b0c16a928598e8066f7510e952b730f",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/numpyconfig.h",
+      "bytes": 7339
+    },
+    {
+      "sha256": "fc7d2e5ea9a7b9be0fc6725674c59a36a7e9c850eed8a074b247f6c1ce6f8d47",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/random/bitgen.h",
+      "bytes": 508
+    },
+    {
+      "sha256": "18b5116b7b05112644d3fd112bedc6aa67daf7a8ad047c3c2e5b0dcb2f443ede",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/random/distributions.h",
+      "bytes": 10070
+    },
+    {
+      "sha256": "17d3cbc7a4dc3a4fac77474e6ded2758bcb3e0785b1efd8aeefa11fe4a25a465",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/random/libdivide.h",
+      "bytes": 82217
+    },
+    {
+      "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/random/LICENSE.txt",
+      "bytes": 1039
+    },
+    {
+      "sha256": "3ced74944a12be9b587b9eebac6a4c885d2dcad9e6abd3d6d9478c230374e8c6",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/ufuncobject.h",
+      "bytes": 12265
+    },
+    {
+      "sha256": "bf32406dab4961fc47997db22ffc418ab981e261062ce849f7626557db3cc8fb",
+      "path": "Lib/site-packages/numpy/_core/include/numpy/utils.h",
+      "bytes": 1222
+    },
+    {
+      "sha256": "858585ca8071134dfa761d7db22f143e46b4d47d9cbfae2a95ce19b60a00ffb0",
+      "path": "Lib/site-packages/numpy/_core/lib/npy-pkg-config/mlib.ini",
+      "bytes": 156
+    },
+    {
+      "sha256": "7b4addb1bd3463ddd5b9a9a6baf208165cd9b675005f0b12d5734a94253c9854",
+      "path": "Lib/site-packages/numpy/_core/lib/npy-pkg-config/npymath.ini",
+      "bytes": 381
+    },
+    {
+      "sha256": "fee734379e7985c3e64f50010aec88d8ef6c0115e515f7a1e6143d295e490f85",
+      "path": "Lib/site-packages/numpy/_core/lib/npymath.lib",
+      "bytes": 154174
+    },
+    {
+      "sha256": "9a965e8b108093308815d48d0c15949913367e025570dde8f6fb4d374d727839",
+      "path": "Lib/site-packages/numpy/_core/lib/pkgconfig/numpy.pc",
+      "bytes": 198
+    },
+    {
+      "sha256": "82d5c38041e49b3b828f03e96054f9824173ce2602e35240198b8a343a3609f2",
+      "path": "Lib/site-packages/numpy/_core/memmap.py",
+      "bytes": 13025
+    },
+    {
+      "sha256": "9f49017b88900f995c5af02f561754535f182283d7e927f97b6aa1f4874ee6e4",
+      "path": "Lib/site-packages/numpy/_core/memmap.pyi",
+      "bytes": 50
+    },
+    {
+      "sha256": "f9c1f71c7cf3b588924844b074def3720a979352ff01112e8a631124193f7131",
+      "path": "Lib/site-packages/numpy/_core/multiarray.py",
+      "bytes": 59891
+    },
+    {
+      "sha256": "60474e867d8dc821872d0460a5ed46778e7104716525275d3ec1e27ac4969803",
+      "path": "Lib/site-packages/numpy/_core/multiarray.pyi",
+      "bytes": 34751
+    },
+    {
+      "sha256": "f35621650d8ba44be3e549efe445256d75a4b6690647d74dd82bce5848d8ba41",
+      "path": "Lib/site-packages/numpy/_core/numeric.py",
+      "bytes": 84439
+    },
+    {
+      "sha256": "2550f38dc641cff54ecc7c4bf5c62ec762cfaefabd160ed923a7ce88b7228800",
+      "path": "Lib/site-packages/numpy/_core/numeric.pyi",
+      "bytes": 20094
+    },
+    {
+      "sha256": "a36961975485a46b83788185cdf812db32d60f0200b78d608b756985577d0b08",
+      "path": "Lib/site-packages/numpy/_core/numerictypes.py",
+      "bytes": 16754
+    },
+    {
+      "sha256": "36eabc984a3ad9ad00d7ee8724d4eb38d37b6fd86450d4a9f874d13f6f2b6247",
+      "path": "Lib/site-packages/numpy/_core/numerictypes.pyi",
+      "bytes": 3750
+    },
+    {
+      "sha256": "807ae62c34635728b7a68639a9856bb003fd40dbef857b625b5820c79830806b",
+      "path": "Lib/site-packages/numpy/_core/overrides.py",
+      "bytes": 7392
+    },
+    {
+      "sha256": "7921b45f3c66ef0bad01149a43f9a61cf4435fec691473344c056179e6c5dd2f",
+      "path": "Lib/site-packages/numpy/_core/overrides.pyi",
+      "bytes": 1793
+    },
+    {
+      "sha256": "6edc727e2b2327fec307926d64a02d68b60bf6a99c9939e727ca4715cc27d967",
+      "path": "Lib/site-packages/numpy/_core/printoptions.py",
+      "bytes": 1095
+    },
+    {
+      "sha256": "404dfa3152f7060a9f97242e8fa50ecf2c1b9c42cc88b7b2373ff5b002ef3925",
+      "path": "Lib/site-packages/numpy/_core/printoptions.pyi",
+      "bytes": 622
+    },
+    {
+      "sha256": "b50a1ff3338ca18f145e7e19b68214f0eea53e3f2952c0d01423a465101ab7d0",
+      "path": "Lib/site-packages/numpy/_core/records.py",
+      "bytes": 37953
+    },
+    {
+      "sha256": "f5d7f8184fe1918548f8896a088e9cc491ed62fb90f13530b174a333f53c7ce2",
+      "path": "Lib/site-packages/numpy/_core/records.pyi",
+      "bytes": 9104
+    },
+    {
+      "sha256": "6513a1dc46cd17522e1cb17fd5e709d0d5e9c147fffd15f0f0cd9b582d483b44",
+      "path": "Lib/site-packages/numpy/_core/shape_base.py",
+      "bytes": 33887
+    },
+    {
+      "sha256": "bc81793806d339806c2267fff41748953d75e5635bbab460d8a005515f59308b",
+      "path": "Lib/site-packages/numpy/_core/shape_base.pyi",
+      "bytes": 4720
+    },
+    {
+      "sha256": "6402970e6a48cca45e59869497e178879161b7855527ecf4550a5157e59fd247",
+      "path": "Lib/site-packages/numpy/_core/strings.py",
+      "bytes": 47313
+    },
+    {
+      "sha256": "5df924274de74674e4a99a29d0b29413f2be8d586b03844587dcfe2c71903278",
+      "path": "Lib/site-packages/numpy/_core/strings.pyi",
+      "bytes": 13270
+    },
+    {
+      "sha256": "c6c289a93dd96622462d06e6e17c755b68bd28bab1d78a1013dc146b8f4f909f",
+      "path": "Lib/site-packages/numpy/_core/tests/_locales.py",
+      "bytes": 2248
+    },
+    {
+      "sha256": "b955c709a866c836d9640690f8e2aa6969ce809448611113534e9daecb1248fd",
+      "path": "Lib/site-packages/numpy/_core/tests/_natype.py",
+      "bytes": 6457
+    },
+    {
+      "sha256": "9564b309cbf3441ff0a6e4468fddaca46230fab34f15c77d87025a455bdf59d9",
+      "path": "Lib/site-packages/numpy/_core/tests/data/astype_copy.pkl",
+      "bytes": 716
+    },
+    {
+      "sha256": "f5305dc693e8d1d8efd422b143afc36c6291c486556b08ad026ec032658aae82",
+      "path": "Lib/site-packages/numpy/_core/tests/data/generate_umath_validation_data.cpp",
+      "bytes": 6012
+    },
+    {
+      "sha256": "340d24962cf7d4594b9d8c6fde9a737abb8e36a35892e12fb6ce70cd711e21ce",
+      "path": "Lib/site-packages/numpy/_core/tests/data/recarray_from_file.fits",
+      "bytes": 8640
+    },
+    {
+      "sha256": "55475074a045ae95c72e53ed5f659820afeec24697824cbce4267868dbaf983e",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arccos.csv",
+      "bytes": 62794
+    },
+    {
+      "sha256": "b5bb8e424be76314b225ffda946937670dd5cafd073b974c0b585495eda15b04",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arccosh.csv",
+      "bytes": 62794
+    },
+    {
+      "sha256": "24f11658cc603ca74da6b0ead291f9421276a22542cee0db2bedd68532a7cbca",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arcsin.csv",
+      "bytes": 62768
+    },
+    {
+      "sha256": "7f0baadb9c5e4b9ee4044c41b9235f7b08076fe9a0a11f7050656a70e5db7e82",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arcsinh.csv",
+      "bytes": 61718
+    },
+    {
+      "sha256": "9eedf76322fe00b5d2485e5cba909369ffe34cf2cafd0c947dc88d406a5f7e46",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arctan.csv",
+      "bytes": 61734
+    },
+    {
+      "sha256": "c0748a158d98bdbbf77e79a67cba8f6298e190433cf181e4155a59422a32043c",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-arctanh.csv",
+      "bytes": 62768
+    },
+    {
+      "sha256": "1458bf5f11271ab7c977b3b1b635454fa5850b6b54a8a85557c7e641f6f4cfca",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-cbrt.csv",
+      "bytes": 62275
+    },
+    {
+      "sha256": "71c0eb8b9fe343ce03fe40264b067fced3543c8873860c9c0ed36c3c1ee6f1d7",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-cos.csv",
+      "bytes": 60497
+    },
+    {
+      "sha256": "0e737a446bca4070162287dc8668461fb92425e8f656d370186311646cc19134",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-cosh.csv",
+      "bytes": 62298
+    },
+    {
+      "sha256": "98f86317828b7b46ddc31dfc48988d8a90f6e27b4b23fe5a59cf21f95d143203",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-exp.csv",
+      "bytes": 17903
+    },
+    {
+      "sha256": "b03f78a4ad840190320f67c312871fc35a17370d6a4e55b54c1c1195ca5b72c2",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-exp2.csv",
+      "bytes": 60053
+    },
+    {
+      "sha256": "b727d93790fcb659bb00f8310883f2bb2efbe00647cad30e079f47f4a7b0c44b",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-expm1.csv",
+      "bytes": 61728
+    },
+    {
+      "sha256": "0833e4cbae0f8da5115a1aa41f190b12598c888db5bf9ba0186cb385d7d46e72",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-log.csv",
+      "bytes": 11963
+    },
+    {
+      "sha256": "756e853c4065471da9712fbb7ae8bf1ada93a57ccecb5e3b8a5e79a9d3fef009",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-log10.csv",
+      "bytes": 70551
+    },
+    {
+      "sha256": "d9a12c1d572f4729bee39df90a4bc94ec987cb092dd3564c7e68e5f9de1fbd52",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-log1p.csv",
+      "bytes": 61732
+    },
+    {
+      "sha256": "69567b54c439bab18ec7930c30e52630a06114b144f94ef2e835424de5d07e8d",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-log2.csv",
+      "bytes": 70546
+    },
+    {
+      "sha256": "19fae4994ff04e3a4b90e7ed583b866b2103755dd13e93761915505fad558162",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt",
+      "bytes": 982
+    },
+    {
+      "sha256": "1af3eb414118317d62076ce36df2b6e895093b1b6a6df8915205ee00ed5070fd",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-sin.csv",
+      "bytes": 59981
+    },
+    {
+      "sha256": "95cece61c6165a99316ccb910169a8810e5c2a2ec4c2c43689b88c76925661bc",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-sinh.csv",
+      "bytes": 61722
+    },
+    {
+      "sha256": "7e7ec3afdb3aadca86533b26c89c6f7bf675f09e0051a4a6faea3637737f85f9",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-tan.csv",
+      "bytes": 61728
+    },
+    {
+      "sha256": "c526397e07de05737a7da9785c379df9551c805232f6a28ea2c6bbbd0e6fd7e5",
+      "path": "Lib/site-packages/numpy/_core/tests/data/umath-validation-set-tanh.csv",
+      "bytes": 61728
+    },
+    {
+      "sha256": "b06bdadcf21ca1a8570481774240563e35671161cf19033592d369f0e604c14a",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/cython/checks.pyx",
+      "bytes": 8183
+    },
+    {
+      "sha256": "11a51d4e0a65794051384c4368554c9d62185b85c3c452c518af5e8ffa53b508",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/cython/meson.build",
+      "bytes": 1311
+    },
+    {
+      "sha256": "b4f43d9ba76be3c252bcba60995f9a567316315d22b25ce54abca7079c866036",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/cython/setup.py",
+      "bytes": 894
+    },
+    {
+      "sha256": "76bbeb352c8e785d0eaf4b6b0e66b22569654cfedce0dce9a7d4f4c9dc0f006a",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/limited_api/limited_api_latest.c",
+      "bytes": 471
+    },
+    {
+      "sha256": "45c1defe7cb28eff3a82317d139ddc7b1422196f9836cf0e186aa3af10858417",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/limited_api/limited_api1.c",
+      "bytes": 363
+    },
+    {
+      "sha256": "e0fe7ecaed32afc3416be4c5b70e2fdf42c68dc711ae844040514b6b3b442bd2",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/limited_api/limited_api2.pyx",
+      "bytes": 214
+    },
+    {
+      "sha256": "ca2b4cccbb860e15828f26afa66e54101ae1c0a9df5ce540c40dd92fb3e50744",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/limited_api/meson.build",
+      "bytes": 1686
+    },
+    {
+      "sha256": "37b92ab15a78888136d0879b8a0109516de75b617497a56d85be6a36f2870663",
+      "path": "Lib/site-packages/numpy/_core/tests/examples/limited_api/setup.py",
+      "bytes": 457
+    },
+    {
+      "sha256": "832efe999abb5d2e73ff0faeb388112330b41fb5ea0bfeb6c5a410996a8bcd2c",
+      "path": "Lib/site-packages/numpy/_core/tests/test__exceptions.py",
+      "bytes": 2970
+    },
+    {
+      "sha256": "bbcdb0ad229727657b02636b8789251f1622a8ec74058589e23ee1a93307fbe0",
+      "path": "Lib/site-packages/numpy/_core/tests/test_abc.py",
+      "bytes": 2275
+    },
+    {
+      "sha256": "6d446f73a3282079628f64abb20883c9a7c043e03240314599b233afeca8f04b",
+      "path": "Lib/site-packages/numpy/_core/tests/test_api.py",
+      "bytes": 23546
+    },
+    {
+      "sha256": "bcf72dbb14e83e464c95b8239f313ddb85e4c57614741c6547a2ec3f6ffe6903",
+      "path": "Lib/site-packages/numpy/_core/tests/test_argparse.py",
+      "bytes": 2914
+    },
+    {
+      "sha256": "ee7f7e2c9bfec2000c55b7cad491bb750014d9605841b3bbc9e378acfdfc2ed8",
+      "path": "Lib/site-packages/numpy/_core/tests/test_array_api_info.py",
+      "bytes": 3174
+    },
+    {
+      "sha256": "bc6e471df2e09751dc3faa1e985c6fa58aa26d2d1e5aa440282c4b0a26418da6",
+      "path": "Lib/site-packages/numpy/_core/tests/test_array_coercion.py",
+      "bytes": 35744
+    },
+    {
+      "sha256": "13a411f832584c95ff17e8bbd0f6a440c9afc737d2043f96d6b16f7bbd0c1538",
+      "path": "Lib/site-packages/numpy/_core/tests/test_array_interface.py",
+      "bytes": 7986
+    },
+    {
+      "sha256": "6fb0de46d8334824f3a0f892d414f55b0be9af7d60fd83f8e0377857ab9a47e5",
+      "path": "Lib/site-packages/numpy/_core/tests/test_arraymethod.py",
+      "bytes": 3339
+    },
+    {
+      "sha256": "710bb86838f217a120a2219ee54212c8e1c6c7940491d1af6df09756e2a31d0f",
+      "path": "Lib/site-packages/numpy/_core/tests/test_arrayobject.py",
+      "bytes": 2671
+    },
+    {
+      "sha256": "44447381b550de6ba648625985857d2deb1391cb0c1fc4eb1cc04f98fc240538",
+      "path": "Lib/site-packages/numpy/_core/tests/test_arrayprint.py",
+      "bytes": 50349
+    },
+    {
+      "sha256": "151456241a696b9bf56b18a3e8bd7810d9b3a194bc47f4b224a807880148d8a4",
+      "path": "Lib/site-packages/numpy/_core/tests/test_casting_floatingpoint_errors.py",
+      "bytes": 5228
+    },
+    {
+      "sha256": "142a244284bfe7a74ea018ead564a9d94544d8d13d592db0daefb8c4d0508cc3",
+      "path": "Lib/site-packages/numpy/_core/tests/test_casting_unittests.py",
+      "bytes": 35126
+    },
+    {
+      "sha256": "733d961220984843fd9bfed11dada94bc596d0f7163b413e2efa4b4ceef63e41",
+      "path": "Lib/site-packages/numpy/_core/tests/test_conversion_utils.py",
+      "bytes": 6814
+    },
+    {
+      "sha256": "0696ff7a9ee44f739f372a55d6948e58236593ca13e3a9236411064b7daa7c22",
+      "path": "Lib/site-packages/numpy/_core/tests/test_cpu_dispatcher.py",
+      "bytes": 1597
+    },
+    {
+      "sha256": "18efd47fa1402b6a57f24888f51d54bfba04173b8f573a7786eddb9ba7190ae5",
+      "path": "Lib/site-packages/numpy/_core/tests/test_cpu_features.py",
+      "bytes": 15838
+    },
+    {
+      "sha256": "2447913bbca46523d80d394a115e045a394c589c045a27a2082b0de1a11dd160",
+      "path": "Lib/site-packages/numpy/_core/tests/test_custom_dtypes.py",
+      "bytes": 11934
+    },
+    {
+      "sha256": "6e0271bc895094cc71140f87aa582aa3b348bc428f67b16f9d8d1abfe1017e83",
+      "path": "Lib/site-packages/numpy/_core/tests/test_cython.py",
+      "bytes": 8923
+    },
+    {
+      "sha256": "dcac94c49aab80246f52898cdcfc70ff00a87518d6611729fbdd818208aa9365",
+      "path": "Lib/site-packages/numpy/_core/tests/test_datetime.py",
+      "bytes": 124376
+    },
+    {
+      "sha256": "88e3bc01404ec2169d4c8f145253b0fad2340ddd25e24d6b2d8f60585b902dbc",
+      "path": "Lib/site-packages/numpy/_core/tests/test_defchararray.py",
+      "bytes": 31423
+    },
+    {
+      "sha256": "cbbea416409f5c89a7c1d8c103a58949228fb4597f77a2b73be842453ebf2c04",
+      "path": "Lib/site-packages/numpy/_core/tests/test_deprecations.py",
+      "bytes": 29255
+    },
+    {
+      "sha256": "30a73d3dd0a4d536e8cfc46931bad9ccb170913104123fb0439919d4d787b4d2",
+      "path": "Lib/site-packages/numpy/_core/tests/test_dlpack.py",
+      "bytes": 5990
+    },
+    {
+      "sha256": "6902ef664273657e6ab7db867d78a57fea3cc65210f29f990c151cccb427103f",
+      "path": "Lib/site-packages/numpy/_core/tests/test_dtype.py",
+      "bytes": 79365
+    },
+    {
+      "sha256": "c4e200e42a36fc5c47933af46fe69c016e5ffc53ad9c60e142f4b8801d662dd3",
+      "path": "Lib/site-packages/numpy/_core/tests/test_einsum.py",
+      "bytes": 54119
+    },
+    {
+      "sha256": "323575a7bb43abb2e9020213ef7d2530d545b313744552b80ad4498019295659",
+      "path": "Lib/site-packages/numpy/_core/tests/test_errstate.py",
+      "bytes": 4763
+    },
+    {
+      "sha256": "60a217d2af44356d2a7a126d75a000076b051b499ee36536c899aad242bac464",
+      "path": "Lib/site-packages/numpy/_core/tests/test_extint128.py",
+      "bytes": 5863
+    },
+    {
+      "sha256": "d451a84ee64b2bfaf4e7aee0340445217a8b84863a400f66aa487aacc18c2cdc",
+      "path": "Lib/site-packages/numpy/_core/tests/test_function_base.py",
+      "bytes": 17950
+    },
+    {
+      "sha256": "93dfd3698a8108bf8ebd8a72bd60284f1a42c194a9c5816fbebd91eefb8f11e8",
+      "path": "Lib/site-packages/numpy/_core/tests/test_getlimits.py",
+      "bytes": 7180
+    },
+    {
+      "sha256": "ecce955899c153ba67a46ba865cd618a5b41e7eae7f4f90311723e126b4d2920",
+      "path": "Lib/site-packages/numpy/_core/tests/test_half.py",
+      "bytes": 24880
+    },
+    {
+      "sha256": "f9997eba9a496dcf64c0f37f665c49300efac8040ab201a6410588f18facc5a3",
+      "path": "Lib/site-packages/numpy/_core/tests/test_hashtable.py",
+      "bytes": 1182
+    },
+    {
+      "sha256": "91e59c94dbc5bb7ba485549773def0ddb24cf01be43a9ba5ea48cdb9d7f51764",
+      "path": "Lib/site-packages/numpy/_core/tests/test_indexerrors.py",
+      "bytes": 4858
+    },
+    {
+      "sha256": "8db62cd0c763ff8c355d1067ac109b533651f68d6f753dea1efa34604dfec9ab",
+      "path": "Lib/site-packages/numpy/_core/tests/test_indexing.py",
+      "bytes": 56741
+    },
+    {
+      "sha256": "cda1ae31c4c3b1b0a940ed64f5cf71b9ce2351685b02b7e7ff520d7e295ff619",
+      "path": "Lib/site-packages/numpy/_core/tests/test_item_selection.py",
+      "bytes": 6623
+    },
+    {
+      "sha256": "a33ef03b3ed545baec3ffeb449a0a2325ebd199973fb72786fa4bff46b2317b0",
+      "path": "Lib/site-packages/numpy/_core/tests/test_limited_api.py",
+      "bytes": 3404
+    },
+    {
+      "sha256": "91cbb60e93eec3e8f4a27d08370f8b34c3a3c38c2e5c8fdf3dbbe7fbd9fe3a4b",
+      "path": "Lib/site-packages/numpy/_core/tests/test_longdouble.py",
+      "bytes": 14285
+    },
+    {
+      "sha256": "cf49b0c9fe8048523e82d31e98501a83ef1e1172a36f5da6675052a4b600e764",
+      "path": "Lib/site-packages/numpy/_core/tests/test_machar.py",
+      "bytes": 1099
+    },
+    {
+      "sha256": "7d9307bac536f72b9801d32a9262dc7e3db4f6af318da636dc8c7004f4949e81",
+      "path": "Lib/site-packages/numpy/_core/tests/test_mem_overlap.py",
+      "bytes": 30071
+    },
+    {
+      "sha256": "02fc3dd33990e738c8bde7291b4855e7451c28c6b155891b99641274db93ea20",
+      "path": "Lib/site-packages/numpy/_core/tests/test_mem_policy.py",
+      "bytes": 17109
+    },
+    {
+      "sha256": "e0fbcca55ec4a58b820253e43b5b3c4e2304ef9fc6fd5d6da019b40038b32e96",
+      "path": "Lib/site-packages/numpy/_core/tests/test_memmap.py",
+      "bytes": 8372
+    },
+    {
+      "sha256": "4aedee28ce0b859b8c4619fc932af01aa83e0997bddc646068f826d21ac1641b",
+      "path": "Lib/site-packages/numpy/_core/tests/test_multiarray.py",
+      "bytes": 402650
+    },
+    {
+      "sha256": "3fa24fdb1f98a9253a827ccb1ad2b6549d6659ea093fb8becf13e9538e840f15",
+      "path": "Lib/site-packages/numpy/_core/tests/test_multithreading.py",
+      "bytes": 8899
+    },
+    {
+      "sha256": "56b5fdd505f59ddde958d33c32ac706240e4ffbb307ee5b4200081f3a1413550",
+      "path": "Lib/site-packages/numpy/_core/tests/test_nditer.py",
+      "bytes": 134550
+    },
+    {
+      "sha256": "35b7730a92dbc161d6517064e09c4ce451486be62a89b807576ac46b04b78765",
+      "path": "Lib/site-packages/numpy/_core/tests/test_nep50_promotions.py",
+      "bytes": 10354
+    },
+    {
+      "sha256": "a25f3ee8f7a658a4001b1a4d18881bf878c0c00d77194dc85f808163ce16766b",
+      "path": "Lib/site-packages/numpy/_core/tests/test_numeric.py",
+      "bytes": 162700
+    },
+    {
+      "sha256": "850d58a9ab10ea6abefbb7e728ed3c928a95ae7b0ad88c25a1671d125281ed4e",
+      "path": "Lib/site-packages/numpy/_core/tests/test_numerictypes.py",
+      "bytes": 23912
+    },
+    {
+      "sha256": "fc5b2a9dd73244ddebd093a9dcd9fbff10193ef184ca945ea3d3c07687de6af6",
+      "path": "Lib/site-packages/numpy/_core/tests/test_overrides.py",
+      "bytes": 28733
+    },
+    {
+      "sha256": "1e138c0b8ae836b9d7767720a573e6160b095b0711a4273dbb728e20c491c43c",
+      "path": "Lib/site-packages/numpy/_core/tests/test_print.py",
+      "bytes": 7038
+    },
+    {
+      "sha256": "d7dc972c92979b2d7e02b01c959f85ecfb6037a2e62076e23ef83a562d8f9099",
+      "path": "Lib/site-packages/numpy/_core/tests/test_protocols.py",
+      "bytes": 1234
+    },
+    {
+      "sha256": "6de183fb2bfaec30be79abf454d7862e1d3ab883302a9dc80c457e8b62b248de",
+      "path": "Lib/site-packages/numpy/_core/tests/test_records.py",
+      "bytes": 21074
+    },
+    {
+      "sha256": "e66b1977f81d9818ac9d0aef284cac9be3708f3f38b2da749ff73e3aa8e6b779",
+      "path": "Lib/site-packages/numpy/_core/tests/test_regression.py",
+      "bytes": 98058
+    },
+    {
+      "sha256": "0ab3d88fac68e40e76555a9e71cf52f10d094163cfc94da9343e4a50d5fffa9c",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalar_ctors.py",
+      "bytes": 6923
+    },
+    {
+      "sha256": "0900110cc754fd3f0b060d6c01d27a3e645a96900ad82152307dfb02f2c2996d",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalar_methods.py",
+      "bytes": 9388
+    },
+    {
+      "sha256": "d1df0b83221c9609a2e3024cdb5f1facd0d76b8578d3c31c0c50e489e069245a",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalarbuffer.py",
+      "bytes": 5735
+    },
+    {
+      "sha256": "d09ba4882ede47a370599805cbe6019805d821a036066b9d818dd1b7cce25fe2",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalarinherit.py",
+      "bytes": 2693
+    },
+    {
+      "sha256": "d80e8280069e15412a501a386dec968ba501c00f9ec9a13fd08b37eb8463ddc4",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalarmath.py",
+      "bytes": 47796
+    },
+    {
+      "sha256": "ec12521d64de56f2adcedfc85200a061c4a9f2ec13c5b525a651a657679d3471",
+      "path": "Lib/site-packages/numpy/_core/tests/test_scalarprint.py",
+      "bytes": 21058
+    },
+    {
+      "sha256": "aea2a3292ebda3a34f12da9552f466e2f736ce5ac9f3b404cb83e2a4c0e53172",
+      "path": "Lib/site-packages/numpy/_core/tests/test_shape_base.py",
+      "bytes": 31842
+    },
+    {
+      "sha256": "b36dada98b60374c7ee41dc74d78867c85766935f24101f5f1cd5f623e954618",
+      "path": "Lib/site-packages/numpy/_core/tests/test_simd_module.py",
+      "bytes": 4004
+    },
+    {
+      "sha256": "d4a44396faf1e8c1af04b705bc6112a0de434b142ad0629cbd9792aed4452f56",
+      "path": "Lib/site-packages/numpy/_core/tests/test_simd.py",
+      "bytes": 49985
+    },
+    {
+      "sha256": "07c079661082c1601b31ad31289f64dd1d369c1ac6cacfcd3c371c0de399793e",
+      "path": "Lib/site-packages/numpy/_core/tests/test_stringdtype.py",
+      "bytes": 59491
+    },
+    {
+      "sha256": "1efa36760027e1588f20bd1e8ff4ba3d108cfb4506de04f62b8b98982aa1864e",
+      "path": "Lib/site-packages/numpy/_core/tests/test_strings.py",
+      "bytes": 53076
+    },
+    {
+      "sha256": "0ad84af17d9cbcb46e0121c363837538782a70dd69a79b352599ddd15040e765",
+      "path": "Lib/site-packages/numpy/_core/tests/test_ufunc.py",
+      "bytes": 135606
+    },
+    {
+      "sha256": "656f8d044711056b5b8f384f9a4f5f4a9377b24401b8c804a074bcef32e679d9",
+      "path": "Lib/site-packages/numpy/_core/tests/test_umath_accuracy.py",
+      "bytes": 5593
+    },
+    {
+      "sha256": "6519c9b85a3a0d03f3e6d754519c8749a9ad688d811652d7cf3e80b6520b548c",
+      "path": "Lib/site-packages/numpy/_core/tests/test_umath_complex.py",
+      "bytes": 23912
+    },
+    {
+      "sha256": "8e039c59e163bd01256c3247756d046f5fc8ca7052d8aaa9dd8da1a4399f5333",
+      "path": "Lib/site-packages/numpy/_core/tests/test_umath.py",
+      "bytes": 198085
+    },
+    {
+      "sha256": "6395529ae32ba73b8df6534607d80d0e450297573aaa1890469dbf90e736579d",
+      "path": "Lib/site-packages/numpy/_core/tests/test_unicode.py",
+      "bytes": 13221
+    },
+    {
+      "sha256": "dff3936e688c85a54db31a47db1295f65eb36b9f6b61706bcba81bd56809688d",
+      "path": "Lib/site-packages/numpy/_core/umath.py",
+      "bytes": 2133
+    },
+    {
+      "sha256": "f68e040587a26cff5a6e8c07407ba8d22ba16d49df4d6c3973cbad36628476ea",
+      "path": "Lib/site-packages/numpy/_core/umath.pyi",
+      "bytes": 2840
+    },
+    {
+      "sha256": "6a105b64fcfe98666b9b0c77e451d0dba0228a7493efc171beea62041286169e",
+      "path": "Lib/site-packages/numpy/_distributor_init.py",
+      "bytes": 422
+    },
+    {
+      "sha256": "092adb4a9d986311d3c655fb4749d3dd1a47ec4968075c08be8ed8380ed05b2f",
+      "path": "Lib/site-packages/numpy/_distributor_init.pyi",
+      "bytes": 28
+    },
+    {
+      "sha256": "b8f512a65482ebfc7f361ca7a00ba9dd909fdf276decc1ab04dc0973674188bf",
+      "path": "Lib/site-packages/numpy/_expired_attrs_2_0.py",
+      "bytes": 3983
+    },
+    {
+      "sha256": "6478dce998d80b58ca5d7c0b878c3296be8fd5b627950ef9b148a00cda9a5e80",
+      "path": "Lib/site-packages/numpy/_expired_attrs_2_0.pyi",
+      "bytes": 1332
+    },
+    {
+      "sha256": "15653122da3d850e4c8b6368c4fe83786a48ddb812f07f71abb8dfcda54bb46d",
+      "path": "Lib/site-packages/numpy/_globals.py",
+      "bytes": 3185
+    },
+    {
+      "sha256": "92cb77566ed96f39ceb47b0fc9ad0fcd4d0a6e344667cc613264cd31a7ef4fee",
+      "path": "Lib/site-packages/numpy/_globals.pyi",
+      "bytes": 297
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/_pyinstaller/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/_pyinstaller/__init__.pyi",
+      "bytes": 0
+    },
+    {
+      "sha256": "1851a2cd816377d1ec60c3ad6f2ee07b0f780a4bd3ad15bbec40863cd5201867",
+      "path": "Lib/site-packages/numpy/_pyinstaller/hook-numpy.py",
+      "bytes": 1429
+    },
+    {
+      "sha256": "d817308f61704776d176d9b6ea99a95042c486c899e7cb50bfd43bff5629dc75",
+      "path": "Lib/site-packages/numpy/_pyinstaller/hook-numpy.pyi",
+      "bytes": 362
+    },
+    {
+      "sha256": "64aa8d8ea94ac35a588afe7ba276e30c99c9755acb6b06d901c97e98f673712c",
+      "path": "Lib/site-packages/numpy/_pyinstaller/tests/__init__.py",
+      "bytes": 345
+    },
+    {
+      "sha256": "c6dddd97f0e3c6ecd54cfaea99598c3999b9fb6e30046d93c6575097bf17b758",
+      "path": "Lib/site-packages/numpy/_pyinstaller/tests/pyinstaller-smoke.py",
+      "bytes": 1175
+    },
+    {
+      "sha256": "df5cd696f9400b6b1f85d7b0f7bc7c683bdc614695dd373fd02c0593ca6029a3",
+      "path": "Lib/site-packages/numpy/_pyinstaller/tests/test_pyinstaller.py",
+      "bytes": 1170
+    },
+    {
+      "sha256": "e888be548e2ecf7c22439a7335929dbd44fa2cea0df3af2b37355f7fbad39409",
+      "path": "Lib/site-packages/numpy/_pytesttester.py",
+      "bytes": 6525
+    },
+    {
+      "sha256": "0b2d6b77eb2ff43be600010a444cbd548d21613595a40fcca014559b30f2bdc6",
+      "path": "Lib/site-packages/numpy/_pytesttester.pyi",
+      "bytes": 515
+    },
+    {
+      "sha256": "7977dd38df884c60158e9a6b9e36d90bd92f728edcf9a02895cdfbec3da5a961",
+      "path": "Lib/site-packages/numpy/_typing/__init__.py",
+      "bytes": 5201
+    },
+    {
+      "sha256": "60f6239717ea0bc91733f6a6b4bc8a5c9e1a48d2897262d8f88b7f3e75b5fa5e",
+      "path": "Lib/site-packages/numpy/_typing/_add_docstring.py",
+      "bytes": 4148
+    },
+    {
+      "sha256": "39007d2f72b74d85fafcf442b6f51fcbc060611d6f602b0892022a9424e59249",
+      "path": "Lib/site-packages/numpy/_typing/_array_like.py",
+      "bytes": 5757
+    },
+    {
+      "sha256": "7d3ab97130686916709778c50a4fc6d5e612132c47ae9091e7e56840930ccd93",
+      "path": "Lib/site-packages/numpy/_typing/_callable.pyi",
+      "bytes": 12176
+    },
+    {
+      "sha256": "423dedee3fe08e8cbb102995673cf76f99d5306241294e6d8cf649d69786a33a",
+      "path": "Lib/site-packages/numpy/_typing/_char_codes.py",
+      "bytes": 9000
+    },
+    {
+      "sha256": "a27fec50335e0ba790e95ae5b22e0948901fc469888f6337ce13b1d3226d3744",
+      "path": "Lib/site-packages/numpy/_typing/_dtype_like.py",
+      "bytes": 6213
+    },
+    {
+      "sha256": "e4f863113e0d911a7e2d281f7c9a9f719d42e42a7ec44441d7814d5df52f4645",
+      "path": "Lib/site-packages/numpy/_typing/_extended_precision.py",
+      "bytes": 804
+    },
+    {
+      "sha256": "9cdf36da2c48bc1b64c83a6d5ff2c44ab5e80d9e238f29b9a61d8553a00f1279",
+      "path": "Lib/site-packages/numpy/_typing/_nbit_base.py",
+      "bytes": 2980
+    },
+    {
+      "sha256": "e04f04ebb4a449ec0fbc3475e48ebc2843a7785f20b1cf7b98511ef6860171d4",
+      "path": "Lib/site-packages/numpy/_typing/_nbit.py",
+      "bytes": 651
+    },
+    {
+      "sha256": "0a31b8f69f9dc6b7ad29e4a13a2c95bd3a8ea3233f98dca15c0ac8618ea7061e",
+      "path": "Lib/site-packages/numpy/_typing/_nested_sequence.py",
+      "bytes": 2697
+    },
+    {
+      "sha256": "b0a69a10466a010b621228deb87e14e4a3cda46ec562c06d18eef797d76d8bd4",
+      "path": "Lib/site-packages/numpy/_typing/_scalars.py",
+      "bytes": 1058
+    },
+    {
+      "sha256": "de0d2b369647c4ceeb3c89c124c486a5b543f58d0bc3542d90510dff2ad611ea",
+      "path": "Lib/site-packages/numpy/_typing/_shape.py",
+      "bytes": 238
+    },
+    {
+      "sha256": "4b14e8346f8ee4dba617fc95ec947301796835ba2457c07c2590bf11c6de3459",
+      "path": "Lib/site-packages/numpy/_typing/_ufunc.py",
+      "bytes": 160
+    },
+    {
+      "sha256": "9a102b6e27021a793305d7f23f12f07faa3200fc91e53d82fa304e93d4b756af",
+      "path": "Lib/site-packages/numpy/_typing/_ufunc.pyi",
+      "bytes": 27651
+    },
+    {
+      "sha256": "98ee3595d58f3872644e463e69c989ffcc0cf3d20a46fda55b051eff95e5516a",
+      "path": "Lib/site-packages/numpy/_utils/__init__.py",
+      "bytes": 3379
+    },
+    {
+      "sha256": "3e6a289f9164be491b18daf45f3c7a8ba8bc6a87a14a72c59415cd981457c22d",
+      "path": "Lib/site-packages/numpy/_utils/__init__.pyi",
+      "bytes": 769
+    },
+    {
+      "sha256": "bdeb5916a0b5a81f99f63bdced12ae53fe444ce6926e385b29afac570615f135",
+      "path": "Lib/site-packages/numpy/_utils/_convertions.py",
+      "bytes": 347
+    },
+    {
+      "sha256": "ce465f91d064ebe5dcc83df39abec4e6c25b61ab2fc830889d4b56bebb635616",
+      "path": "Lib/site-packages/numpy/_utils/_convertions.pyi",
+      "bytes": 122
+    },
+    {
+      "sha256": "6d221a7048472ed6234d768c569d5714f6362197f26dbe5b83c5f975881cf093",
+      "path": "Lib/site-packages/numpy/_utils/_inspect.py",
+      "bytes": 7626
+    },
+    {
+      "sha256": "1f5419ef31206321bd930a5fcfc70452117f41f33de96541a1ead0b4964d5432",
+      "path": "Lib/site-packages/numpy/_utils/_inspect.pyi",
+      "bytes": 2326
+    },
+    {
+      "sha256": "cb93a9a6adcac67d9d1f711605848436ffe3f178c65175af34088d08427e7ae2",
+      "path": "Lib/site-packages/numpy/_utils/_pep440.py",
+      "bytes": 14556
+    },
+    {
+      "sha256": "2dda43156f22223fdb2dbb936ef46bd975a60bd612f65ae9ccb47b79fa8bd865",
+      "path": "Lib/site-packages/numpy/_utils/_pep440.pyi",
+      "bytes": 3991
+    },
+    {
+      "sha256": "a1065200eb3bac799ee82c5f74bf67ada611348dcd535f0c8f343891098ada40",
+      "path": "Lib/site-packages/numpy/char/__init__.py",
+      "bytes": 95
+    },
+    {
+      "sha256": "c28957fea1366e3b087147d0ad0cc68f391aa9d32db8658e543037abed89aa3d",
+      "path": "Lib/site-packages/numpy/char/__init__.pyi",
+      "bytes": 1650
+    },
+    {
+      "sha256": "a2ab107982a942e269b932ea324657eacb2a41f497b342688ff4bc32cf4a48d5",
+      "path": "Lib/site-packages/numpy/compat/__init__.py",
+      "bytes": 756
+    },
+    {
+      "sha256": "c1c4911ab4e890b3f12da991170067b164bdcf9b80cb3b0c95312709652aa56c",
+      "path": "Lib/site-packages/numpy/compat/py3k.py",
+      "bytes": 3946
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/compat/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "81588a58841a3f3bbdb4a64f4edeab22fdcbc6dbc47bd9f1ad480f6550c4f146",
+      "path": "Lib/site-packages/numpy/conftest.py",
+      "bytes": 8978
+    },
+    {
+      "sha256": "fe5a5c688a8d8374c7e77244d09295283e17d03393922d9d4af4208c78fa11e9",
+      "path": "Lib/site-packages/numpy/core/__init__.py",
+      "bytes": 1307
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/core/__init__.pyi",
+      "bytes": 0
+    },
+    {
+      "sha256": "7a264d28225bcd9d448bd4e477b15f7f1f2f594b002a71522bee6fcdadef9844",
+      "path": "Lib/site-packages/numpy/core/_dtype_ctypes.py",
+      "bytes": 359
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/core/_dtype_ctypes.pyi",
+      "bytes": 0
+    },
+    {
+      "sha256": "3dc4829fb0c2a60aef0639be93878231c1224e71fe8cfcd09a1f05cb32d5c3d2",
+      "path": "Lib/site-packages/numpy/core/_dtype.py",
+      "bytes": 331
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/core/_dtype.pyi",
+      "bytes": 0
+    },
+    {
+      "sha256": "1c2d4daea0c480afba33533afbc653652645ef19c860f87f1bfe23d8114134b3",
+      "path": "Lib/site-packages/numpy/core/_internal.py",
+      "bytes": 972
+    },
+    {
+      "sha256": "bcee3dff8c7949883e0524f9e3597bdd19819bba64a9bc25b2c9b0b1149d53cd",
+      "path": "Lib/site-packages/numpy/core/_multiarray_umath.py",
+      "bytes": 2151
+    },
+    {
+      "sha256": "740699b5755684e1058b0995b33f0c9fbec7b329cc0ca859ec792b8c3d50def7",
+      "path": "Lib/site-packages/numpy/core/_utils.py",
+      "bytes": 944
+    },
+    {
+      "sha256": "aa8f4621f744996f5fa31bcfd2fb452d16809526cea0e18953e841950e612250",
+      "path": "Lib/site-packages/numpy/core/arrayprint.py",
+      "bytes": 347
+    },
+    {
+      "sha256": "fa00a373d72220b852cc0c6d5578224f0769b8d303dd1ea9f6d5c77bf30bc7d0",
+      "path": "Lib/site-packages/numpy/core/defchararray.py",
+      "bytes": 355
+    },
+    {
+      "sha256": "2e40928d14371c81787dd473eee12097ed53c9e4f482d195e72f31f5c418b19d",
+      "path": "Lib/site-packages/numpy/core/einsumfunc.py",
+      "bytes": 347
+    },
+    {
+      "sha256": "890b2287bd7cafa416f346ae3c96ef6bdf6a7967d3e482b64b4dacbf8005314b",
+      "path": "Lib/site-packages/numpy/core/fromnumeric.py",
+      "bytes": 351
+    },
+    {
+      "sha256": "57ffad50665f8236338d9c6f84b351b555d5dbfbf5dab26cbc01a90d76dfabcc",
+      "path": "Lib/site-packages/numpy/core/function_base.py",
+      "bytes": 359
+    },
+    {
+      "sha256": "490b13943a43573f40bc50bec6f0096e1726e6cbc10f4daaa44f872e0b75ed10",
+      "path": "Lib/site-packages/numpy/core/getlimits.py",
+      "bytes": 343
+    },
+    {
+      "sha256": "d8aee0de35db1fbc2aba94accabe703f4628412a5795969bf6e0c36c9b73d819",
+      "path": "Lib/site-packages/numpy/core/multiarray.py",
+      "bytes": 816
+    },
+    {
+      "sha256": "9d3bf073002a9330a7626a84b7827776fa94a1dcd7525688f07e58179c7ae718",
+      "path": "Lib/site-packages/numpy/core/numeric.py",
+      "bytes": 370
+    },
+    {
+      "sha256": "8e643d7355ab5b1971f0e0c364a380aab8b152edc6c7f3490f54b34f7c2d6f9d",
+      "path": "Lib/site-packages/numpy/core/numerictypes.py",
+      "bytes": 355
+    },
+    {
+      "sha256": "0eafa54dbf36f60be0f877d1b58d0113a184d946c8ea25e430887c1af933b758",
+      "path": "Lib/site-packages/numpy/core/overrides.py",
+      "bytes": 343
+    },
+    {
+      "sha256": "1d2722789936de4e0b935e2af2ef4211cdd9115390ea11aefc57960d1d93caef",
+      "path": "Lib/site-packages/numpy/core/overrides.pyi",
+      "bytes": 532
+    },
+    {
+      "sha256": "e633ed804b47689eb8d82b7e1bdb84c2717dcbf4d99d90145e6fc4509105f09f",
+      "path": "Lib/site-packages/numpy/core/records.py",
+      "bytes": 335
+    },
+    {
+      "sha256": "8ad8abcf884ddccf0d7608a3e3f65572b6b8aad4642b8d8ec29f2aafd7c57b9c",
+      "path": "Lib/site-packages/numpy/core/shape_base.py",
+      "bytes": 347
+    },
+    {
+      "sha256": "d3db8dc9b52a7d6c5daa4a181f3bfa8eb4c3097aba0c323e11dc1a38a7628e7e",
+      "path": "Lib/site-packages/numpy/core/umath.py",
+      "bytes": 327
+    },
+    {
+      "sha256": "f5e8f2a3bed0a9de787fd8fba5141068005801f5718d67e02af89af3c4fd84fe",
+      "path": "Lib/site-packages/numpy/ctypeslib.py",
+      "bytes": 19438
+    },
+    {
+      "sha256": "ec263f35ad84d2ec19f3c4f3277a5ab288322c8af4c1df2c71d7316342cadb50",
+      "path": "Lib/site-packages/numpy/ctypeslib.pyi",
+      "bytes": 8338
+    },
+    {
+      "sha256": "8cc9df4214649d5221805552f73da5e6860cf0dd6db90b5fe5b5cc04be38f682",
+      "path": "Lib/site-packages/numpy/doc/ufuncs.py",
+      "bytes": 5552
+    },
+    {
+      "sha256": "70f912e812d1be97ec53385ded59352fbfd571e9d66f59ee1ee0b173d7d80b82",
+      "path": "Lib/site-packages/numpy/dtypes.py",
+      "bytes": 1353
+    },
+    {
+      "sha256": "f46cace4e20351c8256c30a09c9aae6c0963bad732fcd52d9aa594cbdfab441d",
+      "path": "Lib/site-packages/numpy/dtypes.pyi",
+      "bytes": 15787
+    },
+    {
+      "sha256": "f28afa9c1d9d8b4aec5e9c4bae6a142389c7e5bb32008227b017cc0d82f5452f",
+      "path": "Lib/site-packages/numpy/exceptions.py",
+      "bytes": 8085
+    },
+    {
+      "sha256": "6da0647c9fc341d1fa007eeba085eaf094a56395a7e33fe174955ba3fd524141",
+      "path": "Lib/site-packages/numpy/exceptions.pyi",
+      "bytes": 776
+    },
+    {
+      "sha256": "5995dee89326501691b81b68b024739e8d2ba1e523f02128430f60dbf451a247",
+      "path": "Lib/site-packages/numpy/f2py/__init__.py",
+      "bytes": 2590
+    },
+    {
+      "sha256": "d3ffb15e1673b6a9287434b65094c664074b3bc264cc4ecb30961e0d96b8e9c6",
+      "path": "Lib/site-packages/numpy/f2py/__init__.pyi",
+      "bytes": 1103
+    },
+    {
+      "sha256": "4c37accbfd9f0d7fa0dbbb89b78c972175b34a8af5dfc476b7657b1c51f0a809",
+      "path": "Lib/site-packages/numpy/f2py/__main__.py",
+      "bytes": 135
+    },
+    {
+      "sha256": "4e2b0abe0720e2f879169b70d864b5241ff76c042c59920a85c9445fa65c021a",
+      "path": "Lib/site-packages/numpy/f2py/__version__.py",
+      "bytes": 35
+    },
+    {
+      "sha256": "c48547885faf7a59010cf2b0152db43d283e5e4156e642c0563e424aa34b75d3",
+      "path": "Lib/site-packages/numpy/f2py/_backends/__init__.py",
+      "bytes": 308
+    },
+    {
+      "sha256": "f51643bb8142c0233b1b7f445f6604b7e5676b3d14d964a9f904807f3d750461",
+      "path": "Lib/site-packages/numpy/f2py/_backends/_backend.py",
+      "bytes": 1233
+    },
+    {
+      "sha256": "7b776a0bd75d9a9a6c08d84b9e0b4e13767a5999cb7da1bf379c6221c1cf5562",
+      "path": "Lib/site-packages/numpy/f2py/_backends/_distutils.py",
+      "bytes": 2459
+    },
+    {
+      "sha256": "183e69bf78a54d18ed538c065a05ab6a48389c5c923a2697e0d76680edde8183",
+      "path": "Lib/site-packages/numpy/f2py/_backends/_meson.py",
+      "bytes": 8322
+    },
+    {
+      "sha256": "e970f78fe2b9a5cd4ffe272051692b804b3296e7505aca92e6b6fa501dbdb47d",
+      "path": "Lib/site-packages/numpy/f2py/_backends/meson.build.template",
+      "bytes": 1654
+    },
+    {
+      "sha256": "415a11fe90ff6d8f488136921c7530ffc1018349a469fdc965fc212df1dbcf54",
+      "path": "Lib/site-packages/numpy/f2py/_isocbind.py",
+      "bytes": 2422
+    },
+    {
+      "sha256": "decc2640a19379019530bcd34e466a6471d0e443fa453d8b8e06949d7bf44bbe",
+      "path": "Lib/site-packages/numpy/f2py/_src_pyf.py",
+      "bytes": 7904
+    },
+    {
+      "sha256": "e6d17f66f7ac7c90d39a1fb53eaecd815ec0ac3b43d9a3868706dbe1566dada1",
+      "path": "Lib/site-packages/numpy/f2py/auxfuncs.py",
+      "bytes": 28020
+    },
+    {
+      "sha256": "1e3d60e53e528b273825649924f9db7d7a8f4c2aa85db970883113d385018789",
+      "path": "Lib/site-packages/numpy/f2py/capi_maps.py",
+      "bytes": 31428
+    },
+    {
+      "sha256": "8402de98ab2a6b5aa44c3d8aa8171d1a64438524c0baad59e59b0f9498d6757c",
+      "path": "Lib/site-packages/numpy/f2py/cb_rules.py",
+      "bytes": 25648
+    },
+    {
+      "sha256": "a9bb85f5f256961552677c48b2d170ac658cec53b5672d03533064e870f5d629",
+      "path": "Lib/site-packages/numpy/f2py/cfuncs.py",
+      "bytes": 54036
+    },
+    {
+      "sha256": "d7d54310f43df8fcf3927bf4dd4db781661eb260c0cc9ac6c70757aa7ec2c614",
+      "path": "Lib/site-packages/numpy/f2py/common_rules.py",
+      "bytes": 5277
+    },
+    {
+      "sha256": "0e768b78c238c1d73d714014312b826ffdbf640cd6b907db8bca6e2de44d6de5",
+      "path": "Lib/site-packages/numpy/f2py/crackfortran.py",
+      "bytes": 151841
+    },
+    {
+      "sha256": "d03b4f4c38f16c552ed05fe70c77ec0f4be50a09d185ff16675907b175567291",
+      "path": "Lib/site-packages/numpy/f2py/diagnose.py",
+      "bytes": 5351
+    },
+    {
+      "sha256": "dfaa9d28a957c4b8b0159a03c00f6c6193311fa233a0f63d6a507c65a8e7c436",
+      "path": "Lib/site-packages/numpy/f2py/f2py2e.py",
+      "bytes": 29621
+    },
+    {
+      "sha256": "43e7bd43bf5d90ebc404ba090cb4dfee75fb59bb4f7feaade296d1238d642d8c",
+      "path": "Lib/site-packages/numpy/f2py/f90mod_rules.py",
+      "bytes": 10144
+    },
+    {
+      "sha256": "5aba340b734648efb5836cf1048f2a83f4e5e8ac9cceb0ad09326f84de0ab544",
+      "path": "Lib/site-packages/numpy/f2py/func2subr.py",
+      "bytes": 10621
+    },
+    {
+      "sha256": "9508d9f9ed0b000ad7366b28e5ce87fc8a976620dd99c9a6826577b73b49e142",
+      "path": "Lib/site-packages/numpy/f2py/rules.py",
+      "bytes": 64516
+    },
+    {
+      "sha256": "f36f2ccb726f2663335712e40becb497170431a0d39cc73797d756a8fe236278",
+      "path": "Lib/site-packages/numpy/f2py/setup.cfg",
+      "bytes": 50
+    },
+    {
+      "sha256": "47b0097d68d08b3d9d2f2956b45a6f641c96beef4e0a41b850290c6b7b7e8f1c",
+      "path": "Lib/site-packages/numpy/f2py/src/fortranobject.c",
+      "bytes": 47472
+    },
+    {
+      "sha256": "b827073bc9a3b8036529bddced8019c0ce29813d024da5d62d8aa0136ecc9edd",
+      "path": "Lib/site-packages/numpy/f2py/src/fortranobject.h",
+      "bytes": 5996
+    },
+    {
+      "sha256": "048e66f23ef0129ab5bbdc930d4054b6a502087d49055571c8415944c8c65a50",
+      "path": "Lib/site-packages/numpy/f2py/symbolic.py",
+      "bytes": 54771
+    },
+    {
+      "sha256": "862417d65bc8eeb21844d79c5698390ffd0de84d30f7805299ec61104aeeb662",
+      "path": "Lib/site-packages/numpy/f2py/tests/__init__.py",
+      "bytes": 343
+    },
+    {
+      "sha256": "68268512a7d7a7bf695579d316d8d9056518ff9a6ef30b1e869d5d11ab8e9121",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/abstract_interface/foo.f90",
+      "bytes": 692
+    },
+    {
+      "sha256": "cb74767439f4054cfed1b32081f4f58f05db873fe09e2cfb38d329bab78441ec",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/abstract_interface/gh18403_mod.f90",
+      "bytes": 111
+    },
+    {
+      "sha256": "d1491cb58e68785b3d07daa75fcaa17b7c1315903f985f85041909a32fe2b908",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/array_from_pyobj/wrapmodule.c",
+      "bytes": 7713
+    },
+    {
+      "sha256": "cdfb8e4a19aea2dcdc2c84039d515a011c2f33aea22eb398ce9aae2060db88a5",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap",
+      "bytes": 30
+    },
+    {
+      "sha256": "7ea6d2afb56529f56b06e945810b5003d7d07f4990bd56cb8bde1ee054d24f79",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/assumed_shape/foo_free.f90",
+      "bytes": 494
+    },
+    {
+      "sha256": "f696e2f3cfae48d3f92304b8f4a8a6f7cda30c0ba8a68deda44860d92394ee7a",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/assumed_shape/foo_mod.f90",
+      "bytes": 540
+    },
+    {
+      "sha256": "f42975b1dae2841f1c092b23a101a638ef1546ff678bc163af4024bb551d1163",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/assumed_shape/foo_use.f90",
+      "bytes": 288
+    },
+    {
+      "sha256": "dcbfc5ee7e63bbd1749f1c3de6e05468f7ae8833b0eae1ef079f347888fb6ea2",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/assumed_shape/precision.f90",
+      "bytes": 134
+    },
+    {
+      "sha256": "2954dea9216923de226d8215bd45ba94e43d4f6071e54cd911ac8ff0c69fd87d",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/block_docstring/foo.f",
+      "bytes": 103
+    },
+    {
+      "sha256": "acba9a69a5295854da195c4da06111b4328609ae5d2c24d6e43825b05231fb05",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/foo.f",
+      "bytes": 1316
+    },
+    {
+      "sha256": "fbf36f40ad0cce5491ef63d2b9413515e533cec30151c3cab1bada1c817b3b6e",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/gh17797.f90",
+      "bytes": 155
+    },
+    {
+      "sha256": "9ff46bf7d708ee21c110f5772862c4b7440a66d22d114283750901b7418a2b2e",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/gh18335.f90",
+      "bytes": 523
+    },
+    {
+      "sha256": "7a363fb2c69d6d941f0f9ffe5e7c7f6b2cd65d62e391dcbb0c6a7a0bfb825026",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/gh25211.f",
+      "bytes": 189
+    },
+    {
+      "sha256": "9ebcefb7640765109cba083447ee050cc325d4c2665823808d1ed36bea57cfb6",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/gh25211.pyf",
+      "bytes": 465
+    },
+    {
+      "sha256": "ca4c0d5d6ca36b915f664d5b3e285b6223263256ca8513e83cabdaf5d345b4b3",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/callback/gh26681.f90",
+      "bytes": 584
+    },
+    {
+      "sha256": "7b7cd88c59a23b1cdd5e8c73824690f8257ab19d6de1a2ae83286a45798135d4",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/cli/gh_22819.pyf",
+      "bytes": 148
+    },
+    {
+      "sha256": "6e0044445e046311e5cc90af64224e944994135148be2a5d9a3e0b8dd98bfdd1",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/cli/hi77.f",
+      "bytes": 74
+    },
+    {
+      "sha256": "46771a12a1969ac1fd67c04c57e526393532a37f9ef7139018098d803bfa49f6",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/cli/hiworld.f90",
+      "bytes": 54
+    },
+    {
+      "sha256": "b5c18a6b8d92fba6df03a7f26e93344aeff18f2b0456eb2d904268179d68fe91",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/common/block.f",
+      "bytes": 235
+    },
+    {
+      "sha256": "5696f7e254550bde924d66897abaa40d07997fb9833b059bb9dea95bad93be6e",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/common/gh19161.f90",
+      "bytes": 203
+    },
+    {
+      "sha256": "dce3476f864dc745c84afa7c7c0ae75304755bdaf37ad2c520b4e21133d477cd",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/accesstype.f90",
+      "bytes": 221
+    },
+    {
+      "sha256": "240cc70f96a5ba8630d23546663058775c130015343f03410f4733dc0bf90009",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/common_with_division.f",
+      "bytes": 511
+    },
+    {
+      "sha256": "acfddabe7ba55aa25b18214b59aca3a05292b291831d932274f4eeae3cf7dd37",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/data_common.f",
+      "bytes": 201
+    },
+    {
+      "sha256": "2da3d756ea39957d20159561efa1dcecb335b0c93d1013c02ee5c19c700674e0",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/data_multiplier.f",
+      "bytes": 202
+    },
+    {
+      "sha256": "30067782cb6c3ea1029379d6439425f82e6e76b22fdec01c896d59193b472edb",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/data_stmts.f90",
+      "bytes": 713
+    },
+    {
+      "sha256": "1543e5b8db61e6e1e0c8aaa3416ec72a6c96838c035e3dd73c90880bd659b8eb",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/data_with_comments.f",
+      "bytes": 183
+    },
+    {
+      "sha256": "0fd153f11c7e98ada9f11eabe1b5b1c6a8188645d1ea53663e3d915ceb1e329c",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/foo_deps.f90",
+      "bytes": 134
+    },
+    {
+      "sha256": "d06f5b99f55a7e9baec78f99824b5867aa2b9b0ad60d33a128c2b8c268926654",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh15035.f",
+      "bytes": 391
+    },
+    {
+      "sha256": "69c9278f0a1661d034dfca258982e30784f53c785790a44b789a1b22007f2dba",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh17859.f",
+      "bytes": 352
+    },
+    {
+      "sha256": "c4f9cac7845c4f5e7af2afaafcef370d8a42815609f33e1643ec8b9873dc8490",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh22648.pyf",
+      "bytes": 248
+    },
+    {
+      "sha256": "936c6346945a6a3318a62e4ef9c95d60f4d9185181d763d419c8f9166f63a329",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh23533.f",
+      "bytes": 131
+    },
+    {
+      "sha256": "db4ba47595eafaa534671cede16e9c3bcb51c65365438e7ace00f4f73768cc21",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh23598.f90",
+      "bytes": 105
+    },
+    {
+      "sha256": "16f9c8c72e5f10ebf335be564a45b33e4ef267dc88bf4c8f664f6f3674bef37c",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh23598Warn.f90",
+      "bytes": 216
+    },
+    {
+      "sha256": "8c42d57c418417aeb3fcfbff8811e9df21ac1a169d0747672820ed3dc6b3fc23",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh23879.f90",
+      "bytes": 352
+    },
+    {
+      "sha256": "9933849dcc5995a9ba37edc8f882f4b9afa22e482a0ebad55cdb04fbbcbb8c03",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh27697.f90",
+      "bytes": 376
+    },
+    {
+      "sha256": "f88a64793cf48fdfe591078df664fbc3753570026343148c7409b21dd17ca158",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/gh2848.f90",
+      "bytes": 295
+    },
+    {
+      "sha256": "71bd493b684830241e8d93bf5095a5b8108ff0b75741b049c365cde981c1dc90",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/operators.f90",
+      "bytes": 1233
+    },
+    {
+      "sha256": "f4eda8584aae21471b0c1d7023335e69ede1c7882f5c0a185b9b467c1b772969",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/privatemod.f90",
+      "bytes": 185
+    },
+    {
+      "sha256": "9d4fd55c22a29e2894abfefc2805a45e237aa22310877f5e98cc5b80e55ff5c8",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/publicmod.f90",
+      "bytes": 177
+    },
+    {
+      "sha256": "faecfbe64aae538c286da00f6750cb297260eb24826680cc13571ee98676ab96",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/pubprivmod.f90",
+      "bytes": 175
+    },
+    {
+      "sha256": "c0332817b17b54561d7a871f4f258887b9e89e213013155bdfae07ae15126d28",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/crackfortran/unicode_comment.f90",
+      "bytes": 102
+    },
+    {
+      "sha256": "7f0b33ca669685c58edbdeaee538475b9c8c02416107a12d1d6aaaa5cf450152",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/f2cmap/.f2py_f2cmap",
+      "bytes": 83
+    },
+    {
+      "sha256": "ae984dfe69b38c208291d3ccd078ec88957bae6c69a381a808da79aa6073bfc5",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/f2cmap/isoFortranEnvMap.f90",
+      "bytes": 307
+    },
+    {
+      "sha256": "3a2af43df137984ae7510e36685c62a8091c627dc1e9bd451c83c68a90dd7a48",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/isocintrin/isoCtests.f90",
+      "bytes": 1032
+    },
+    {
+      "sha256": "ebfceadce016b2e349e5fb464d0004ca7907cbe327b8b8015e630881bbcbef25",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/kind/foo.f90",
+      "bytes": 367
+    },
+    {
+      "sha256": "e9e1046021fbd603e9ea567a7b669f2eb7d2e85fdf74fec66436e018927fea7b",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/mixed/foo_fixed.f90",
+      "bytes": 187
+    },
+    {
+      "sha256": "502ea2551726d3e6955c020b1398d9862be81906ca53ea6baafe7d1d36f15090",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/mixed/foo_free.f90",
+      "bytes": 147
+    },
+    {
+      "sha256": "6609f4c43861cdf6acdc7af38154b120bd65184176985455a21aef5cdd6d854d",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/mixed/foo.f",
+      "bytes": 90
+    },
+    {
+      "sha256": "12a304b84574fecc785db1737ed6d4ffa55f1ad3b0f536ecd299b4795129d9c0",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/gh25337/data.f90",
+      "bytes": 188
+    },
+    {
+      "sha256": "0c28552e00fba933a96d83667c68cf8df3b1e58b2984c218c1dc27175d97e313",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/gh25337/use_data.f90",
+      "bytes": 185
+    },
+    {
+      "sha256": "30c2cf4b3070b864b8530097c2cf5d8c7d75179b46e7114b73cd020dbe14f4c9",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/gh26920/two_mods_with_no_public_entities.f90",
+      "bytes": 423
+    },
+    {
+      "sha256": "d5d243d640c2ff0c27eefff3178f43de7eb64f5c7dc05c4629a9d0433fd523b9",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/gh26920/two_mods_with_one_public_routine.f90",
+      "bytes": 424
+    },
+    {
+      "sha256": "f9ab27307eef64cc1521e314d9888b5a06025145316603d3a5b0289a0581c87b",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/module_data_docstring.f90",
+      "bytes": 236
+    },
+    {
+      "sha256": "6ef79202a5c866d77834c9437c57a2d5995eb0501af409f92e3903fa00e4da6b",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/modules/use_modules.f90",
+      "bytes": 418
+    },
+    {
+      "sha256": "23104659e9bebaff5e1e00e1cac11d19398d287475800894ed824fa36d1ebde3",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/negative_bounds/issue_20853.f90",
+      "bytes": 164
+    },
+    {
+      "sha256": "7e461e9b02012ac3fadfe1462815bc9b3380a7a935dde64e8a7f2c41ed69ca7a",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_array.f90",
+      "bytes": 1513
+    },
+    {
+      "sha256": "2f4ac6ebe0a5bc7c7b42c721e3a0545d18bfa0810bd2ec3976944774e510bafd",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_both.f90",
+      "bytes": 1996
+    },
+    {
+      "sha256": "9404fbe8771718c82bd4d7caa1ff91217dd6d8ffe29353cfaa445d27a1320663",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_compound.f90",
+      "bytes": 484
+    },
+    {
+      "sha256": "e368d1380aeb1bbbc86a0f7015afd1af90c19e736f1acac4520a4f535e2f7c8a",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_integer.f90",
+      "bytes": 634
+    },
+    {
+      "sha256": "bbd3117fcf780b0d0c56548e51b3129c54873f821ccfb4413b6d507cc90897e4",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_non_compound.f90",
+      "bytes": 632
+    },
+    {
+      "sha256": "4283e02a21d6af023bc3972d619ba05d6cda42ca927c630eec9b246e0e022d37",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/parameter/constant_real.f90",
+      "bytes": 633
+    },
+    {
+      "sha256": "d335d06dd6aa07d9c1f11e0b174eca0cc1436f194d76226355d47c35bde7cc83",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/quoted_character/foo.f",
+      "bytes": 496
+    },
+    {
+      "sha256": "c9d8d355be90130d62630dad462ce2aaacd67031eb26c356af79b9d7eaea1574",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/AB.inc",
+      "bytes": 17
+    },
+    {
+      "sha256": "bcf25b84e94db0bae0377b2ee288475126f1138186294ed288987b76106f5f7a",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/assignOnlyModule.f90",
+      "bytes": 633
+    },
+    {
+      "sha256": "1ee04bb84c3490d129949f53c7148dafb84b8fe8f1f593466970bc88b9bf91ff",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/datonly.f90",
+      "bytes": 409
+    },
+    {
+      "sha256": "1633fed3bb2e4c176a82dc2210d4f4e0ffb8ed407883d279fb6d0841d5c01e13",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/f77comments.f",
+      "bytes": 652
+    },
+    {
+      "sha256": "29d28570073766b203fa1e274ce24374461f4334769249fd56a402a2b7c91a93",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/f77fixedform.f95",
+      "bytes": 144
+    },
+    {
+      "sha256": "570785222e7ec71661b6048e87c8bf16330f5eefe877daa3ac31eaea66b95f99",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/f90continuation.f90",
+      "bytes": 285
+    },
+    {
+      "sha256": "82af3b1f60ad09950e37d57953370aeb1fdfb619d60d5b8f1502dad1f79c7b53",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/incfile.f90",
+      "bytes": 97
+    },
+    {
+      "sha256": "4e53312638638e2b8b23ef938362ec84b9db7d9a622b3dfb12947fb4f28a4b1f",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/inout.f90",
+      "bytes": 286
+    },
+    {
+      "sha256": "6d6963d85adc877a279d4a5de834daa0b0daea1b6badb901888f492116d03df1",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/regression/lower_f2py_fortran.f90",
+      "bytes": 105
+    },
+    {
+      "sha256": "b51c904aef6f356b4c462ee08e630df886674bba20af9612d27dfcb9ac7f128d",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_character/foo77.f",
+      "bytes": 1025
+    },
+    {
+      "sha256": "58f4190ba0a35cb6d4629cf2e4b22d1281e64431715b40010777a64400ac8d95",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_character/foo90.f90",
+      "bytes": 1296
+    },
+    {
+      "sha256": "efe88aa1a989f9539b3c547e4ec9618b0f44f88b48bda9e458ccb15391eac482",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_complex/foo77.f",
+      "bytes": 1018
+    },
+    {
+      "sha256": "fc638a3997a8a16a77a4469306b64d98f9a4806a1d8f7de9267266c929e9eda1",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_complex/foo90.f90",
+      "bytes": 1286
+    },
+    {
+      "sha256": "10ab3529e00e4019083bdf6d302c741fbfe5a6abeaa6389ef33599e93fdb011e",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_integer/foo77.f",
+      "bytes": 1234
+    },
+    {
+      "sha256": "d1a61671a015b3b2f0dd06dff21ba97cb0bc61abd1b8f6552308c779c22530ea",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_integer/foo90.f90",
+      "bytes": 1590
+    },
+    {
+      "sha256": "031ded05534097116d1e157c7f388572c4e7a1af1825d6a979c32be908fb7cb9",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_logical/foo77.f",
+      "bytes": 1244
+    },
+    {
+      "sha256": "2195c27ab15e7184f6e334d0feca48a0fafa9fe7d19dc68cd2d913b3c26a3b51",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_logical/foo90.f90",
+      "bytes": 1590
+    },
+    {
+      "sha256": "de7018d58b731a4e28b11da36641cc548507c45a0eb45d4e2df5acc29715ee40",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_real/foo77.f",
+      "bytes": 978
+    },
+    {
+      "sha256": "dfc6429c11966fd6ab949767556bd98d593cb9eb2b40df301b61ab5c6712209b",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/return_real/foo90.f90",
+      "bytes": 1242
+    },
+    {
+      "sha256": "aeec972ba79048b42743face0d3d6a9b5709be91eb16123a351ae75af1082b45",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/routines/funcfortranname.f",
+      "bytes": 128
+    },
+    {
+      "sha256": "120470f1958675ddae2b8a82643f3dafd550b445e69ca0f1e7d3a90742b9f1ab",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/routines/funcfortranname.pyf",
+      "bytes": 451
+    },
+    {
+      "sha256": "df90e31c88fce592e4c51c4fe1bb3e5854d0e72d40c83a812805d3cd24930311",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/routines/subrout.f",
+      "bytes": 94
+    },
+    {
+      "sha256": "c53fd69c3a6fa723dbd053110154d14609b79e57c02dfd4e8e0f31dea64dbffe",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/routines/subrout.pyf",
+      "bytes": 332
+    },
+    {
+      "sha256": "9caffbebb7f54eda95afe74c6a53645e670a6d26cb0a269b8519314830b32f3d",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/size/foo.f90",
+      "bytes": 859
+    },
+    {
+      "sha256": "5ffb2838457c70ab1565e7e2de22d3ee29479638ef249fe2f5510758eb744fd6",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/char.f90",
+      "bytes": 647
+    },
+    {
+      "sha256": "b42379b00e9eeccd55899b4136f4e73bbfde7e4ec11c88f2845281a0b0b7512d",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/fixed_string.f90",
+      "bytes": 729
+    },
+    {
+      "sha256": "67a72af12146be6680ef6a9e1fdb6ed6b3fca588ea9b438da479fb9c66e1a0b0",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/gh24008.f",
+      "bytes": 225
+    },
+    {
+      "sha256": "c4992262facc4fd2296fd0aaece5e5d44bfa4c84a5f29ab53067a6c92cdf19dd",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/gh24662.f90",
+      "bytes": 204
+    },
+    {
+      "sha256": "651be04b346568f131f06c8db7dec5ad186d0a0fabe194c40ec1cd05f8ade26f",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/gh25286_bc.pyf",
+      "bytes": 396
+    },
+    {
+      "sha256": "96a125f3522ef462034c06ce7e490d19c1a00f2c869cf078e26270da22b59278",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/gh25286.f90",
+      "bytes": 318
+    },
+    {
+      "sha256": "c18924af980437dfd1b468e9aa1dbc5f593c282821d3e0ecf5702df080bd8f80",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/gh25286.pyf",
+      "bytes": 393
+    },
+    {
+      "sha256": "53542a5606c5d436f17457a4463721c8394544f9d7c331bbda4b84f00e3865af",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/scalar_string.f90",
+      "bytes": 185
+    },
+    {
+      "sha256": "242c0bb87db52ed6a0e5cc3ff607884102781efff7f4da86f03cdbaa3d5e0ca1",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/string/string.f",
+      "bytes": 260
+    },
+    {
+      "sha256": "31b6d2510239127ceae3a29614747341b63baba647247ffd3512fe0bd8b5dd68",
+      "path": "Lib/site-packages/numpy/f2py/tests/src/value_attrspec/gh21665.f90",
+      "bytes": 199
+    },
+    {
+      "sha256": "ebbdeb558afa66c3126f796e9a38aa7b22b60e390c2c416baa6a5196361645eb",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_abstract_interface.py",
+      "bytes": 833
+    },
+    {
+      "sha256": "f16e63d67a9b5db5290ac0b0dd2e66a467ee4adbe414229575f5e2ede536728e",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_array_from_pyobj.py",
+      "bytes": 24379
+    },
+    {
+      "sha256": "232a893c6a4656ffd16910b0ae4a3fefdde32f1242d78f79b51f6001b993951f",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_assumed_shape.py",
+      "bytes": 1515
+    },
+    {
+      "sha256": "d0387519795a0a0df70e695b842d3c30e04c5dda4c6e4f7cdcc401da107b5e10",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_block_docstring.py",
+      "bytes": 600
+    },
+    {
+      "sha256": "a4896871c145ea724e3300f8c8e883587154b54d8f7ca92b65f5ae86a22104cd",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_callback.py",
+      "bytes": 7375
+    },
+    {
+      "sha256": "22e57a0d0fbe4ebf8d100592c735b3ae30d0b550205cb895fa37c78bf75ce527",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_character.py",
+      "bytes": 22544
+    },
+    {
+      "sha256": "cf5aa83a6e8716f2da97f70e08fb8d9fb355a215a358170edafd6669515f4614",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_common.py",
+      "bytes": 661
+    },
+    {
+      "sha256": "d31c5f17401b61d755a2eef629b4595f620c9d27d48770a3e618791441f9be33",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_crackfortran.py",
+      "bytes": 16801
+    },
+    {
+      "sha256": "25239b87c35f662a50429d3fd36d462d52a19b086237112f01fe599b6ab475db",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_data.py",
+      "bytes": 2958
+    },
+    {
+      "sha256": "2006ae7fdea26e6a62ea1ccd0fc748fef7c09cba149fe1b31cc55fd39188c093",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_docs.py",
+      "bytes": 1909
+    },
+    {
+      "sha256": "d98cb8cee16b927d10bc29224631a21ea8aba7d6d77bc3834a733f2d834052c3",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_f2cmap.py",
+      "bytes": 400
+    },
+    {
+      "sha256": "05e50198234a89761ed93c4f3028691cc0a8ecc6676ea60797a893a09e2adb98",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_f2py2e.py",
+      "bytes": 28832
+    },
+    {
+      "sha256": "2865228da37642e9bfa900f545cee6ec1ddd313c78ee846e77c65635f7393346",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_isoc.py",
+      "bytes": 1481
+    },
+    {
+      "sha256": "895b3e4cbdf8dda35ae8d39ac37d44698077b1c15d9d4e27d3f20a3dd8f201ca",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_kind.py",
+      "bytes": 1832
+    },
+    {
+      "sha256": "f793bcc64a2e0da34572431ad93e2a9d47c1a55115ba06ccd22aee428f49169c",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_mixed.py",
+      "bytes": 893
+    },
+    {
+      "sha256": "98c2f372310d549de89fefb3f6a99b52d86bb96cf4d93e3d5e263f034c5bce4c",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_modules.py",
+      "bytes": 2380
+    },
+    {
+      "sha256": "2939a00fbef06451ea672ab8c1f4466d1f518ac36d8bc2203be43a9949de4b0a",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_parameter.py",
+      "bytes": 4753
+    },
+    {
+      "sha256": "44b9bde5a00d19a910602ce4fd426351cab498e407d0bb43e87a1962412222b5",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_pyf_src.py",
+      "bytes": 1179
+    },
+    {
+      "sha256": "70b3d132136208ed2ffbf0398cf91383e66fdfc53e6db26d7ae2ce2fd5526629",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_quoted_character.py",
+      "bytes": 493
+    },
+    {
+      "sha256": "0376b785ba4ca94ac510aa77a77231b9eb9b7daa19c89641250cfb034049a9ee",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_regression.py",
+      "bytes": 6023
+    },
+    {
+      "sha256": "f61014ad35a61e44a7450338a73e3770b141484214e6c37c83633cc5aa81a811",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_return_character.py",
+      "bytes": 1557
+    },
+    {
+      "sha256": "ca749a68c4b18814c0a69fad206c171cb7b98028ea9b8a890aafd03708a11969",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_return_complex.py",
+      "bytes": 2481
+    },
+    {
+      "sha256": "3cd79e7b2921d10f683f150272e2c2dd0d5715b46b93b8e14302ba7ab8dabb43",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_return_integer.py",
+      "bytes": 1830
+    },
+    {
+      "sha256": "80f04eeb3c66c1e9347d422f0838326e296d88daa2330688aaab18da8d0f5ed8",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_return_logical.py",
+      "bytes": 2081
+    },
+    {
+      "sha256": "7b7f50a90103929c6454497fe6a2baedcbbbbafd2265469103bb6561e2b29d5d",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_return_real.py",
+      "bytes": 3354
+    },
+    {
+      "sha256": "e01837a8b448c8a17374cdc1a115babe7e82288d8453396de709c70c1cc1c747",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_routines.py",
+      "bytes": 822
+    },
+    {
+      "sha256": "6645a957b88a2e849f7d5768cff8837666679b44f2e336521b9822b7c76c05e6",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_semicolon_split.py",
+      "bytes": 1700
+    },
+    {
+      "sha256": "18a679cc2b18fb05aae33c2505f3292ee6fef4cce2cb9185382edd837f64ee78",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_size.py",
+      "bytes": 1198
+    },
+    {
+      "sha256": "28489ce83703a0766eaa87d6b72b5402a68e0be1964784956b68f1b1d5ead73c",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_string.py",
+      "bytes": 3034
+    },
+    {
+      "sha256": "664e21dd60b67ad32b204c8cadac8fa46b61a567ee4b7e58cfee17cf3185718e",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_symbolic.py",
+      "bytes": 18835
+    },
+    {
+      "sha256": "09b704037536ac5ac513eeeba0a2174173f4d95abba60c2272b3f4e57ae2ccad",
+      "path": "Lib/site-packages/numpy/f2py/tests/test_value_attrspec.py",
+      "bytes": 343
+    },
+    {
+      "sha256": "f4184a57903983086b04176723f69ad27e4fc0f5d2e324628ddf158c1cdf9420",
+      "path": "Lib/site-packages/numpy/f2py/tests/util.py",
+      "bytes": 12615
+    },
+    {
+      "sha256": "cd687ca46e5ec1f83f2c89c3993e3c3bb734a019436864387b1a790b96546735",
+      "path": "Lib/site-packages/numpy/f2py/use_rules.py",
+      "bytes": 3621
+    },
+    {
+      "sha256": "3305448c8a37c03c4c01b284466997ddc1e1f042bd9c8c3dbe550d4e93a0372a",
+      "path": "Lib/site-packages/numpy/fft/__init__.py",
+      "bytes": 8541
+    },
+    {
+      "sha256": "f4b518fcda2b2c979c4101cdfb474b13db952e1c2fd37061da21554cea52316f",
+      "path": "Lib/site-packages/numpy/fft/__init__.pyi",
+      "bytes": 557
+    },
+    {
+      "sha256": "9c0b5043b78766b421c2cdc810806da670960387a63eb89c3a63675eb9bf6e78",
+      "path": "Lib/site-packages/numpy/fft/_helper.py",
+      "bytes": 7010
+    },
+    {
+      "sha256": "16b6b0efee2b45ae2d97f513d475b3bc6ad1d9b13bacd72bbb43e9b02d7f6f25",
+      "path": "Lib/site-packages/numpy/fft/_helper.pyi",
+      "bytes": 1379
+    },
+    {
+      "sha256": "39f9c06d564280ace6c95ae570efb0f7945aafc304db7c7fa432900b217d21fe",
+      "path": "Lib/site-packages/numpy/fft/_pocketfft_umath.cp312-win_amd64.lib",
+      "bytes": 2176
+    },
+    {
+      "sha256": "25cc37acd3d849c0fde1e0dc0112979dec4ec4279b7826d1a45395fe966068c9",
+      "path": "Lib/site-packages/numpy/fft/_pocketfft_umath.cp312-win_amd64.pyd",
+      "bytes": 279040
+    },
+    {
+      "sha256": "dccd11b1d568ffa4a98c6d761fb5baed6af91865dcf378a9480c7ee20095d956",
+      "path": "Lib/site-packages/numpy/fft/_pocketfft.py",
+      "bytes": 64379
+    },
+    {
+      "sha256": "3d47e1ba6fb12cc35a61a729a09663de1a3ec2ca085ab6c04bfa6af3857ca047",
+      "path": "Lib/site-packages/numpy/fft/_pocketfft.pyi",
+      "bytes": 3292
+    },
+    {
+      "sha256": "0ef7fa0d2f691d30a6ba0310cb9201c24e4b952b793e375286fd4846c5324886",
+      "path": "Lib/site-packages/numpy/fft/helper.py",
+      "bytes": 626
+    },
+    {
+      "sha256": "303248ee4d01173f0dd43b9893204211d693d3d77708712c05a1bd24082cd9a2",
+      "path": "Lib/site-packages/numpy/fft/helper.pyi",
+      "bytes": 913
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/fft/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "f82ad9bc6c680f5c6114d56c1c94b7a0d4f0eb262836ad3a08a1e658eff47d29",
+      "path": "Lib/site-packages/numpy/fft/tests/test_helper.py",
+      "bytes": 6316
+    },
+    {
+      "sha256": "41ab13c3718fc94f8c881d6a82d703c414a3086ac19c2b740535263239eb0055",
+      "path": "Lib/site-packages/numpy/fft/tests/test_pocketfft.py",
+      "bytes": 24999
+    },
+    {
+      "sha256": "a5c614f7073870eb2b3c8f46a1c5b89e4007af6f2bdce904156c7a6fab57b1d6",
+      "path": "Lib/site-packages/numpy/lib/__init__.py",
+      "bytes": 3320
+    },
+    {
+      "sha256": "cad0a59f181c99805233cd04b8bf28a0326beee319b6dbd6ce2d897b10a584f4",
+      "path": "Lib/site-packages/numpy/lib/__init__.pyi",
+      "bytes": 538
+    },
+    {
+      "sha256": "f15e61876258ccbd0b2b2d8a06b44f87e1591e37caae7ee7c92fd536bbd148ed",
+      "path": "Lib/site-packages/numpy/lib/_array_utils_impl.py",
+      "bytes": 1751
+    },
+    {
+      "sha256": "3ef24984d451c8e70bb58f851b090099109d25f1c459c9780709d4d7559aabfb",
+      "path": "Lib/site-packages/numpy/lib/_array_utils_impl.pyi",
+      "bytes": 818
+    },
+    {
+      "sha256": "462e88fecf795cb114c12ca4c7d78e073ec9aa23cd2904cc1f6e2e42b0c10fe9",
+      "path": "Lib/site-packages/numpy/lib/_arraypad_impl.py",
+      "bytes": 33217
+    },
+    {
+      "sha256": "6ce8c1aae9cfa9c98c37846238c7b44f9774de020cc489bf7e418c9fc38d8923",
+      "path": "Lib/site-packages/numpy/lib/_arraypad_impl.pyi",
+      "bytes": 1881
+    },
+    {
+      "sha256": "e3fe36540ecbbb83fe3832bd33792eb0afb12903f9bbbb5c4e1cae1cc727d15a",
+      "path": "Lib/site-packages/numpy/lib/_arraysetops_impl.py",
+      "bytes": 40524
+    },
+    {
+      "sha256": "07c92df75912ce4aed03e7f0ab05962cda4f0f312670cd3e0562a261df4d7b42",
+      "path": "Lib/site-packages/numpy/lib/_arraysetops_impl.pyi",
+      "bytes": 9948
+    },
+    {
+      "sha256": "9f5fde9af7ea5dcbceb4b85a78cb42bd8899a810a754235fc2923de65a0205ad",
+      "path": "Lib/site-packages/numpy/lib/_arrayterator_impl.py",
+      "bytes": 7410
+    },
+    {
+      "sha256": "53ea25a1c6f5113b97511a06e90b9886ad71a1e0f1aed490227a611ec1c21a25",
+      "path": "Lib/site-packages/numpy/lib/_arrayterator_impl.pyi",
+      "bytes": 1873
+    },
+    {
+      "sha256": "1fb1ca1470b27bdaf698b0eea7a2989ee29c8d4ace77719cdb014c9fbf2b5466",
+      "path": "Lib/site-packages/numpy/lib/_datasource.py",
+      "bytes": 23429
+    },
+    {
+      "sha256": "6bf984c3de1cc8af8893b65a4080c8269f02076a5857ed4512f46464708cdb47",
+      "path": "Lib/site-packages/numpy/lib/_datasource.pyi",
+      "bytes": 1027
+    },
+    {
+      "sha256": "dd3d59d7025ab419fc7d5ee890df66a0ba222f98d288d30646f7b1d2345f86f8",
+      "path": "Lib/site-packages/numpy/lib/_function_base_impl.py",
+      "bytes": 201865
+    },
+    {
+      "sha256": "d45b9048f6002e8b7867c2d7495bdc8e23fc665661d1fbc50523c770680ae226",
+      "path": "Lib/site-packages/numpy/lib/_function_base_impl.pyi",
+      "bytes": 23122
+    },
+    {
+      "sha256": "5828b7fb7bf727a35e5f1a100f2d8c071242412b9f80c926b6faf820880af88e",
+      "path": "Lib/site-packages/numpy/lib/_histograms_impl.py",
+      "bytes": 39852
+    },
+    {
+      "sha256": "1c543655a5794add611fb0ab76750e9f6a4abab2a35e83513784c9f43d6f9982",
+      "path": "Lib/site-packages/numpy/lib/_histograms_impl.pyi",
+      "bytes": 1118
+    },
+    {
+      "sha256": "df8fa5a835f12daa7757a23f0b6ece7b26092e2d5f288472cfe589dcada0ec3f",
+      "path": "Lib/site-packages/numpy/lib/_index_tricks_impl.py",
+      "bytes": 33248
+    },
+    {
+      "sha256": "b2108279e5ff5ddfdf035f18466861b64e1653be813f5a8560e40f0769b37938",
+      "path": "Lib/site-packages/numpy/lib/_index_tricks_impl.pyi",
+      "bytes": 6521
+    },
+    {
+      "sha256": "81fc382f032ccd6e5b0c7efc98cd58fd5596099feedb8b96fadba86405413369",
+      "path": "Lib/site-packages/numpy/lib/_iotools.py",
+      "bytes": 31840
+    },
+    {
+      "sha256": "ff6df8cb822e1e460e63532dfbb949fa42771496e18e8311974cd9872552f9d9",
+      "path": "Lib/site-packages/numpy/lib/_iotools.pyi",
+      "bytes": 3493
+    },
+    {
+      "sha256": "df682c6987c53ca02a7aac648e5f5700561a2ae9fa17d7fdf80ba1934b7bdc99",
+      "path": "Lib/site-packages/numpy/lib/_nanfunctions_impl.py",
+      "bytes": 74178
+    },
+    {
+      "sha256": "37cb436747e1c8c8850f4fb833fac13fad439839081a2375ef518d8f057195c9",
+      "path": "Lib/site-packages/numpy/lib/_nanfunctions_impl.pyi",
+      "bytes": 886
+    },
+    {
+      "sha256": "e77be5ba6495b1632369268536d33b01d6fcc73065108d4a89907e6318aebf1d",
+      "path": "Lib/site-packages/numpy/lib/_npyio_impl.py",
+      "bytes": 101972
+    },
+    {
+      "sha256": "607fa88b28b0779962e229a8ebf923be9c468273beff042e0f8345b33d02956d",
+      "path": "Lib/site-packages/numpy/lib/_npyio_impl.pyi",
+      "bytes": 9555
+    },
+    {
+      "sha256": "a3941df9549edfa82c804b8906b8c9ad6e23e5930c7d8baaea1a301d1dd36b31",
+      "path": "Lib/site-packages/numpy/lib/_polynomial_impl.py",
+      "bytes": 45752
+    },
+    {
+      "sha256": "3269566b04cd9449f2be5328926ff0dc8c96a5420342f3e38b11f708656eacca",
+      "path": "Lib/site-packages/numpy/lib/_polynomial_impl.pyi",
+      "bytes": 7432
+    },
+    {
+      "sha256": "dcfd861f4865756330ea182a366bff29794435f158cde232f60aaba9c3ae81d8",
+      "path": "Lib/site-packages/numpy/lib/_scimath_impl.py",
+      "bytes": 16334
+    },
+    {
+      "sha256": "f5a2495ff0f5f5c708ac6ab2d150a644600656896e5826102d6eff79cca4fd71",
+      "path": "Lib/site-packages/numpy/lib/_scimath_impl.pyi",
+      "bytes": 3049
+    },
+    {
+      "sha256": "2e0298327344ae4332f316c8ba68da3c91c53ce00bbc54d1c064076237c2b59a",
+      "path": "Lib/site-packages/numpy/lib/_shape_base_impl.py",
+      "bytes": 40647
+    },
+    {
+      "sha256": "7e5d1a4dfa2d37ef4839e1ac10054b9dec5b33e9e33c52a7614d77701ba31e41",
+      "path": "Lib/site-packages/numpy/lib/_shape_base_impl.pyi",
+      "bytes": 5513
+    },
+    {
+      "sha256": "d0bae7be6a689eed74852da0e84d0473bb07b8dadf352e42a0f64fa963cfef83",
+      "path": "Lib/site-packages/numpy/lib/_stride_tricks_impl.py",
+      "bytes": 18574
+    },
+    {
+      "sha256": "15e58fb35c83e2e4104a2b3cc38726f7e616ec843a6efdf7dc915aa88734ceb4",
+      "path": "Lib/site-packages/numpy/lib/_stride_tricks_impl.pyi",
+      "bytes": 1881
+    },
+    {
+      "sha256": "fe97db1382d390c4acb00e4f8b3d45d9cf6938cb4930eecb370fcccba3c5d240",
+      "path": "Lib/site-packages/numpy/lib/_twodim_base_impl.py",
+      "bytes": 35052
+    },
+    {
+      "sha256": "260a8f8e5068d4915e61d3276f6364318c91f03bda9a2de18e4e1543e30aea66",
+      "path": "Lib/site-packages/numpy/lib/_twodim_base_impl.pyi",
+      "bytes": 11706
+    },
+    {
+      "sha256": "359845ff321b7660f36cb6f06a43a73e1976791cf79495bfacdcc10942cb4849",
+      "path": "Lib/site-packages/numpy/lib/_type_check_impl.py",
+      "bytes": 19919
+    },
+    {
+      "sha256": "b22f3ee9d9f3adc69e56d76a9e82fa0aef3665da01f629e48e667189175a173e",
+      "path": "Lib/site-packages/numpy/lib/_type_check_impl.pyi",
+      "bytes": 5366
+    },
+    {
+      "sha256": "9aaf76e1afeb23bc2fb16a0f287c9cdfc58b235d5fc42022a20fa4ea02796ebd",
+      "path": "Lib/site-packages/numpy/lib/_ufunclike_impl.py",
+      "bytes": 6516
+    },
+    {
+      "sha256": "e10fee30e618239f089d4b017019eade5f890513acbc4532b5307bc58053f25b",
+      "path": "Lib/site-packages/numpy/lib/_ufunclike_impl.pyi",
+      "bytes": 1389
+    },
+    {
+      "sha256": "9b1d716636626f74b19e8a6fb251442ba67eaa5fd9ce052c9f5bb42d9f0a9d7c",
+      "path": "Lib/site-packages/numpy/lib/_user_array_impl.py",
+      "bytes": 8262
+    },
+    {
+      "sha256": "9e8ff18752f8fa60ab5f031171819512a46cce7bae62af24c2091171a1ee5a47",
+      "path": "Lib/site-packages/numpy/lib/_user_array_impl.pyi",
+      "bytes": 9521
+    },
+    {
+      "sha256": "f63c0d29ac85a18c42ae0e0681d1570426707e330d733a1a4017ecd26b0ac55b",
+      "path": "Lib/site-packages/numpy/lib/_utils_impl.py",
+      "bytes": 24163
+    },
+    {
+      "sha256": "02fbbf2602ce5f81499c523c29ca9459dc7f57695d4bafd81cd320f72bdfca06",
+      "path": "Lib/site-packages/numpy/lib/_utils_impl.pyi",
+      "bytes": 284
+    },
+    {
+      "sha256": "9b8675b9f0a8407e7262774aae45ca88dde9f052328146de62dd9f8c67e2d91b",
+      "path": "Lib/site-packages/numpy/lib/_version.py",
+      "bytes": 5009
+    },
+    {
+      "sha256": "cc099f36715e91eeff947b2f47de1f69f34172e247a59d63681d8fcb3128b2d7",
+      "path": "Lib/site-packages/numpy/lib/_version.pyi",
+      "bytes": 658
+    },
+    {
+      "sha256": "4b23075e5b0e24c2b0c648d0c63b31c77276720c7fdc9d8dd2aaa62d94d080c7",
+      "path": "Lib/site-packages/numpy/lib/array_utils.py",
+      "bytes": 137
+    },
+    {
+      "sha256": "6189f1fd5e0231d49b2530a761ba0dd6cc1cb309a5383d9ee19bd08f95ac49a9",
+      "path": "Lib/site-packages/numpy/lib/array_utils.pyi",
+      "bytes": 197
+    },
+    {
+      "sha256": "c8abea687e27c2b4bb18fa10515fd8827342fecd0a41a67ed3c586d74ab5c772",
+      "path": "Lib/site-packages/numpy/lib/format.py",
+      "bytes": 37208
+    },
+    {
+      "sha256": "a85e4c817e072f8e525b3d762a86d7d3772be343280e25c3b38bc596d01956e1",
+      "path": "Lib/site-packages/numpy/lib/format.pyi",
+      "bytes": 770
+    },
+    {
+      "sha256": "3fbf949b8fbec061ce58b56eb0d3756e18ccb80d60ea42a6bbe8f1d4619e38f3",
+      "path": "Lib/site-packages/numpy/lib/introspect.py",
+      "bytes": 2810
+    },
+    {
+      "sha256": "22c9edb85ae516144165c1868515130209ce3541c46d8c3fd80a4f99f7f1f101",
+      "path": "Lib/site-packages/numpy/lib/introspect.pyi",
+      "bytes": 155
+    },
+    {
+      "sha256": "8520cc0ae60fe75f306ae827dd576efd2e2d6d7b4379491cfb3077c30cf2a0e2",
+      "path": "Lib/site-packages/numpy/lib/mixins.py",
+      "bytes": 7519
+    },
+    {
+      "sha256": "a411c6b63f3f1050b0cafeae3e528432b0533b2b047b378f35d8ea51832c80f3",
+      "path": "Lib/site-packages/numpy/lib/mixins.pyi",
+      "bytes": 3205
+    },
+    {
+      "sha256": "9d969d83520a4574cb657ff9d93a6353e62eb4d1f9400fd4538e7bac77e7ea87",
+      "path": "Lib/site-packages/numpy/lib/npyio.py",
+      "bytes": 65
+    },
+    {
+      "sha256": "eb167acc5fbaa8ab9239f8e30cbe18378df128f61c0fa229cc988388ba66492b",
+      "path": "Lib/site-packages/numpy/lib/npyio.pyi",
+      "bytes": 121
+    },
+    {
+      "sha256": "4a05ae96ab9c71886e732569cf5694e908bca5b70c2b2129a5bb2ba48b21fa73",
+      "path": "Lib/site-packages/numpy/lib/recfunctions.py",
+      "bytes": 61339
+    },
+    {
+      "sha256": "1e36dbaadec997e6e6ad6101bd1d596472fa105a2b69c5f293bde84679415eeb",
+      "path": "Lib/site-packages/numpy/lib/recfunctions.pyi",
+      "bytes": 13718
+    },
+    {
+      "sha256": "1e016dde25ab81cc6057863a53ec7265904cfcc31ec17eb6b8ff0784ec61bde6",
+      "path": "Lib/site-packages/numpy/lib/scimath.py",
+      "bytes": 122
+    },
+    {
+      "sha256": "3e19698ef783aa7490bcb9f6710d40405355a711026815a062f84af12df68f3a",
+      "path": "Lib/site-packages/numpy/lib/scimath.pyi",
+      "bytes": 245
+    },
+    {
+      "sha256": "043a85925590e1e540a00bed75bff79d3d18c5778c64eb4fa7a9c1afb80a1bae",
+      "path": "Lib/site-packages/numpy/lib/stride_tricks.py",
+      "bytes": 85
+    },
+    {
+      "sha256": "ebe2b747b5c1c3f7dca4768022cf72e0b11ce62e2be606541beb60e04391f9ec",
+      "path": "Lib/site-packages/numpy/lib/stride_tricks.pyi",
+      "bytes": 128
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/lib/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "64ba08ecade24295c392ea03175626c9ce896f0e099e06d0282f60adab9546c9",
+      "path": "Lib/site-packages/numpy/lib/tests/data/py2-np0-objarr.npy",
+      "bytes": 258
+    },
+    {
+      "sha256": "178732502fbf4c1f504852c0a3673b738e2b0ba35460882b7c6c7d3ea58f48a9",
+      "path": "Lib/site-packages/numpy/lib/tests/data/py2-objarr.npy",
+      "bytes": 258
+    },
+    {
+      "sha256": "c68d771c14f415b159daabd9cf42d61836f74ae40049269787baca7d57098f1e",
+      "path": "Lib/site-packages/numpy/lib/tests/data/py2-objarr.npz",
+      "bytes": 366
+    },
+    {
+      "sha256": "ee6b6290a9475e9e2e9d984cf1e068b7c0a49e5c750687c975def7369d8f5bca",
+      "path": "Lib/site-packages/numpy/lib/tests/data/py3-objarr.npy",
+      "bytes": 325
+    },
+    {
+      "sha256": "bd5465f7f359effabe86376e52bf185a7cd1cbc1123659af30f95a4920baf5f9",
+      "path": "Lib/site-packages/numpy/lib/tests/data/py3-objarr.npz",
+      "bytes": 453
+    },
+    {
+      "sha256": "5f469dde101a2c65e283d2ed487028f8180ebcb9457cf60c9d9b952314668fed",
+      "path": "Lib/site-packages/numpy/lib/tests/data/python3.npy",
+      "bytes": 96
+    },
+    {
+      "sha256": "6a039c807558149ad5fa7ad12436c69d49c5e194cf617b92785f8cb60ec63297",
+      "path": "Lib/site-packages/numpy/lib/tests/data/win64python2.npy",
+      "bytes": 96
+    },
+    {
+      "sha256": "1fa3d9290d2d63aaf56e1adc2d128c8d6756a29e4fe118ff498beb53dba40f37",
+      "path": "Lib/site-packages/numpy/lib/tests/test__datasource.py",
+      "bytes": 10921
+    },
+    {
+      "sha256": "7a36c6ed256f4e6e792eae4b754cdaf3e9c8bc5da6b7e5d8bdfa739f5dead37f",
+      "path": "Lib/site-packages/numpy/lib/tests/test__iotools.py",
+      "bytes": 14097
+    },
+    {
+      "sha256": "bf64ce947e1fd4f9b3c67d4759bcb778180b3bdb469e1c07d8bbc15e55ed1cfe",
+      "path": "Lib/site-packages/numpy/lib/tests/test__version.py",
+      "bytes": 2063
+    },
+    {
+      "sha256": "172f3f3d1e861de77e992b6a71b7e34def10e733199c9f56cc5cd7e838e8451d",
+      "path": "Lib/site-packages/numpy/lib/tests/test_array_utils.py",
+      "bytes": 1152
+    },
+    {
+      "sha256": "35ce31a318e5664b9a1525a0736b8ff5b21788b6987237b5b451767db20c9401",
+      "path": "Lib/site-packages/numpy/lib/tests/test_arraypad.py",
+      "bytes": 57480
+    },
+    {
+      "sha256": "c90cb6b861b1fe8609bbc9c3118ba33ff348943066c428b21f96bbb79507f1c0",
+      "path": "Lib/site-packages/numpy/lib/tests/test_arraysetops.py",
+      "bytes": 39023
+    },
+    {
+      "sha256": "211566cf16ebf6275ba098ce1cab97ffc35084c00ab3ba43d715aa994dd9111c",
+      "path": "Lib/site-packages/numpy/lib/tests/test_arrayterator.py",
+      "bytes": 1337
+    },
+    {
+      "sha256": "e8ab7c97e3fd958b026d8d8a45006eb02acd7a81989454cc7056a05ecde055e6",
+      "path": "Lib/site-packages/numpy/lib/tests/test_format.py",
+      "bytes": 41937
+    },
+    {
+      "sha256": "ee39575d3ff4f82855dd26a4f1b8f11c6c9fa1772b6a68028ba3130c8af269ac",
+      "path": "Lib/site-packages/numpy/lib/tests/test_function_base.py",
+      "bytes": 173318
+    },
+    {
+      "sha256": "e0f9da78f412a55fc7b0aca79db7b91dce4bd3667ae9e7022f6e1cbc06287918",
+      "path": "Lib/site-packages/numpy/lib/tests/test_histograms.py",
+      "bytes": 34535
+    },
+    {
+      "sha256": "b605e92c6a53f57a4efdd8d70932a9334f9617e015139185f256ef232533f57e",
+      "path": "Lib/site-packages/numpy/lib/tests/test_index_tricks.py",
+      "bytes": 20921
+    },
+    {
+      "sha256": "7146151c37b0d4df8e7deb54b7ef1ed7d56a30c58050a64d84deae75bc5f719c",
+      "path": "Lib/site-packages/numpy/lib/tests/test_io.py",
+      "bytes": 112868
+    },
+    {
+      "sha256": "a6f4593289fa572cbfa5d6c48897498b5ed15ba23e460f3751cdd7c0c0af7b0d",
+      "path": "Lib/site-packages/numpy/lib/tests/test_loadtxt.py",
+      "bytes": 41622
+    },
+    {
+      "sha256": "9c879cfc36480f1ece367969abf6364cb90850b00fbd0ecb3eab4cc041ee5785",
+      "path": "Lib/site-packages/numpy/lib/tests/test_mixins.py",
+      "bytes": 7246
+    },
+    {
+      "sha256": "a1eba86b5af7cf1e49245914ff37677bc18c496113dd43c3c4bd6c75564f7c03",
+      "path": "Lib/site-packages/numpy/lib/tests/test_nanfunctions.py",
+      "bytes": 54762
+    },
+    {
+      "sha256": "c8df2b61b3c3b5e38f25fedd11e6648129f2cc850a7bf8adb8b61db2ac5ca9b4",
+      "path": "Lib/site-packages/numpy/lib/tests/test_packbits.py",
+      "bytes": 17920
+    },
+    {
+      "sha256": "a986465d421ec99a0d8db90461eb94ab569dd9e08f0e43578fa3316a4bdb22f9",
+      "path": "Lib/site-packages/numpy/lib/tests/test_polynomial.py",
+      "bytes": 11731
+    },
+    {
+      "sha256": "620da940470e81fe1ddcf82b1a2c3186bad77f23d745add2b3222dc6463fc300",
+      "path": "Lib/site-packages/numpy/lib/tests/test_recfunctions.py",
+      "bytes": 45029
+    },
+    {
+      "sha256": "6825b9693d4f24bd590b0ac75126bb8a2c502d6302dc3e62152443b1613651a8",
+      "path": "Lib/site-packages/numpy/lib/tests/test_regression.py",
+      "bytes": 7921
+    },
+    {
+      "sha256": "7d82b219d2d333e976ae54c70330c96ce6dcfd24165d717c4282addbae85ecae",
+      "path": "Lib/site-packages/numpy/lib/tests/test_shape_base.py",
+      "bytes": 28296
+    },
+    {
+      "sha256": "10a1d888fa1ac06fefbbfb4598a8b92e6bdfb345440dc516edf7a25b26d41970",
+      "path": "Lib/site-packages/numpy/lib/tests/test_stride_tricks.py",
+      "bytes": 23644
+    },
+    {
+      "sha256": "98d357b03293de13e9cfe1c1ff593c6135a9c1dc7b767be6ad6592fcb91ec37d",
+      "path": "Lib/site-packages/numpy/lib/tests/test_twodim_base.py",
+      "bytes": 19382
+    },
+    {
+      "sha256": "da59cb473500d2fa13294462faa5e5958631040aa9b1500998cb4b4021e82180",
+      "path": "Lib/site-packages/numpy/lib/tests/test_type_check.py",
+      "bytes": 15145
+    },
+    {
+      "sha256": "f42f4b5775d92da1cd428c9155997e0b8c3d1dc393109303c36b9761785fd6ee",
+      "path": "Lib/site-packages/numpy/lib/tests/test_ufunclike.py",
+      "bytes": 3123
+    },
+    {
+      "sha256": "28dd6af9e14b99c9186ce313c4f293c0530fb730477403dbd23f67b5f79aff23",
+      "path": "Lib/site-packages/numpy/lib/tests/test_utils.py",
+      "bytes": 2454
+    },
+    {
+      "sha256": "bf774208db3e3d9eed1d9d6fa86a9d795e452c74622cb5ab31985dcd04d24403",
+      "path": "Lib/site-packages/numpy/lib/user_array.py",
+      "bytes": 50
+    },
+    {
+      "sha256": "21a08d7ab2dba0a8eddc59befe4fddf08a9ec897fb2dcf4faf944e52beb095e3",
+      "path": "Lib/site-packages/numpy/lib/user_array.pyi",
+      "bytes": 54
+    },
+    {
+      "sha256": "0199c7d859cc93f6c3cbc56e3ac8a19a84be9c80aba4a21130f35ae4fbb2937d",
+      "path": "Lib/site-packages/numpy/linalg/__init__.py",
+      "bytes": 2201
+    },
+    {
+      "sha256": "0b3af5846b848d2198fc9ecd6c56a9ac28acc5e20034264062a2b3d184544002",
+      "path": "Lib/site-packages/numpy/linalg/__init__.pyi",
+      "bytes": 1076
+    },
+    {
+      "sha256": "caa02a0fb04547f0bccb5238049f4a0226249a1509d7af37839850a31bd88e5e",
+      "path": "Lib/site-packages/numpy/linalg/_linalg.py",
+      "bytes": 118309
+    },
+    {
+      "sha256": "9da9a817af4e8e4844d2dcf69e076371d5343703c6e2e8680cb8f36f9fe20277",
+      "path": "Lib/site-packages/numpy/linalg/_linalg.pyi",
+      "bytes": 11867
+    },
+    {
+      "sha256": "43c13dc08525258dd0dea4dcba4ede3a45222637211241aca1cd30ac7a736144",
+      "path": "Lib/site-packages/numpy/linalg/_umath_linalg.cp312-win_amd64.lib",
+      "bytes": 2120
+    },
+    {
+      "sha256": "88c8d38d7b2f483542442292e149ca335462d1467b8e835b00a71a8b27125cf5",
+      "path": "Lib/site-packages/numpy/linalg/_umath_linalg.cp312-win_amd64.pyd",
+      "bytes": 108032
+    },
+    {
+      "sha256": "839349a0db5ee82c2e3050df779e4ef0ebc9bf894e8b9dfd54a001f8cadcf3ae",
+      "path": "Lib/site-packages/numpy/linalg/_umath_linalg.pyi",
+      "bytes": 1470
+    },
+    {
+      "sha256": "1b90f0f3a64ab610e85fd094a4d078e1dac6403dd70879824775c290cd0a5641",
+      "path": "Lib/site-packages/numpy/linalg/lapack_lite.cp312-win_amd64.lib",
+      "bytes": 2084
+    },
+    {
+      "sha256": "fce8ba55a94ab669c1b8447cda54edcccdcf181380c8edacc3c095517b9f9414",
+      "path": "Lib/site-packages/numpy/linalg/lapack_lite.cp312-win_amd64.pyd",
+      "bytes": 17920
+    },
+    {
+      "sha256": "b1629604347650fd1ecfa113744d11cfe9a9f26fe0382328e0261565a8c330da",
+      "path": "Lib/site-packages/numpy/linalg/lapack_lite.pyi",
+      "bytes": 2818
+    },
+    {
+      "sha256": "d420bd8dcfaeeb519e3c2e40ba27838b2332ad5be02c3f1925b4cfbcb7ca8c77",
+      "path": "Lib/site-packages/numpy/linalg/linalg.py",
+      "bytes": 600
+    },
+    {
+      "sha256": "88677c6f8fa037577dd8aef07e00d9c681eb5579d50b573abc6a96e196d695d6",
+      "path": "Lib/site-packages/numpy/linalg/linalg.pyi",
+      "bytes": 1001
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/linalg/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "19a784dc99d09492e801f6d8f772e6802154955e4cf0816643b12117859bab05",
+      "path": "Lib/site-packages/numpy/linalg/tests/test_deprecations.py",
+      "bytes": 660
+    },
+    {
+      "sha256": "0fb021c6a1a21f03e320723724d90f72c6053acb5388a7bf3d3365e9de189521",
+      "path": "Lib/site-packages/numpy/linalg/tests/test_linalg.py",
+      "bytes": 85701
+    },
+    {
+      "sha256": "2915ce8401e365b13787abea92c4ef41acabbe1524c9133cfcee8acb9b3e36ab",
+      "path": "Lib/site-packages/numpy/linalg/tests/test_regression.py",
+      "bytes": 6866
+    },
+    {
+      "sha256": "1057b7aa4e6237fed9fff070964116eb1a3665ce8d9c8f05ec6d9bd54556e2e6",
+      "path": "Lib/site-packages/numpy/ma/__init__.py",
+      "bytes": 1473
+    },
+    {
+      "sha256": "efa74e47374b7b2e07a0c0f6eb1245bb0fb66881ab077d31b7cac5a84f3169f6",
+      "path": "Lib/site-packages/numpy/ma/__init__.pyi",
+      "bytes": 7404
+    },
+    {
+      "sha256": "537f7303ceda33f38826110abc780bd5163596130965cd588f70c62f06cf6c5d",
+      "path": "Lib/site-packages/numpy/ma/API_CHANGES.txt",
+      "bytes": 3540
+    },
+    {
+      "sha256": "e09bf5ffae1e33afda048437b29e2e29453cb1fc6c94ccde181d40a324d389ca",
+      "path": "Lib/site-packages/numpy/ma/core.py",
+      "bytes": 299477
+    },
+    {
+      "sha256": "d9a92e6f836fe711c2ae1b41436f29546d8172753c862eb980af949193f4ffaa",
+      "path": "Lib/site-packages/numpy/ma/core.pyi",
+      "bytes": 18835
+    },
+    {
+      "sha256": "d0e774acc2a1e852f21b46f2694e6401e59c64245f7154114cdbad31f9a2091a",
+      "path": "Lib/site-packages/numpy/ma/extras.py",
+      "bytes": 72951
+    },
+    {
+      "sha256": "618b844b14136ed74bc3193fad9cfba196e0fc924ccc1a3dd82129148a425a70",
+      "path": "Lib/site-packages/numpy/ma/extras.pyi",
+      "bytes": 3938
+    },
+    {
+      "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7",
+      "path": "Lib/site-packages/numpy/ma/LICENSE",
+      "bytes": 1616
+    },
+    {
+      "sha256": "0578256cc4582de07917105c53fd6fce6319a45ea25da292e7baa94e45859bc0",
+      "path": "Lib/site-packages/numpy/ma/mrecords.py",
+      "bytes": 27888
+    },
+    {
+      "sha256": "a064ac1229e0c49fc0d3b7cb343adc9234bb33003cc9937f37ac243849913de1",
+      "path": "Lib/site-packages/numpy/ma/mrecords.pyi",
+      "bytes": 2078
+    },
+    {
+      "sha256": "fcc1eba874c4f0be3088926abda3a1d65fb14f189dc1d8a573f4999056e0b9b3",
+      "path": "Lib/site-packages/numpy/ma/README.rst",
+      "bytes": 10110
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/ma/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "6a9d3a0b46b474659c3a49e972d6e12dbcc748d77633da7f24bda3112a810469",
+      "path": "Lib/site-packages/numpy/ma/tests/test_arrayobject.py",
+      "bytes": 1139
+    },
+    {
+      "sha256": "51f9a51441c90a4b31e1a77d52c3fbee7f5b39e9d6aaa7b8a5e33b1b9246d7c9",
+      "path": "Lib/site-packages/numpy/ma/tests/test_core.py",
+      "bytes": 225055
+    },
+    {
+      "sha256": "5aeaca4ae37a86c5e65b1468c6cb5d5415dc2824ef631958cfe9ed4a45baa8a7",
+      "path": "Lib/site-packages/numpy/ma/tests/test_deprecations.py",
+      "bytes": 2650
+    },
+    {
+      "sha256": "0bf6aec54191277f28fbb2d918d4cde487408b8f1cd50218f1bcccd8da3307a8",
+      "path": "Lib/site-packages/numpy/ma/tests/test_extras.py",
+      "bytes": 80274
+    },
+    {
+      "sha256": "4f343096f6358899ca1fb011b0e23d9cd68d793b75b06819023f0d1233fb8d8d",
+      "path": "Lib/site-packages/numpy/ma/tests/test_mrecords.py",
+      "bytes": 20348
+    },
+    {
+      "sha256": "b50f88a8a67534c1eae7ff2a90e6995a0feb664581a5168f9e5a1d05177f0010",
+      "path": "Lib/site-packages/numpy/ma/tests/test_old_ma.py",
+      "bytes": 33629
+    },
+    {
+      "sha256": "2757ed1c329f205dd2508810971269942b184eb3e9032378adfe4ad54c394fcc",
+      "path": "Lib/site-packages/numpy/ma/tests/test_regression.py",
+      "bytes": 3384
+    },
+    {
+      "sha256": "5052b4478e2944299c10d3f691b23fe2144c43b602eaa8e995934cd167aa7023",
+      "path": "Lib/site-packages/numpy/ma/tests/test_subclassing.py",
+      "bytes": 17469
+    },
+    {
+      "sha256": "f3a7bc6dc925f82db82412025f354c23fb3846ab5b819a832c3d0be6d64f4e07",
+      "path": "Lib/site-packages/numpy/ma/testutils.py",
+      "bytes": 10564
+    },
+    {
+      "sha256": "6b7916d8f9520835e656b0f1d1518f43dbe171022e0d43c49ca679e3354ff35d",
+      "path": "Lib/site-packages/numpy/ma/timer_comparison.py",
+      "bytes": 16153
+    },
+    {
+      "sha256": "0c9b1ac8e0c16ddd27e8c9a1c4f9a088bdbc00bc8b810747b50e411ca8206392",
+      "path": "Lib/site-packages/numpy/matlib.py",
+      "bytes": 11036
+    },
+    {
+      "sha256": "22cff40e28b7392339f1bccf5e2889578eb11942bd35bdf869d1cea8d94c6cc1",
+      "path": "Lib/site-packages/numpy/matlib.pyi",
+      "bytes": 10214
+    },
+    {
+      "sha256": "f7e0cc96674bc4e9391d2189db402e4e32a4199dcc50f1c2163844eac6f834ca",
+      "path": "Lib/site-packages/numpy/matrixlib/__init__.py",
+      "bytes": 253
+    },
+    {
+      "sha256": "640bad92603c069b6d9de3b264da808e260937917bb25f964807c8924236aa52",
+      "path": "Lib/site-packages/numpy/matrixlib/__init__.pyi",
+      "bytes": 109
+    },
+    {
+      "sha256": "8cc61ec7732134a96f8e070ff4401832dff2ad54343baed9b97c0c46f1427dfd",
+      "path": "Lib/site-packages/numpy/matrixlib/defmatrix.py",
+      "bytes": 31918
+    },
+    {
+      "sha256": "6b8b4a61285847d11e53d16db9bdff8b21b3c2e9d422a2bfeaecff074640c974",
+      "path": "Lib/site-packages/numpy/matrixlib/defmatrix.pyi",
+      "bytes": 495
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "ddc4938c58a515956ad9f3207e8525c7a85ff4de0c4af04c84771e9a8894ccb0",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_defmatrix.py",
+      "bytes": 15488
+    },
+    {
+      "sha256": "f65a0cc1229704ebb4f59e9a67afd11bba236c47e7d7d03c377f61d76179ebaf",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_interaction.py",
+      "bytes": 12249
+    },
+    {
+      "sha256": "4a3b94b38221137c76cbca0cf6ea1684a5f82b5b17d893642d032584c96fcc3d",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_masked_matrix.py",
+      "bytes": 9146
+    },
+    {
+      "sha256": "f52f59ae4f0f30b7c4128f70071e4bcab57f4db5e123aafe1dce6de7de254056",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_matrix_linalg.py",
+      "bytes": 2152
+    },
+    {
+      "sha256": "1398ef597f72a5660d1c7ee2a805b7c73ded32b115fa83608cddffa0fcd9cf0b",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_multiarray.py",
+      "bytes": 570
+    },
+    {
+      "sha256": "97e2c504a3e83f7fced6279adb73266800812f1fed49274f7140414538936f39",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_numeric.py",
+      "bytes": 458
+    },
+    {
+      "sha256": "c295958cce291d16a2557fd8e7fcdceb236be08e7359d9897c74f06e605485ec",
+      "path": "Lib/site-packages/numpy/matrixlib/tests/test_regression.py",
+      "bytes": 963
+    },
+    {
+      "sha256": "2409cf2066d1ed02629722211e356f03b4ac58648ed529b43c2b1ef975a4ddd6",
+      "path": "Lib/site-packages/numpy/polynomial/__init__.py",
+      "bytes": 6947
+    },
+    {
+      "sha256": "f3ce47e297f02478f4c45b8f0ec57aa7f38dda725e9c68c0e61f1de2e318f886",
+      "path": "Lib/site-packages/numpy/polynomial/__init__.pyi",
+      "bytes": 711
+    },
+    {
+      "sha256": "4ac14508f431b57cf10e05ccb03da8befa012fed63408ae67560943018b3c8fb",
+      "path": "Lib/site-packages/numpy/polynomial/_polybase.py",
+      "bytes": 40648
+    },
+    {
+      "sha256": "2add71e0f833227552f66311fc2e5deb28c96883dc7ccca1a74b69d01cf61599",
+      "path": "Lib/site-packages/numpy/polynomial/_polybase.pyi",
+      "bytes": 8821
+    },
+    {
+      "sha256": "f8d8cd85c30ff5dc02756ac8a1dd2e44999236da8841243a9526ef4b2dda29de",
+      "path": "Lib/site-packages/numpy/polynomial/_polytypes.pyi",
+      "bytes": 23455
+    },
+    {
+      "sha256": "7f4878772b93cb529e3ce8caa3bb4179898bbeb87561c141ce2de2e70672835c",
+      "path": "Lib/site-packages/numpy/polynomial/chebyshev.py",
+      "bytes": 64168
+    },
+    {
+      "sha256": "027264359a07c88510bc56d07dec5d7b2f862703777cc8d9b36a43653e98cef4",
+      "path": "Lib/site-packages/numpy/polynomial/chebyshev.pyi",
+      "bytes": 4917
+    },
+    {
+      "sha256": "401bc97e3f1a3b14eae2a169636163a34119b3900485dfeeaf8a4887976add70",
+      "path": "Lib/site-packages/numpy/polynomial/hermite_e.py",
+      "bytes": 53850
+    },
+    {
+      "sha256": "086abc3294d73a89d5d49cdf2dd5ae37ffa95ce604246e2abcd77defbb35d61a",
+      "path": "Lib/site-packages/numpy/polynomial/hermite_e.pyi",
+      "bytes": 2643
+    },
+    {
+      "sha256": "5e5b082945b5b001ad754a94a7364eb7d04fcb20de6d097f7caef3ae5648f062",
+      "path": "Lib/site-packages/numpy/polynomial/hermite.py",
+      "bytes": 56206
+    },
+    {
+      "sha256": "c6081860bffbe0819596a98af4d5d72224a918a10b21ca2a68e389d1e9d7bcf5",
+      "path": "Lib/site-packages/numpy/polynomial/hermite.pyi",
+      "bytes": 2551
+    },
+    {
+      "sha256": "2135cf49d735e4739184de6cb52ae2e61199cae0afbfa6710f69582cca2c4aa4",
+      "path": "Lib/site-packages/numpy/polynomial/laguerre.py",
+      "bytes": 54054
+    },
+    {
+      "sha256": "7ed045d99538085ae2358eb1cbc9463fe80dc51078b9d008e07556ee792fd91d",
+      "path": "Lib/site-packages/numpy/polynomial/laguerre.pyi",
+      "bytes": 2274
+    },
+    {
+      "sha256": "f16301c4c17f010b5f6b8778e896274026276cc1414ec8b1a559be8817b98839",
+      "path": "Lib/site-packages/numpy/polynomial/legendre.py",
+      "bytes": 52599
+    },
+    {
+      "sha256": "e7dd1724d9bd625fd285805975cae507ae6ab3d0c487b38e026782fc85eee6da",
+      "path": "Lib/site-packages/numpy/polynomial/legendre.pyi",
+      "bytes": 2272
+    },
+    {
+      "sha256": "3753b588f65e835e4b41383b5bc41ccf8f89ec4c03cc796144a2c55ec375d00c",
+      "path": "Lib/site-packages/numpy/polynomial/polynomial.py",
+      "bytes": 53819
+    },
+    {
+      "sha256": "d0a4880d1089835127ad90aec9054210a3f4ec88874c51f268a3c2e0fa378c92",
+      "path": "Lib/site-packages/numpy/polynomial/polynomial.pyi",
+      "bytes": 2089
+    },
+    {
+      "sha256": "c1f35d7c378f5ca0aa24893c5525a3980a503754caa427be62e06ead8c096e2f",
+      "path": "Lib/site-packages/numpy/polynomial/polyutils.py",
+      "bytes": 23287
+    },
+    {
+      "sha256": "cc0e54754ef5356aa22afde701802de4c01c260032c073a3f65c235fcb1b12ba",
+      "path": "Lib/site-packages/numpy/polynomial/polyutils.pyi",
+      "bytes": 10857
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/polynomial/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "3c8d97c2f186a902840754716ec61181e4c6d1cba707ff0eb5df52049a33abef",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_chebyshev.py",
+      "bytes": 21141
+    },
+    {
+      "sha256": "542706d8808eb5e0689501f27f3633314872a8795b009c55f0b7509bd34ee745",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_classes.py",
+      "bytes": 19057
+    },
+    {
+      "sha256": "e5906d1a2da091e95d6154a1f3195038b5035ba7dc4f861d6624eb07a01a1895",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_hermite_e.py",
+      "bytes": 19467
+    },
+    {
+      "sha256": "cc71a6cb5500b8ab4b8f929ecba04c9deed9461ded669a307e57a0850cf286aa",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_hermite.py",
+      "bytes": 19131
+    },
+    {
+      "sha256": "066e5200a8ce710e91952b1cf1245761f537e266dd4367dd3237f613da69ce73",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_laguerre.py",
+      "bytes": 18047
+    },
+    {
+      "sha256": "55bc9eebbc88ccdec88f65306199614adebc86835eba414761dd500af03bd196",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_legendre.py",
+      "bytes": 19240
+    },
+    {
+      "sha256": "cee249a152e5b371f6c2761e2e3739d78a010b1f2113902f9db060b50a892332",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_polynomial.py",
+      "bytes": 22660
+    },
+    {
+      "sha256": "6f7bddb495630b7e00984bfdeacc3622f20004d0ea9988429cc6190af86d5b35",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_polyutils.py",
+      "bytes": 3897
+    },
+    {
+      "sha256": "fd121c6713c450951bf1a4a974092f9d90700437c8c91f2d288dbefb0f58eb8a",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_printing.py",
+      "bytes": 21854
+    },
+    {
+      "sha256": "1999ea0783cb8d90d66a544454e008deabacf648d40e1096f9667ff3b8d198f6",
+      "path": "Lib/site-packages/numpy/polynomial/tests/test_symbol.py",
+      "bytes": 5588
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/py.typed",
+      "bytes": 0
+    },
+    {
+      "sha256": "83711a322df27e69ea4fe2845a3d1ca7a49623154df428458c461718e7ce89f1",
+      "path": "Lib/site-packages/numpy/random/__init__.pxd",
+      "bytes": 445
+    },
+    {
+      "sha256": "5bf845cc6b0a5507dd877f94d79833b0e28a024f2e6608a80e4c4acaea2ee160",
+      "path": "Lib/site-packages/numpy/random/__init__.py",
+      "bytes": 7721
+    },
+    {
+      "sha256": "b5bf229ab40249da4e2fd0f10fd593044cff06ea2df5ac9c43862f52bdec9e13",
+      "path": "Lib/site-packages/numpy/random/__init__.pyi",
+      "bytes": 2284
+    },
+    {
+      "sha256": "86cb0c4b817ff02336373c1a9496dd280e080d194b45271a8df08a867e59aff2",
+      "path": "Lib/site-packages/numpy/random/_bounded_integers.cp312-win_amd64.lib",
+      "bytes": 18000
+    },
+    {
+      "sha256": "0434a5b271f935deb8623bb8663f33132a70a8f4d1936c14432e16d4f6eb46fc",
+      "path": "Lib/site-packages/numpy/random/_bounded_integers.cp312-win_amd64.pyd",
+      "bytes": 208384
+    },
+    {
+      "sha256": "10e28a52517d6e1d022cd10ff13cd7cd7e30ff1579922bebd4fbad7dd7facaf5",
+      "path": "Lib/site-packages/numpy/random/_bounded_integers.pxd",
+      "bytes": 1763
+    },
+    {
+      "sha256": "88946831d2b14c0a54c19520fe4db1595e7d604b902becfd4c05a066529e6e71",
+      "path": "Lib/site-packages/numpy/random/_common.cp312-win_amd64.lib",
+      "bytes": 2012
+    },
+    {
+      "sha256": "9a39d43e0ef73dfb5a8b1abce92ff0063bffcd580d8be275f468961b24b153af",
+      "path": "Lib/site-packages/numpy/random/_common.cp312-win_amd64.pyd",
+      "bytes": 152064
+    },
+    {
+      "sha256": "dbff4d2d61529cb1b888377e29e6140516b8ed033ca9c794b0f880932599ef82",
+      "path": "Lib/site-packages/numpy/random/_common.pxd",
+      "bytes": 5089
+    },
+    {
+      "sha256": "060c9d6046016fa843821305f8a40555cf2cb145351790e0fb71b27a2953dd58",
+      "path": "Lib/site-packages/numpy/random/_examples/cffi/extending.py",
+      "bytes": 920
+    },
+    {
+      "sha256": "79105b56b9f1bf0d2fdc14ba249bd7d6b8e99b5300ef266efb7d501ccb8d969e",
+      "path": "Lib/site-packages/numpy/random/_examples/cffi/parse.py",
+      "bytes": 1805
+    },
+    {
+      "sha256": "9b2af9ddbcc9da455396d671fcc0dcc3743a6db87530ad54db618ac9a122e42f",
+      "path": "Lib/site-packages/numpy/random/_examples/cython/extending_distributions.pyx",
+      "bytes": 3963
+    },
+    {
+      "sha256": "d6592aeb31627e7c1a32d024546d22ffd49b32236aa65bea9c76aa529c6a373b",
+      "path": "Lib/site-packages/numpy/random/_examples/cython/extending.pyx",
+      "bytes": 2344
+    },
+    {
+      "sha256": "abf205715b3fab3111243ffef2e6839e3a6cdd075a5b8f6891931b16dc2400fa",
+      "path": "Lib/site-packages/numpy/random/_examples/cython/meson.build",
+      "bytes": 1747
+    },
+    {
+      "sha256": "f9a4f12c8aa75d6d173ed984a74c897da05305c8c4a3d43d49e6ca1bf74e2efc",
+      "path": "Lib/site-packages/numpy/random/_examples/numba/extending_distributions.py",
+      "bytes": 2103
+    },
+    {
+      "sha256": "be7a94a9046f94023edd5603cc8c5240395bfac9810328fc7c0d7e33622b390c",
+      "path": "Lib/site-packages/numpy/random/_examples/numba/extending.py",
+      "bytes": 2041
+    },
+    {
+      "sha256": "8e33cb2b3179a810682b93233987979eaef1d937b7830b98dd83aaf35769b4ba",
+      "path": "Lib/site-packages/numpy/random/_generator.cp312-win_amd64.lib",
+      "bytes": 18400
+    },
+    {
+      "sha256": "6dde7168fc52dcad27779d45dcc6828b91ec0d05bb6094c86d6aff8a1ee8e1b3",
+      "path": "Lib/site-packages/numpy/random/_generator.cp312-win_amd64.pyd",
+      "bytes": 714752
+    },
+    {
+      "sha256": "7e5a39a27b0fea9d92102459834f0ddc8c7d256adc584b6a2f33342462507f4a",
+      "path": "Lib/site-packages/numpy/random/_generator.pyi",
+      "bytes": 24865
+    },
+    {
+      "sha256": "0192029c9ca08f792e8dd5a5bd2c8489151081385f8489f164839efffff74851",
+      "path": "Lib/site-packages/numpy/random/_mt19937.cp312-win_amd64.lib",
+      "bytes": 2032
+    },
+    {
+      "sha256": "3331809b214fc30e2fc167f742ca3b1a84b567d185d4194fa8893a032010eeb4",
+      "path": "Lib/site-packages/numpy/random/_mt19937.cp312-win_amd64.pyd",
+      "bytes": 83456
+    },
+    {
+      "sha256": "401f2fc7c7fe10697eab3de260602b16c7cf6f7320aa5764d76f147965f790bb",
+      "path": "Lib/site-packages/numpy/random/_mt19937.pyi",
+      "bytes": 800
+    },
+    {
+      "sha256": "00eef81993bbc5ab5a95a4d1f124847e02102fac22cfd0736c2cf7881e781f32",
+      "path": "Lib/site-packages/numpy/random/_pcg64.cp312-win_amd64.lib",
+      "bytes": 1996
+    },
+    {
+      "sha256": "448b71a0b7d9037d9655008fbc3081070fa801f757b83f9a3ee6e0934c095aa8",
+      "path": "Lib/site-packages/numpy/random/_pcg64.cp312-win_amd64.pyd",
+      "bytes": 93696
+    },
+    {
+      "sha256": "4d2203fe5b23a0fbdf18847871bbc62e0e355666ec1dc961792b7ca5f0593e1b",
+      "path": "Lib/site-packages/numpy/random/_pcg64.pyi",
+      "bytes": 1186
+    },
+    {
+      "sha256": "6b24a0290a55556234f996117f0d73f140f22fcdd62eafc33b48d8e35f412e5e",
+      "path": "Lib/site-packages/numpy/random/_philox.cp312-win_amd64.lib",
+      "bytes": 2012
+    },
+    {
+      "sha256": "9c989e7b0fc383e2fa5aa15de2f17c5875b690dc64c44891ee1e1d54ce7cac4a",
+      "path": "Lib/site-packages/numpy/random/_philox.cp312-win_amd64.pyd",
+      "bytes": 77312
+    },
+    {
+      "sha256": "7bb27ddd2c1c6d8ac37c17c9827b95227822127ecd48dee4e7be89f69cf8779e",
+      "path": "Lib/site-packages/numpy/random/_philox.pyi",
+      "bytes": 1044
+    },
+    {
+      "sha256": "0f932bb3347fa030f8cacb376edf7830fc39e05348c87e9fe0cb4e5816110ef9",
+      "path": "Lib/site-packages/numpy/random/_pickle.py",
+      "bytes": 2832
+    },
+    {
+      "sha256": "578500235b5dd493cc1de34c663a27df4c7b13b483dd664100b0bc1f34057225",
+      "path": "Lib/site-packages/numpy/random/_pickle.pyi",
+      "bytes": 1651
+    },
+    {
+      "sha256": "7d7c4a67344361f3b5dc62738563d90774c204a0bbd42466968d7e6920f53115",
+      "path": "Lib/site-packages/numpy/random/_sfc64.cp312-win_amd64.lib",
+      "bytes": 1996
+    },
+    {
+      "sha256": "5732d38725cb5177c9de1e1d4bdb67389283a53986f87a5e52ca9255ec98c733",
+      "path": "Lib/site-packages/numpy/random/_sfc64.cp312-win_amd64.pyd",
+      "bytes": 60416
+    },
+    {
+      "sha256": "1c2088c68d07d5bd3fb393045abc2db6512558413918ab79c15e8b63122f4b13",
+      "path": "Lib/site-packages/numpy/random/_sfc64.pyi",
+      "bytes": 710
+    },
+    {
+      "sha256": "068d47a2f26450287d47043568822ac0bdd49859f836ffe90f3711d9df1ee578",
+      "path": "Lib/site-packages/numpy/random/bit_generator.cp312-win_amd64.lib",
+      "bytes": 2120
+    },
+    {
+      "sha256": "eef81bf02fa9f387d6c4a18d52b22af58b737c01608f0d594130586a06022807",
+      "path": "Lib/site-packages/numpy/random/bit_generator.cp312-win_amd64.pyd",
+      "bytes": 163328
+    },
+    {
+      "sha256": "2c9a5e07e10a79557cfc93baf6c4b7dd724b650dc3021ad408dcecfde8bb0282",
+      "path": "Lib/site-packages/numpy/random/bit_generator.pxd",
+      "bytes": 1042
+    },
+    {
+      "sha256": "3aa1d462d97de2046b4f9015f80ee257ed102ae9867e66f78eb902a14908e177",
+      "path": "Lib/site-packages/numpy/random/bit_generator.pyi",
+      "bytes": 3641
+    },
+    {
+      "sha256": "d3659ea9bcd0e21790d5c67b4a178f7a3c66b7900e239913b2d059e70d96c43d",
+      "path": "Lib/site-packages/numpy/random/c_distributions.pxd",
+      "bytes": 6454
+    },
+    {
+      "sha256": "d6eee7494a279a903d9ea026e4b34bf050490d69ec5cc37eab96e139504570fb",
+      "path": "Lib/site-packages/numpy/random/lib/npyrandom.lib",
+      "bytes": 148178
+    },
+    {
+      "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a",
+      "path": "Lib/site-packages/numpy/random/LICENSE.md",
+      "bytes": 3582
+    },
+    {
+      "sha256": "2fa6b3711655d71e7a50b8c34678d5c9d7ca10da85ed62359c5d688604fa8299",
+      "path": "Lib/site-packages/numpy/random/mtrand.cp312-win_amd64.lib",
+      "bytes": 17122
+    },
+    {
+      "sha256": "339f40f24231643777de36d5ff8121a07ccf2c4a66add63307d25f9d431c9928",
+      "path": "Lib/site-packages/numpy/random/mtrand.cp312-win_amd64.pyd",
+      "bytes": 603136
+    },
+    {
+      "sha256": "d9ef1a52cb45332acb3ad41257f4b082d33f17653398017e0d62991f6c51a1c3",
+      "path": "Lib/site-packages/numpy/random/mtrand.pyi",
+      "bytes": 22676
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/random/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/random/tests/data/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "11f43e5fbd0a9078010055f6a483dc09497830d3f564d44e697394ef9bdd8aa3",
+      "path": "Lib/site-packages/numpy/random/tests/data/generator_pcg64_np121.pkl.gz",
+      "bytes": 203
+    },
+    {
+      "sha256": "7cdf1d78d5715fe1c42c0d5e219df691db58bdce21c0ac9aeb0bf4d0625e1f46",
+      "path": "Lib/site-packages/numpy/random/tests/data/generator_pcg64_np126.pkl.gz",
+      "bytes": 208
+    },
+    {
+      "sha256": "6c0e6eb8e5e02e9900c098df57ca1478f837f9ec9a1f8fa029ef0031c9765e7d",
+      "path": "Lib/site-packages/numpy/random/tests/data/mt19937-testset-1.csv",
+      "bytes": 16845
+    },
+    {
+      "sha256": "4a738bd67c916db958942db9e0f05449cdfb360b95e7137ed16fc1df62310c61",
+      "path": "Lib/site-packages/numpy/random/tests/data/mt19937-testset-2.csv",
+      "bytes": 16826
+    },
+    {
+      "sha256": "c07a12edf211de130476d6bb32d27c1292165fe070d727d2695c620b5e6fc55b",
+      "path": "Lib/site-packages/numpy/random/tests/data/pcg64-testset-1.csv",
+      "bytes": 24840
+    },
+    {
+      "sha256": "eaf96756e5bfe22e8b12c567e9be341e37015968e85f995ba120810e90ebcc5b",
+      "path": "Lib/site-packages/numpy/random/tests/data/pcg64-testset-2.csv",
+      "bytes": 24846
+    },
+    {
+      "sha256": "16185ae7e8eb0a6464fffaecbf1e826c3159ec43dcf0138f0d387e9b264b9213",
+      "path": "Lib/site-packages/numpy/random/tests/data/pcg64dxsm-testset-1.csv",
+      "bytes": 24834
+    },
+    {
+      "sha256": "98d63390287434cb7556f4eb374f016e4a406df905c73b4d72ca1f81e5bfd27b",
+      "path": "Lib/site-packages/numpy/random/tests/data/pcg64dxsm-testset-2.csv",
+      "bytes": 24840
+    },
+    {
+      "sha256": "42fa53ca7587423a93cf73f630fbed30b760d959cce93193a57829fbf2de2798",
+      "path": "Lib/site-packages/numpy/random/tests/data/philox-testset-1.csv",
+      "bytes": 24853
+    },
+    {
+      "sha256": "f8134ed4e098b432239cde50f80b107b30421a6549508b37a803328fc48db6c0",
+      "path": "Lib/site-packages/numpy/random/tests/data/philox-testset-2.csv",
+      "bytes": 24839
+    },
+    {
+      "sha256": "3156b5ca5172ec350f81404afa821e292755978518122377019ec6dec773cdac",
+      "path": "Lib/site-packages/numpy/random/tests/data/sfc64_np126.pkl.gz",
+      "bytes": 290
+    },
+    {
+      "sha256": "b2091e996d256ca276c21d6c063e827e65f01584ea7c0935e763f4afc7a63b7f",
+      "path": "Lib/site-packages/numpy/random/tests/data/sfc64-testset-1.csv",
+      "bytes": 24841
+    },
+    {
+      "sha256": "9a4a76d521bc782aac7cdc9065d9a2578d7ec4a72c57c7aeb53eeb5675441b9d",
+      "path": "Lib/site-packages/numpy/random/tests/data/sfc64-testset-2.csv",
+      "bytes": 24834
+    },
+    {
+      "sha256": "3c8d42e51fd64066a0750eb9b12ef8a3f9eade8bd84838c4c480eef6bde363b9",
+      "path": "Lib/site-packages/numpy/random/tests/test_direct.py",
+      "bytes": 20536
+    },
+    {
+      "sha256": "cd904007a56f321f893ba91cfc5728f02e1b97ec13c3f198fc10a84e0fa443e3",
+      "path": "Lib/site-packages/numpy/random/tests/test_extending.py",
+      "bytes": 4561
+    },
+    {
+      "sha256": "e70950aa7ea374bc0f6c6359ac5dd13f02e7ff1463d82080e83635ebb74737b7",
+      "path": "Lib/site-packages/numpy/random/tests/test_generator_mt19937_regressions.py",
+      "bytes": 8300
+    },
+    {
+      "sha256": "9acff20414a4c54293d05ee48cf33e3cac138ba499bca3279817589104bc6b61",
+      "path": "Lib/site-packages/numpy/random/tests/test_generator_mt19937.py",
+      "bytes": 120085
+    },
+    {
+      "sha256": "4d6fa291989c0d58138bd59e64e4302c208267f43f8160289ba3e8ced5d26799",
+      "path": "Lib/site-packages/numpy/random/tests/test_random.py",
+      "bytes": 71901
+    },
+    {
+      "sha256": "f052f8b315f50f5a0c557fc5f6ee6f47c65ace8e55d188f86cbef3b21e7b57e6",
+      "path": "Lib/site-packages/numpy/random/tests/test_randomstate_regression.py",
+      "bytes": 8215
+    },
+    {
+      "sha256": "46b80578adabe49703e0af2969639b4bc9cab9f746ba62cdd9f767be9f7be242",
+      "path": "Lib/site-packages/numpy/random/tests/test_randomstate.py",
+      "bytes": 87399
+    },
+    {
+      "sha256": "fdea046be408621df7b4449a84c1ec559b42cbd5bfb394f944fcc8e90612ecb6",
+      "path": "Lib/site-packages/numpy/random/tests/test_regression.py",
+      "bytes": 5611
+    },
+    {
+      "sha256": "cd652f8560f10664cdd96b5e48541e276f56d3eda4dd95337bfdd8b4be0a826b",
+      "path": "Lib/site-packages/numpy/random/tests/test_seed_sequence.py",
+      "bytes": 3391
+    },
+    {
+      "sha256": "4ad4f179e99a98a784fc7fd41d05b20f12172526cb408e18af9b03a77cba647e",
+      "path": "Lib/site-packages/numpy/random/tests/test_smoke.py",
+      "bytes": 28992
+    },
+    {
+      "sha256": "48c33af40f94cd7e4b0fa2714985cef8cf6de20af0cd172a4805d7b8c5393d26",
+      "path": "Lib/site-packages/numpy/rec/__init__.py",
+      "bytes": 85
+    },
+    {
+      "sha256": "94fcc0d52e5498a77932f0c305bf9a7ce3606589741abde5e4bc4f07b43273f2",
+      "path": "Lib/site-packages/numpy/rec/__init__.pyi",
+      "bytes": 368
+    },
+    {
+      "sha256": "34b17185a767e75dd30177fc920560b82be6cb35e73f5269567349b6a7c4ad7e",
+      "path": "Lib/site-packages/numpy/strings/__init__.py",
+      "bytes": 85
+    },
+    {
+      "sha256": "d4b6b1e026da4e2c9c9090c4974165b96167bfb199c8e879871327115b8d066a",
+      "path": "Lib/site-packages/numpy/strings/__init__.pyi",
+      "bytes": 1390
+    },
+    {
+      "sha256": "10d734f4837f0fbe3136f1f7dd9eb943676469212f9631c5fedcfe055fa0fdd5",
+      "path": "Lib/site-packages/numpy/testing/__init__.py",
+      "bytes": 617
+    },
+    {
+      "sha256": "8734aade5559da065bc4cad05cd3f73da7ad8e02722a77e0e749a48d307c8d78",
+      "path": "Lib/site-packages/numpy/testing/__init__.pyi",
+      "bytes": 2147
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/testing/_private/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/testing/_private/__init__.pyi",
+      "bytes": 0
+    },
+    {
+      "sha256": "71ee7a83dc446891d4a390aa7267299d492c75c4bab56efa04da007c69f1cac8",
+      "path": "Lib/site-packages/numpy/testing/_private/extbuild.py",
+      "bytes": 8358
+    },
+    {
+      "sha256": "15644bf5bbf608ad45a4534b1971092efa1937a8e07503676fad8410d43fbba6",
+      "path": "Lib/site-packages/numpy/testing/_private/extbuild.pyi",
+      "bytes": 651
+    },
+    {
+      "sha256": "1d4fb548bcc931af8e9c9b6dadc2e503851c63e141a05eee85cc4b324342b75b",
+      "path": "Lib/site-packages/numpy/testing/_private/utils.py",
+      "bytes": 98460
+    },
+    {
+      "sha256": "f77d228eb0a677f6484a62f8ac65924aeb72b420f30224fe2493e5e1f91adb26",
+      "path": "Lib/site-packages/numpy/testing/_private/utils.pyi",
+      "bytes": 13463
+    },
+    {
+      "sha256": "151929f5c2ef13009d5d62e29d41f78467ffbbd488cd9935ed071141f2136729",
+      "path": "Lib/site-packages/numpy/testing/overrides.py",
+      "bytes": 2216
+    },
+    {
+      "sha256": "2cc61aea18a2f233e647f782f8b1cdaf3de2aeb226bd9716dbd3710a47e0ccd9",
+      "path": "Lib/site-packages/numpy/testing/overrides.pyi",
+      "bytes": 408
+    },
+    {
+      "sha256": "0464e0671bf19d4358a8ec2c71e311f714352c3e9051e3ec28b06cabc73c572a",
+      "path": "Lib/site-packages/numpy/testing/print_coercion_tables.py",
+      "bytes": 6424
+    },
+    {
+      "sha256": "3b89c58e8c90e00bc33b606bcec162e1029ac6c8267f52832804be2047a63f1c",
+      "path": "Lib/site-packages/numpy/testing/print_coercion_tables.pyi",
+      "bytes": 848
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/testing/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "c6842c9082e0e3185191f1cbb258e45df0c76234ed4f54242f2bcd695d8a0559",
+      "path": "Lib/site-packages/numpy/testing/tests/test_utils.py",
+      "bytes": 72385
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "273880f7a294c97c1608f1316d070906a7bf454d71415ad5c22d7184ef2dcea3",
+      "path": "Lib/site-packages/numpy/tests/test__all__.py",
+      "bytes": 230
+    },
+    {
+      "sha256": "828a8e22946af07ae283f77abf1646bbcce5b9031a9c42e190618397783daada",
+      "path": "Lib/site-packages/numpy/tests/test_configtool.py",
+      "bytes": 1598
+    },
+    {
+      "sha256": "3d2890b04a53dc2a0b169e7ace7b4012468927554c1e4bc4d29afcfa29dfcca3",
+      "path": "Lib/site-packages/numpy/tests/test_ctypeslib.py",
+      "bytes": 12728
+    },
+    {
+      "sha256": "beca1b9e55ca51f74c76a308019045fc34526d8361605dd96b8718bfe27ba870",
+      "path": "Lib/site-packages/numpy/tests/test_lazyloading.py",
+      "bytes": 1196
+    },
+    {
+      "sha256": "4d4690986a33f5fbd043c16ba284eafa0f411625621968e84c8190494505ebe6",
+      "path": "Lib/site-packages/numpy/tests/test_matlib.py",
+      "bytes": 1910
+    },
+    {
+      "sha256": "174bd6951df24327d62375df0b129873a7fa93795d2c3ca90876d4194fe0cbc1",
+      "path": "Lib/site-packages/numpy/tests/test_numpy_config.py",
+      "bytes": 1277
+    },
+    {
+      "sha256": "9f872081436733da249adc70ca160158117026f2a963b373631320acdc11538d",
+      "path": "Lib/site-packages/numpy/tests/test_numpy_version.py",
+      "bytes": 1808
+    },
+    {
+      "sha256": "6e7dfd61f3c86da56f9f870eb30edeb1c03717e8962c068c281860792bc05d81",
+      "path": "Lib/site-packages/numpy/tests/test_public_api.py",
+      "bytes": 28474
+    },
+    {
+      "sha256": "b291257549bf9e6574b41a141b9ddad8e4423a3c1f96d8a6a4a7c6193a9aee92",
+      "path": "Lib/site-packages/numpy/tests/test_reloading.py",
+      "bytes": 2441
+    },
+    {
+      "sha256": "eab64de5b9c6a5e478bc48cb06228450c5c9884d8d5676d8d50f3128f94ea80f",
+      "path": "Lib/site-packages/numpy/tests/test_scripts.py",
+      "bytes": 1692
+    },
+    {
+      "sha256": "8808a9c25b000ca218d017511ddea846fe11cce234a749f172a4abf43a2a78b2",
+      "path": "Lib/site-packages/numpy/tests/test_warnings.py",
+      "bytes": 2422
+    },
+    {
+      "sha256": "ac697cf372f816744f4b335ed59cb3eff2ab1efc483286d23282ee18f3e128d2",
+      "path": "Lib/site-packages/numpy/typing/__init__.py",
+      "bytes": 5442
+    },
+    {
+      "sha256": "049406bb20845e9b7e0d2560c221b52d0583a1785b593051a83037abc924db02",
+      "path": "Lib/site-packages/numpy/typing/mypy_plugin.py",
+      "bytes": 6669
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "Lib/site-packages/numpy/typing/tests/__init__.py",
+      "bytes": 0
+    },
+    {
+      "sha256": "2f433ce9c20924c512906944cd35f6335cf8478115a41259af494fe497d1c457",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/arithmetic.pyi",
+      "bytes": 4091
+    },
+    {
+      "sha256": "9ab700ad1f4454d138fbdc8a83e4a056ffd8a7ee03a59d50ff4707891c1746d2",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/array_constructors.pyi",
+      "bytes": 1163
+    },
+    {
+      "sha256": "beeea2dd4f1aa5dddc887681e3f490daa7119c1d6047a9ada77f8ebc1dc7d733",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/array_like.pyi",
+      "bytes": 544
+    },
+    {
+      "sha256": "24608c77fb1105896c3d0d9dec47cb68da284ec8353f48c1b83e43b3631e5c08",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/array_pad.pyi",
+      "bytes": 138
+    },
+    {
+      "sha256": "2806f356dc3557ae4899e3b832195e8d0b7cc980779a1087c2dd1ea95aaaa136",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/arrayprint.pyi",
+      "bytes": 602
+    },
+    {
+      "sha256": "b513d68c2875fac83915703261e4db1d247df3725416579c44d72eb2d0cbb781",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/arrayterator.pyi",
+      "bytes": 484
+    },
+    {
+      "sha256": "420951c8a91d7fde99fa49417c64352529ad385937c9e483173d0ca8a4beae3d",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/bitwise_ops.pyi",
+      "bytes": 604
+    },
+    {
+      "sha256": "9bc4b125468c4a3d925851e18ed2478f46f528c3e0edfd6d5c18e93c6fe912ca",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/char.pyi",
+      "bytes": 2781
+    },
+    {
+      "sha256": "8a746a2376650d9f91e96a5ee15a109cdcee3bcef813a48d71bcccf5bcf8c63c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/chararray.pyi",
+      "bytes": 2368
+    },
+    {
+      "sha256": "c6b3571ae96ad64551b9f2d407b9c6f7983f60daffc11e616c8761cb4b6444c7",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/comparisons.pyi",
+      "bytes": 849
+    },
+    {
+      "sha256": "dc867a4fda789fad6a2179e0ac707c56a11aaa5a3170d99b533dd8712a8d4972",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/constants.pyi",
+      "bytes": 88
+    },
+    {
+      "sha256": "997f6e72c80d5cd7a4545b9157306395e03ea7c1a9bb0a5bb07aa21ba6bd0a90",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/datasource.pyi",
+      "bytes": 420
+    },
+    {
+      "sha256": "96d4f8045697fca4d57512f0d9d320dff3a248d6230d236b5ecc5bcba79e2d3c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/dtype.pyi",
+      "bytes": 354
+    },
+    {
+      "sha256": "75839a274278114cddc9406290a1e27bdf4af1231a62b96a37747d68370c789e",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/einsumfunc.pyi",
+      "bytes": 499
+    },
+    {
+      "sha256": "bb8f899d1b32760e415b739c03dc1ef0c5cb27a17972e6b1c70d01ac7540f646",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/flatiter.pyi",
+      "bytes": 891
+    },
+    {
+      "sha256": "70dfe70208f6cb6ff0904acfb0fd730311b40a61d09a678ee20eea900f45b166",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/fromnumeric.pyi",
+      "bytes": 5868
+    },
+    {
+      "sha256": "26d7935e02bf9170fc50f76284c67f4f655c337ad3063eadf8c3113fc507be1c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/histograms.pyi",
+      "bytes": 379
+    },
+    {
+      "sha256": "eb7003611095b5fd036a9736749a582590d22172b7321856ff5946df4777f916",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/index_tricks.pyi",
+      "bytes": 523
+    },
+    {
+      "sha256": "baf54aa193f4331fbc57c0cc0a72d6a1ef2593a7914f7792031a8d169ca5c044",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/lib_function_base.pyi",
+      "bytes": 2751
+    },
+    {
+      "sha256": "3ccd530fd878b4535e329e32e879571cab801c35b46df347c345162d41e72d59",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/lib_polynomial.pyi",
+      "bytes": 928
+    },
+    {
+      "sha256": "721479ccc10ce4a236030d0b3c89480bc0a711c3c81f0c8a30bcdb3e15cd6175",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/lib_utils.pyi",
+      "bytes": 99
+    },
+    {
+      "sha256": "256b6e4cb723919a467d7b21945a493b9bc83716b09fd4be9b12c61f4fbb91cc",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/lib_version.pyi",
+      "bytes": 164
+    },
+    {
+      "sha256": "8fa186a4e10dcf49ee66ccdad03c9fcba32d8df465b6aadb63c2bfee0e47f762",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/linalg.pyi",
+      "bytes": 1370
+    },
+    {
+      "sha256": "7805fe9c42ad39bd3a98bf043c40ae9262fc330ade852551bb94c194789205a4",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/memmap.pyi",
+      "bytes": 164
+    },
+    {
+      "sha256": "1d87e760d2884701a0d9c6b0d7d8aa37530371cb453102a51389aaa1ab160da3",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/modules.pyi",
+      "bytes": 638
+    },
+    {
+      "sha256": "00cb18939f3e077d314131e2ac11800babf29266aec3e4bb1ff6221d22ce0100",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/multiarray.pyi",
+      "bytes": 1696
+    },
+    {
+      "sha256": "7b0d2b925a67c0cfb9ef3653098ee7733312fed8fccbbaf12937279a36b23e55",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/ndarray_misc.pyi",
+      "bytes": 1036
+    },
+    {
+      "sha256": "e40f374c2a4099a502d2bb4e5343551b4bec35f2a8ffed52179aad553edeaa87",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/ndarray.pyi",
+      "bytes": 415
+    },
+    {
+      "sha256": "59eea9e7f9e67d475dff80adc1865ce4eecc4d233233e5f0ee6114cdd28f70fe",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/nditer.pyi",
+      "bytes": 333
+    },
+    {
+      "sha256": "ec4d73276499205d2575b1268ed03f069e9c57843e712e0ea74049377562deb7",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/nested_sequence.pyi",
+      "bytes": 444
+    },
+    {
+      "sha256": "093f8d5e88ac626232f960466999029bccc73c22f626ee4ca32d36d6f9c48485",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/npyio.pyi",
+      "bytes": 653
+    },
+    {
+      "sha256": "c0f25a1f031d897d6d24b767600819e73e36b44857fbc12d19f58a53cd5ccdfe",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/numerictypes.pyi",
+      "bytes": 125
+    },
+    {
+      "sha256": "bff63e11f842ecf0bc137007faff807e26559490d24a12fbed6437c975b1e621",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/random.pyi",
+      "bytes": 2883
+    },
+    {
+      "sha256": "0711f8d65475c0bbcbae56ac87d9b390f16780301748f4105efb87c58ca51c02",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/rec.pyi",
+      "bytes": 721
+    },
+    {
+      "sha256": "80dda94b7e495fa30e0994f32ffd66979df9d742a3af675f55c94b66b3b00a91",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/scalars.pyi",
+      "bytes": 2951
+    },
+    {
+      "sha256": "654d4a48fd24fa2fa7a7020c521a78dbe10cceb75984ea8f12757c6a1f9927a5",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/shape_base.pyi",
+      "bytes": 160
+    },
+    {
+      "sha256": "f92cdfc607af57b00f0cb96af9287c2b3b0a7428c751be465c4789f47ead69c4",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/shape.pyi",
+      "bytes": 143
+    },
+    {
+      "sha256": "2f47c91ae9fa083ab6e3235dc36cde355186708a443b23f67665a3d6911b333f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/stride_tricks.pyi",
+      "bytes": 324
+    },
+    {
+      "sha256": "5c0880c0e1117cc38bf4835b111df7a87fbbff9acf197e1eb9b19c5ac977e857",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/strings.pyi",
+      "bytes": 2429
+    },
+    {
+      "sha256": "1987ef235036a41d488b68c554bf961aa4558a66c54b6a028a39a85956cc020c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/testing.pyi",
+      "bytes": 1371
+    },
+    {
+      "sha256": "c3377e875c9ed8184c7481e543465c1df8184411d55f6189dd619f324e5eb8f8",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/twodim_base.pyi",
+      "bytes": 935
+    },
+    {
+      "sha256": "d0a1b47362cd51b5050a14d8b5b277f1e25499fbd4265e029f91b4be1d4192bc",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/type_check.pyi",
+      "bytes": 392
+    },
+    {
+      "sha256": "5b3673589f9c0b7f6a0336a4dc27fef972195f5d4cab0b046b76d8632ceab2f6",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/ufunc_config.pyi",
+      "bytes": 755
+    },
+    {
+      "sha256": "f3d163b2beef9aead197dd2655b0b92f4c4ec11224d23838989ae09130e7e1e3",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/ufunclike.pyi",
+      "bytes": 648
+    },
+    {
+      "sha256": "d804d4d08e1917c0c1defca87510c922e5e75dbf82710a6dfa5e0a9f4d242710",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/ufuncs.pyi",
+      "bytes": 493
+    },
+    {
+      "sha256": "e2c4df8aeaf4ad5e42a63958242ff5595dca3e7a2fb5e88899f7efa58875f5e5",
+      "path": "Lib/site-packages/numpy/typing/tests/data/fail/warnings_and_errors.pyi",
+      "bytes": 190
+    },
+    {
+      "sha256": "453b1750033d88a5ff2fe8af8b0155b94c0a72a5fd37cb115b96470178d8b637",
+      "path": "Lib/site-packages/numpy/typing/tests/data/misc/extended_precision.pyi",
+      "bytes": 909
+    },
+    {
+      "sha256": "4c83a5fb86f11a3ed0e430186a6384fe904b9d73107f5aae1bb31a7a76bd0916",
+      "path": "Lib/site-packages/numpy/typing/tests/data/mypy.ini",
+      "bytes": 295
+    },
+    {
+      "sha256": "4f6222cd30c9d1b90684f939aec0f976978498d7cfc56ad5a66381d5ec98ec0b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/arithmetic.py",
+      "bytes": 8043
+    },
+    {
+      "sha256": "306ce00adeee4de0bf6fbc14d9a3e5bd3b83cd77e03ae8f1fe547456a7e99f2f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/array_constructors.py",
+      "bytes": 2584
+    },
+    {
+      "sha256": "a8ba9524b53c6e3488077c45342cd1340728cc25910152da8226181bb7b04090",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/array_like.py",
+      "bytes": 1101
+    },
+    {
+      "sha256": "353c35809f6fdd30d5c11a2fe33b20ff6eeb23e9dd2ae1b898389d05610a5727",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/arrayprint.py",
+      "bytes": 803
+    },
+    {
+      "sha256": "cf8a341f4f13eed6f3ccc5a1bb9657755a9b8af8c189cb858111c193f96939c9",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/arrayterator.py",
+      "bytes": 420
+    },
+    {
+      "sha256": "f257e381ac9f4c30dc5a2d4efab9f12eee0566abec92f187bc55c9a4c4164207",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/bitwise_ops.py",
+      "bytes": 1095
+    },
+    {
+      "sha256": "f8d48084534dde45aabb6099aadda9ab791f953c7a9c3096c643b7248625e4d2",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/comparisons.py",
+      "bytes": 3613
+    },
+    {
+      "sha256": "611b13c0a110e6226d74a084408c9b53f9cbf33f16abd854f8166610eec78d01",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/dtype.py",
+      "bytes": 1127
+    },
+    {
+      "sha256": "09774bbd0b14da20ea41ceddd93451092c20b90cc9d12243167db748378e3ae6",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/einsumfunc.py",
+      "bytes": 1406
+    },
+    {
+      "sha256": "db1b4c3ef0e07e1823648aa23770775afcba43da017a8f6e87852408040d9b08",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/flatiter.py",
+      "bytes": 190
+    },
+    {
+      "sha256": "6cfd211106184093a7efe71ed2b01ff1cbeec595f725ae86492942b4d8440543",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/fromnumeric.py",
+      "bytes": 4263
+    },
+    {
+      "sha256": "472b84b6ac995652bd8f8d370d58cc64577cd26bedf9500c8b5b86bd7bab7347",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/index_tricks.py",
+      "bytes": 1462
+    },
+    {
+      "sha256": "2baf5f83d748e416a0973a62261d77b30187bb2c772c15bfce6cc104e075696c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/lib_user_array.py",
+      "bytes": 612
+    },
+    {
+      "sha256": "5c4734bfb6f0112f82e43e069122504924d2025e6783bb6aead0968f78f16c23",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/lib_utils.py",
+      "bytes": 336
+    },
+    {
+      "sha256": "4e52d92bcb1e902326fff596a36d8565f65ce34ce973310d7facbf4cd8c1a42c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/lib_version.py",
+      "bytes": 317
+    },
+    {
+      "sha256": "b1601a4320679b78c8119adda967b9f14dac0b3784ee6512946f2d588710cd17",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/literal.py",
+      "bytes": 1555
+    },
+    {
+      "sha256": "2df2b82d70962cb2b9ab473531ef124d66e11a3f5bff8e8b62f6705c6a5a1234",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ma.py",
+      "bytes": 179
+    },
+    {
+      "sha256": "2f5a8bc2376b468f53c7b9b15a97ffba074a754a6b0d884f45b0af41de508d76",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/mod.py",
+      "bytes": 1725
+    },
+    {
+      "sha256": "6eeccbbab6ade13206989b96de61ac1a4edd28d9a90437d03965905c57dbf547",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/modules.py",
+      "bytes": 670
+    },
+    {
+      "sha256": "8ba554f9537de90d7a9911b3568637a131365b5cf5e863864ce545c5619169c3",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/multiarray.py",
+      "bytes": 1407
+    },
+    {
+      "sha256": "e939efb9c57c56db5eedd1968a1c7b626ac794d39a9ea98b2481f55bc5a89341",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ndarray_conversion.py",
+      "bytes": 1612
+    },
+    {
+      "sha256": "9c8ea5a19ebb3a32f7533bb401062c1eb23e6bf82ae520b357326a4a24ca0dcd",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ndarray_misc.py",
+      "bytes": 3662
+    },
+    {
+      "sha256": "c9a04ade15b97ded95a6f011927fcd31e17e257f8e6a323c262456380fd493b6",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ndarray_shape_manipulation.py",
+      "bytes": 687
+    },
+    {
+      "sha256": "d70a518ad08d64a082dd6255ac54a1db66750fc8cfd95c5000cb731fc35ca55f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/nditer.py",
+      "bytes": 67
+    },
+    {
+      "sha256": "13a26b20167cc9a1039f886469e3f171d61d902e9529950a4aefd9eb946caa48",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/numeric.py",
+      "bytes": 1720
+    },
+    {
+      "sha256": "25a0a3938cd03ce23aed7cea1b28b7748f8650c14cd80bc3ba78b0cd243bfd19",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/numerictypes.py",
+      "bytes": 348
+    },
+    {
+      "sha256": "c18c0294baf2fa637e42f69883a0051a1c03bafa0a42ff9b97de1fab5d2c2f79",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/random.py",
+      "bytes": 63321
+    },
+    {
+      "sha256": "69e3b15f032485cd1a5f2866838756d90bde9070c601a6184c755a430adf2866",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/recfunctions.py",
+      "bytes": 5199
+    },
+    {
+      "sha256": "29f0988c323147d1b6ca9a824092903ae056c622eaac6095dfcab424ddd3aaf0",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/scalars.py",
+      "bytes": 3973
+    },
+    {
+      "sha256": "5abff2dca8957b97a51d72c285156ea45bc4fe16a21058a50af93e11247545c8",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/shape.py",
+      "bytes": 470
+    },
+    {
+      "sha256": "381a680e67f9bb86d16e5ba0a2488e673b9f112b049a8534dccaa2a4446b8cb8",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/simple_py3.py",
+      "bytes": 102
+    },
+    {
+      "sha256": "697bedf6208e575961411d75c555a04085d7c9744728e05f0ad4e3b61645b4cd",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/simple.py",
+      "bytes": 2919
+    },
+    {
+      "sha256": "8263133ebabc80b5c9652050a0ea49720cc8cd680cc7e93f7ad28f5782924c99",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ufunc_config.py",
+      "bytes": 1269
+    },
+    {
+      "sha256": "8f14d1eb57746e6160ec91d99b0f7dd9c711b9ad34bb85d6258b5c411270152d",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ufunclike.py",
+      "bytes": 1172
+    },
+    {
+      "sha256": "82f75c08da0651f3740a74269fa9358fa82176df331a425d71172072d994e3c0",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/ufuncs.py",
+      "bytes": 438
+    },
+    {
+      "sha256": "ab77354a633087260b610b0b8cad36017a61937fbde9896d4937537eb1252734",
+      "path": "Lib/site-packages/numpy/typing/tests/data/pass/warnings_and_errors.py",
+      "bytes": 167
+    },
+    {
+      "sha256": "8a69d1fceb0b06477f753e576b537f84427f2386a10e65d4129c9b3c6b094dc8",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/arithmetic.pyi",
+      "bytes": 25972
+    },
+    {
+      "sha256": "cde34c1ce9f51e84c56894d7933e7f1ae160dcebd16bb5be81dc5d265d453c6e",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/array_api_info.pyi",
+      "bytes": 3119
+    },
+    {
+      "sha256": "8ead13bf3c8a2aa2eadc359cbaf86c237a086c1b63ea29213bcd92fd95a32362",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/array_constructors.pyi",
+      "bytes": 12817
+    },
+    {
+      "sha256": "be2430bfc77f1ec7399e122a0b870691159b9976aa7f77a1bad3e798e95e0e46",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/arraypad.pyi",
+      "bytes": 712
+    },
+    {
+      "sha256": "25999f5b76ea25663a4d43372433325414b77124e8a4f9011793bccb30f79225",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/arrayprint.pyi",
+      "bytes": 844
+    },
+    {
+      "sha256": "800daeaa4c8f1123e36ac6dc6bf999f9ee355e479ca206553a9443499a52977f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/arraysetops.pyi",
+      "bytes": 4496
+    },
+    {
+      "sha256": "6b4815a8eca5b5c7e3a01ab05e2a2e02dde0859530154668d2ce318355591ab2",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/arrayterator.pyi",
+      "bytes": 1098
+    },
+    {
+      "sha256": "f2c9c4a71d9c8bfd3cbd9b9658767cd4aad17e5531486bed69edbff5de6e296a",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/bitwise_ops.pyi",
+      "bytes": 5219
+    },
+    {
+      "sha256": "0320c629c84b3a467c4c569397b0d36f5fb32c2357d5bb231e53169495b44115",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/char.pyi",
+      "bytes": 11065
+    },
+    {
+      "sha256": "d19269fc6e00ceb3b4af69edb74f368826de676727a01d623c1e18a05bd836e7",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/chararray.pyi",
+      "bytes": 6787
+    },
+    {
+      "sha256": "90c7aa63cb00c0bf3f8e80414cca3ae55d700807d00a3a690649a137f6b1d03b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/comparisons.pyi",
+      "bytes": 7491
+    },
+    {
+      "sha256": "a60f1e05c018a7eed773ee62020ccf47c738aa9a3cf5ff428f62ca05ab6cbbb4",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/constants.pyi",
+      "bytes": 377
+    },
+    {
+      "sha256": "e36cd47ff25a12f0b617c249b42bf61b660b479d4bd15ff03a9c6e9502812589",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ctypeslib.pyi",
+      "bytes": 4830
+    },
+    {
+      "sha256": "1f642d16b41669dfe04651a44d9eecb9b05f4c78e8021c33502758b92fddf42d",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/datasource.pyi",
+      "bytes": 638
+    },
+    {
+      "sha256": "7fe12fdb839a48fe8286923a5e7e63e15394286a17e88c6fb3de722458c7b9fd",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/dtype.pyi",
+      "bytes": 5353
+    },
+    {
+      "sha256": "c31de2ee141d6359a19aee9f9ef18b625374c95072653f9f3cb10c85f1242e5b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/einsumfunc.pyi",
+      "bytes": 1997
+    },
+    {
+      "sha256": "4c2e6c222b0751b712d040e755fa2466ed3bd9b7e8daacb5945e976100684de2",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/emath.pyi",
+      "bytes": 2391
+    },
+    {
+      "sha256": "d36317bbe071372ac87125415cb802d29a0db0d1a25c35a15a419b636cef666c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/fft.pyi",
+      "bytes": 1700
+    },
+    {
+      "sha256": "d0be089ac0b8a8ff9bba39b473368b00cb3f279edb5045092fa08d8bc2f8e06c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/flatiter.pyi",
+      "bytes": 1426
+    },
+    {
+      "sha256": "723d71f80d7675969fef047316488dcecad1a4e1a5497cdc2dfb4c61eaa78018",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/fromnumeric.pyi",
+      "bytes": 15260
+    },
+    {
+      "sha256": "8e9e2e309209d90a284d2a3beb991d63dc75b298606a7901e2ca3258bf82247b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/getlimits.pyi",
+      "bytes": 1635
+    },
+    {
+      "sha256": "18c0369f0233b5a5ba9d86c9f2beb034b890bcbd15d02b2c278b81fea11f8aec",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/histograms.pyi",
+      "bytes": 1314
+    },
+    {
+      "sha256": "98b972986583fbcb9a7d9e220c481e7888b607002db39ff0fba92844f748d9f4",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/index_tricks.pyi",
+      "bytes": 3343
+    },
+    {
+      "sha256": "a44546588b816e8f329ab2326e8be48723452fc89817b2c2fb4d4ef77da096d4",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/lib_function_base.pyi",
+      "bytes": 10087
+    },
+    {
+      "sha256": "e62a6458c40e9c4ab9f68c407471ea0fef48a27e429dfcdc55cebd2b9cbe28fb",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/lib_polynomial.pyi",
+      "bytes": 6041
+    },
+    {
+      "sha256": "85cf1211ae465f66ef7b2d653dd8e41de409b06cc54db61aaaf917416cc51990",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/lib_utils.pyi",
+      "bytes": 466
+    },
+    {
+      "sha256": "9c0984f3e118029c7fa37221e9735c9c6013f609b0627dde99c1ff8cc8efa85d",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/lib_version.pyi",
+      "bytes": 603
+    },
+    {
+      "sha256": "bf7da2baf7ca91ff5bebc33813302944d6f7dc56182b897687c5ad03f0d84a83",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/linalg.pyi",
+      "bytes": 6366
+    },
+    {
+      "sha256": "888c831935f1fad345bdcdff7294ec87ee6a7424f5452646ee1a0792eefd0650",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/matrix.pyi",
+      "bytes": 3122
+    },
+    {
+      "sha256": "3732647d529f7a3e1141e558f4afa190dfe1e3fe403b2ea4e96b574fc14c5b55",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/memmap.pyi",
+      "bytes": 775
+    },
+    {
+      "sha256": "81d26bfdfc7497153d21231032dc1bd7fe89d09fcde5bfb4e263d550f494a719",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/mod.pyi",
+      "bytes": 7792
+    },
+    {
+      "sha256": "6d51c9d3ee171f11f01781ba605b50c7813b8bd3635c95f85e5d7edacb96c4be",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/modules.pyi",
+      "bytes": 1922
+    },
+    {
+      "sha256": "11694aa736a2e2c21d4528bd1d7fa37ce7c159063bf5ed8bde075c6f74d25790",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/multiarray.pyi",
+      "bytes": 8061
+    },
+    {
+      "sha256": "2fadb7a1cb118c302f1561019d5d7e0fa13af2fd1b7810ef5d0e6d4c31928da5",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/nbit_base_example.pyi",
+      "bytes": 610
+    },
+    {
+      "sha256": "6d625a76ae739ffeb26b4992af2cd88768e60aa152eb2ff9a15ba402f523fb5c",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ndarray_assignability.pyi",
+      "bytes": 2777
+    },
+    {
+      "sha256": "74fed120dd89a102f28804c5631c611fcd6283be925d50895c0c46864ecb3e41",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ndarray_conversion.pyi",
+      "bytes": 3465
+    },
+    {
+      "sha256": "994cacdc942aabd02389a27d55a104ea6275f34ea2ab2f46cb5ba6ec31c6aad9",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ndarray_misc.pyi",
+      "bytes": 8137
+    },
+    {
+      "sha256": "18e311600876ba7fdaf5832784dbacd6270111cb5604cf89884d175067a70039",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ndarray_shape_manipulation.pyi",
+      "bytes": 1444
+    },
+    {
+      "sha256": "eac57c2c8f03e45f67356c1b70b050496b9b45b9c867ee4456f7878b71bf6c9b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/nditer.pyi",
+      "bytes": 1984
+    },
+    {
+      "sha256": "207a037411eb3d1f6dec796ee6e4bb1b099d869af2d6f9c9c63a196000966e39",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/nested_sequence.pyi",
+      "bytes": 674
+    },
+    {
+      "sha256": "7d6dd2e84eff2dcdbdd020ff0aefe7c0b880eeb0f3c994d6b0da7ba292393a7a",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/npyio.pyi",
+      "bytes": 3608
+    },
+    {
+      "sha256": "d6f88e02e1f686fd0d89eb5bbf1c9512979025a70cab2edc93e990a511f1101e",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/numeric.pyi",
+      "bytes": 6218
+    },
+    {
+      "sha256": "51f2267b11eb4b40442481ddb5d1e70c215a7a892110ab40d3cfc0adf86c5eeb",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/numerictypes.pyi",
+      "bytes": 1414
+    },
+    {
+      "sha256": "94dc0eb4567dc2fdc222e3c9c27c14347c804ad06ff7b2cfe36ddeacdabdd17f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/polynomial_polybase.pyi",
+      "bytes": 8220
+    },
+    {
+      "sha256": "0495f8fcb04fa9b3d0d5e63e6ebe12a875073bdcef22b3b16bf2764caaee7d68",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/polynomial_polyutils.pyi",
+      "bytes": 10984
+    },
+    {
+      "sha256": "34c1f832a5470cd348d662dec00660f598a7e44a03a188a4fd0f9885b41ae609",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/polynomial_series.pyi",
+      "bytes": 7268
+    },
+    {
+      "sha256": "f2596b8d86fab11b7ba9b94988e9e20ca0ab0b511113724d7de9ea20f5fed942",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/random.pyi",
+      "bytes": 105880
+    },
+    {
+      "sha256": "b2fe9bd84240a5051cb9c6f6d394bf181b4f55debbe53ffc56075e567efc8ea6",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/rec.pyi",
+      "bytes": 3944
+    },
+    {
+      "sha256": "0a1d73cb05aa29da72bd324344645d7f367ab68f95c56239d7632e3709d8d343",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/scalars.pyi",
+      "bytes": 6642
+    },
+    {
+      "sha256": "b67da0695f957c92cfa75f0d1f7a86c575683995e6e27663e292ab1792289e51",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/shape_base.pyi",
+      "bytes": 2100
+    },
+    {
+      "sha256": "3348e80cfa1d1250072e323d166a1f2204b8e6e4a27635ce9dfa5b2b0c81699f",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/shape.pyi",
+      "bytes": 307
+    },
+    {
+      "sha256": "60503bdf3220f184680e70e2e9529cfb709166838967f621365aa2caaaed84b1",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/stride_tricks.pyi",
+      "bytes": 1374
+    },
+    {
+      "sha256": "4d2452d5157b29d8d53237c0c09aff8daeb47add4ba965ab743fa1a29fe68a44",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/strings.pyi",
+      "bytes": 9608
+    },
+    {
+      "sha256": "626f2eb8c36ad65e95a99b0de3782110bf03a592855f8922b07f8157bf7114d5",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/testing.pyi",
+      "bytes": 8683
+    },
+    {
+      "sha256": "83e7d9da0f6f8785d8225b6fdac4a0b00b65d3283f1305b735d84a2051551baa",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/twodim_base.pyi",
+      "bytes": 4451
+    },
+    {
+      "sha256": "8bef18b08386c60c5d95e333c0ef1cb5a2df633727054283058ed38b02be2070",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/type_check.pyi",
+      "bytes": 2790
+    },
+    {
+      "sha256": "c385dd313f11cf6a6ee972e65616fe17886709bfbe03f7586230490ad595679b",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ufunc_config.pyi",
+      "bytes": 1222
+    },
+    {
+      "sha256": "efe2e8746ac7b61050b91e36ad0957c379d0b15a87198771ceeef7076a6cd6d6",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ufunclike.pyi",
+      "bytes": 1266
+    },
+    {
+      "sha256": "992bbc0edc0fd9bfa5e399ebc56c0a88d19e00b41b1baa80281620fce2cea967",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/ufuncs.pyi",
+      "bytes": 4944
+    },
+    {
+      "sha256": "4ea41eef5f3da7807b3c06ee2106c63642f292e0a9ab69e0081d81b1cb21fdbc",
+      "path": "Lib/site-packages/numpy/typing/tests/data/reveal/warnings_and_errors.pyi",
+      "bytes": 471
+    },
+    {
+      "sha256": "b25a55075907b6b1b9ba796063197de10fe43b30c13e70ed1594212d976af493",
+      "path": "Lib/site-packages/numpy/typing/tests/test_isfile.py",
+      "bytes": 897
+    },
+    {
+      "sha256": "a7e61dbedd11b7a98f1e600a60e3801b1c574278e801125255999588a3005f40",
+      "path": "Lib/site-packages/numpy/typing/tests/test_runtime.py",
+      "bytes": 3384
+    },
+    {
+      "sha256": "65573dc0982d00a457e92d65912891e98f70fc3c709744cb37eac0bf3241485c",
+      "path": "Lib/site-packages/numpy/typing/tests/test_typing.py",
+      "bytes": 8594
+    },
+    {
+      "sha256": "1f181b3af705de0dc95fcb08d258f0d27234d9a102a6b700af837c25450b2296",
+      "path": "Lib/site-packages/numpy/version.py",
+      "bytes": 304
+    },
+    {
+      "sha256": "58f605df3145f762e726eec219346c878a2c3325c1b9046932f02ea3128cadbc",
+      "path": "Lib/site-packages/numpy/version.pyi",
+      "bytes": 408
+    },
+    {
+      "sha256": "8d3928f9dc4490fd635707cb88eb26bd764102a7282954307d3e5167a577e8a4",
+      "path": "Lib/site-packages/PyYAML-6.0.2.dist-info/LICENSE",
+      "bytes": 1101
+    },
+    {
+      "sha256": "f65c17a933ab5cfb6cfa32362e8e54c2e680628d21891034059aa3721d168c09",
+      "path": "Lib/site-packages/PyYAML-6.0.2.dist-info/METADATA",
+      "bytes": 2106
+    },
+    {
+      "sha256": "4471a80a0260d124cb1dabbddef5ef1ed5ceb5fd18337338260445fb4baa6f11",
+      "path": "Lib/site-packages/PyYAML-6.0.2.dist-info/RECORD",
+      "bytes": 1777
+    },
+    {
+      "sha256": "ae98f42153138ac02387fd6f1b709c7fdbf98e9090c00cfa703d48554e597614",
+      "path": "Lib/site-packages/PyYAML-6.0.2.dist-info/top_level.txt",
+      "bytes": 11
+    },
+    {
+      "sha256": "73b4961b5fe146f73d1d71c49265a54eed49af85a9cd1b9c7f3a933feffcab4b",
+      "path": "Lib/site-packages/PyYAML-6.0.2.dist-info/WHEEL",
+      "bytes": 102
+    },
+    {
+      "sha256": "facd3956eac162f05207e2f575f592b7546bcdbb2b918e2d4e67ed941da03f16",
+      "path": "Lib/site-packages/sentencepiece-0.2.0.dist-info/METADATA",
+      "bytes": 8252
+    },
+    {
+      "sha256": "86701fed5750bcc12797c7d5f0779ddd987356351cdbace7dfbff0d1508b3aea",
+      "path": "Lib/site-packages/sentencepiece-0.2.0.dist-info/RECORD",
+      "bytes": 783
+    },
+    {
+      "sha256": "3485d52a6b2afb1759e4a44e3071d5d2090b0377ef6cd4dbd60d4ab6089814e9",
+      "path": "Lib/site-packages/sentencepiece-0.2.0.dist-info/top_level.txt",
+      "bytes": 130
+    },
+    {
+      "sha256": "8fd022b2ccdadfbe742d01c5010c987ab3639a410e375fbcc3f45a64d16d292b",
+      "path": "Lib/site-packages/sentencepiece-0.2.0.dist-info/WHEEL",
+      "bytes": 102
+    },
+    {
+      "sha256": "73f61908eab5e97c50827378594556199e35ad5cde8ba965c865654f89ccae0e",
+      "path": "Lib/site-packages/sentencepiece/__init__.py",
+      "bytes": 50454
+    },
+    {
+      "sha256": "257510898b8e92cd2bc53bd082857ff505bef92f16c88023850b14a8dde81ceb",
+      "path": "Lib/site-packages/sentencepiece/_sentencepiece.cp312-win_amd64.pyd",
+      "bytes": 1956864
+    },
+    {
+      "sha256": "3ba1dc9b989922ba5c1509eec372330944a829fd071d1bdb606c9e13e4f3e599",
+      "path": "Lib/site-packages/sentencepiece/_version.py",
+      "bytes": 23
+    },
+    {
+      "sha256": "ecf0c5f9f5cf113e9464f6fe2fb6f7f03fbb7b5d077d4d76eecfc1442a692181",
+      "path": "Lib/site-packages/sentencepiece/sentencepiece_model_pb2.py",
+      "bytes": 6301
+    },
+    {
+      "sha256": "7e7c2a97735eb0aad11d11c0d5fecbac103dc15d8d483183c0c372c63b01d816",
+      "path": "Lib/site-packages/sentencepiece/sentencepiece_pb2.py",
+      "bytes": 1783
+    },
+    {
+      "sha256": "377e52d351cc7ac1537b469144c5a43e3d0f6bc2046c7a44f452bb72be4176dc",
+      "path": "Lib/site-packages/yaml/__init__.py",
+      "bytes": 12311
+    },
+    {
+      "sha256": "071edefcb110c7b727775fc0f7f9c2969dd7efb83efcbc356a8000b5865bc169",
+      "path": "Lib/site-packages/yaml/_yaml.cp312-win_amd64.pyd",
+      "bytes": 263680
+    },
+    {
+      "sha256": "fcaa37d16afa783594794a5ab94193dcb720f503c19ce3d59539c8311189f453",
+      "path": "Lib/site-packages/yaml/composer.py",
+      "bytes": 4883
+    },
+    {
+      "sha256": "90d8247da78b524c10618fd0e857f54f3d97570fe91b5c5513d024ef3faf88b0",
+      "path": "Lib/site-packages/yaml/constructor.py",
+      "bytes": 28639
+    },
+    {
+      "sha256": "e99ac01bd7c062f7557b614aff0d21997a06ed962ca185306a91bc0a20bbd87d",
+      "path": "Lib/site-packages/yaml/cyaml.py",
+      "bytes": 3851
+    },
+    {
+      "sha256": "3cb72d66563064ba7b5e679477046ebf89d8399d940670c8532f3e94a7cb17ea",
+      "path": "Lib/site-packages/yaml/dumper.py",
+      "bytes": 2837
+    },
+    {
+      "sha256": "8e086d694ede170837d5b1b407b45979aff6f40762f422a65eafd08e04290a44",
+      "path": "Lib/site-packages/yaml/emitter.py",
+      "bytes": 43006
+    },
+    {
+      "sha256": "021f73fada072546c4f63f8cf18a7181244ce4280b09cc15cc980b2d1176171a",
+      "path": "Lib/site-packages/yaml/error.py",
+      "bytes": 2533
+    },
+    {
+      "sha256": "e74fd392c810884e2ea7e94aa3f57e9c1cbeb402319083d0c58e6a0e1282787c",
+      "path": "Lib/site-packages/yaml/events.py",
+      "bytes": 2445
+    },
+    {
+      "sha256": "5156becc8aa6905482218abf3e04869b835226db4763645fff3438fdbd5f1cdd",
+      "path": "Lib/site-packages/yaml/loader.py",
+      "bytes": 2061
+    },
+    {
+      "sha256": "80f28d8fca4a09d87677882bde021820d9cf39a3b11a12405226211919cf13ce",
+      "path": "Lib/site-packages/yaml/nodes.py",
+      "bytes": 1440
+    },
+    {
+      "sha256": "8a55a9e6fbe0a07146cef3990c8b45a068c3e83e369e1959ad9ca30306b4a09a",
+      "path": "Lib/site-packages/yaml/parser.py",
+      "bytes": 25495
+    },
+    {
+      "sha256": "d1d9b38ab3a20c6e17a38d519ee412ecaf6b918df18c78956ac7c330d4ea08dc",
+      "path": "Lib/site-packages/yaml/reader.py",
+      "bytes": 6794
+    },
+    {
+      "sha256": "22e58ff9c016f6c1ca1274b4802a926bcf78935060e1c813c5a0f021c6d143e6",
+      "path": "Lib/site-packages/yaml/representer.py",
+      "bytes": 14190
+    },
+    {
+      "sha256": "f4bf9561f9b89961f1503d558385fbae30d12bfed565de9bf76c33abb63620a6",
+      "path": "Lib/site-packages/yaml/resolver.py",
+      "bytes": 9004
+    },
+    {
+      "sha256": "60433788b652690c17710460da5d91e0c753d3318fd85f5e1e42862a71f25906",
+      "path": "Lib/site-packages/yaml/scanner.py",
+      "bytes": 51279
+    },
+    {
+      "sha256": "0a1b85826854d35863e31808f0668abfabdf33606e8f06bd8bb7761401e3edc0",
+      "path": "Lib/site-packages/yaml/serializer.py",
+      "bytes": 4165
+    },
+    {
+      "sha256": "953408cd2570f0c83dc2fe39f7e4e388e41eeb05738aa69196a5f6ffcf6ba79e",
+      "path": "Lib/site-packages/yaml/tokens.py",
+      "bytes": 2573
+    },
+    {
+      "sha256": "ccfffddcd3defb8d899026298af9af43bc186130f8483d77e97c93233d5f27d7",
+      "path": "libcrypto-3.dll",
+      "bytes": 5231472
+    },
+    {
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "path": "libffi-8.dll",
+      "bytes": 39696
+    },
+    {
+      "sha256": "007142039f04d04e0ed607bda53de095e5bc6a8a10d26ecedde94ea7d2d7eefe",
+      "path": "libssl-3.dll",
+      "bytes": 794992
+    },
+    {
+      "sha256": "e502c6b880ff58d614901495a9009c136539cd0b1e2a2abb8fc00b934c203419",
+      "path": "LICENSE.txt",
+      "bytes": 36874
+    },
+    {
+      "sha256": "54aa79d9fe3c09e67a16dcd95b9e88676405a6ec174efda31036983cf7672ecb",
+      "path": "licenses/CTRANSLATE2-LICENSE.txt",
+      "bytes": 1115
+    },
+    {
+      "sha256": "34f87451fd82dca16b258c5c6c43ed1c51e33a7eb26c289fee5bc852ac76e051",
+      "path": "licenses/INTEL-SIMPLIFIED-LICENSE.txt",
+      "bytes": 4153
+    },
+    {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "path": "licenses/SENTENCEPIECE-LICENSE.txt",
+      "bytes": 11358
+    },
+    {
+      "sha256": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+      "path": "model/APACHE-2.0.txt",
+      "bytes": 11544
+    },
+    {
+      "sha256": "72901fbd8abd89fb5cf4a388f26fc681f5c4c58a1e1a88b30b879f107270e7ee",
+      "path": "model/config.json",
+      "bytes": 233
+    },
+    {
+      "sha256": "5a2634a4b6aa2be4dd626f8afb1110e48e098fb12660dd99610655d514c2bb41",
+      "path": "model/manifest.json",
+      "bytes": 389
+    },
+    {
+      "sha256": "327584c20bb83c7e89d595bcfa30b6ef3771c10816f707e892c4bbb1f808a8fb",
+      "path": "model/model.bin",
+      "bytes": 79567635
+    },
+    {
+      "sha256": "4821251fdc0a6c9e889837b42427a90cb3240f71aef89681a5a6de525182a634",
+      "path": "model/shared_vocabulary.json",
+      "bytes": 1368888
+    },
+    {
+      "sha256": "5775ddc9e3ff2fae91554da56468ad35ff56edaba870fea74447bc7234bfdaa8",
+      "path": "model/source.spm",
+      "bytes": 806435
+    },
+    {
+      "sha256": "81dc94efa84e4025ef38d25d5d07429fe41e3eb29d44003f1db6fe98487b0052",
+      "path": "model/target.spm",
+      "bytes": 804600
+    },
+    {
+      "sha256": "0f885b509a685d2bbfa652fed26b5fb31d88fbdab0a978c641d1c7b8aa460aa9",
+      "path": "msvcp140.dll",
+      "bytes": 557728
+    },
+    {
+      "sha256": "884a148a0bdafd17fffbf9baa5b50f954889dda1441281062c06be007a8f7cb1",
+      "path": "nmt-sources.json",
+      "bytes": 1715
+    },
+    {
+      "sha256": "c1fb3b92df70a840387a673781275bf720dd539ba220f8b11d1b46cec685feea",
+      "path": "nmt-worker.py",
+      "bytes": 1718
+    },
+    {
+      "sha256": "d615e193d1affcdbfe504e90d3621cbdcff94bf72b79d899126534507fd6d27a",
+      "path": "pyexpat.pyd",
+      "bytes": 205304
+    },
+    {
+      "sha256": "5d85439736ae088d9680b391e2bca55ca7e9cc5b41a12ebe8e2f554506c7e72e",
+      "path": "python.cat",
+      "bytes": 574231
+    },
+    {
+      "sha256": "4d6f5f81a4bca11191c4c7c6b43632694d0a4ce74e068619d8fdc161d469859a",
+      "path": "python.exe",
+      "bytes": 104952
+    },
+    {
+      "sha256": "fb975a606e7fbf74f64260e3f60c3490b4f74a183c0926fd6ed1ac4c52ac7b1c",
+      "path": "python3.dll",
+      "bytes": 70376
+    },
+    {
+      "sha256": "61b6cadcc4583e621a3b9f4e148791aee48a70340dce21ad57e31f91780f22bf",
+      "path": "python312._pth",
+      "bytes": 99
+    },
+    {
+      "sha256": "9a0e3435aaa680d868150f87ab3e388ad2eebc22f87e036155c7b4eda8cd2120",
+      "path": "python312.dll",
+      "bytes": 6945272
+    },
+    {
+      "sha256": "fb131c0ef7e35cc5250a74c8cd18744bf4115fb8163710711f3758d7df3d1f88",
+      "path": "python312.zip",
+      "bytes": 3835482
+    },
+    {
+      "sha256": "d72294fb338bc2fc8896d25a7395a4db466425427e1559e77185d5135a830681",
+      "path": "pythonw.exe",
+      "bytes": 104304
+    },
+    {
+      "sha256": "d4d7181b11db0bd22a6cd5cda6f8583d1f5c77615fd0a6ca33350619d6e0438a",
+      "path": "select.pyd",
+      "bytes": 33136
+    },
+    {
+      "sha256": "8daa45684bf6688fca28d956b2e8942f2fa98f656675ce68e6d61dd869848a7a",
+      "path": "sqlite3.dll",
+      "bytes": 1583608
+    },
+    {
+      "sha256": "208ee1cd3cbad0828433ca7246b05be2b1ff5569983d27d296c0b38888585488",
+      "path": "unicodedata.pyd",
+      "bytes": 1140592
+    },
+    {
+      "sha256": "1f2d41c4aa5db0bc33ebf7b66d72943a817d7ce6cbe880502a9403823633093f",
+      "path": "vcruntime140_1.dll",
+      "bytes": 49792
+    },
+    {
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066",
+      "path": "vcruntime140.dll",
+      "bytes": 124544
+    },
+    {
+      "sha256": "100e8d676777603c7258daf9b2f23ef001f09f1596d8708de359326fff72bddd",
+      "path": "winsound.pyd",
+      "bytes": 31736
+    }
+  ]
+}

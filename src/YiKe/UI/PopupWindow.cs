@@ -13,6 +13,13 @@ public sealed class PopupWindow : Window
 {
     readonly TextBlock translation = Ui.Text("", 15), status = Ui.Text("", 12, "Muted"), language = Ui.Text("", 12, "Muted"), source = Ui.Text("", 12, "Muted");
     readonly TextBlock error = Ui.Text("", 12, "Error");
+    readonly WordSpeech speech = new();
+    string speechText = "";
+    readonly CheckBox technicalSwitch = new() { Content = "技术释义" }, englishSwitch = new() { Content = "英语研习" };
+    readonly TextBlock wordNotes = Ui.Text("", 12);
+    readonly Button speak;
+    AppSettings? options; bool loadingOptions;
+    public event Action<AppSettings>? OptionsChanged;
     readonly TextBlock programmingNotes = Ui.Text("", 12);
     readonly Expander programming;
     readonly Button pin, copy, retry;
@@ -29,7 +36,7 @@ public sealed class PopupWindow : Window
         Title = "译刻 · 翻译"; Width = 398; MaxHeight = 456; SizeToContent = SizeToContent.Height;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize; AllowsTransparency = true; Background = Brushes.Transparent; ShowActivated = false; ShowInTaskbar = false; Topmost = true;
         var outer = new Border { Margin = new Thickness(8), CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(1), Padding = new Thickness(16), Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = 12, ShadowDepth = 3, Opacity = .18 } };
-        outer.SetResourceReference(Border.BackgroundProperty, "Surface"); outer.SetResourceReference(Border.BorderBrushProperty, "Line");
+        outer.SetResourceReference(Border.BackgroundProperty, "Surface"); outer.SetResourceReference(Border.BorderBrushProperty, "Accent");
         var grid = new Grid(); for (int i = 0; i < 6; i++) grid.RowDefinitions.Add(new RowDefinition { Height = i == 1 ? new GridLength(1, GridUnitType.Star) : GridLength.Auto });
         var top = new DockPanel { Margin = new Thickness(0, 0, 0, 12) };
         var close = Ui.Icon("关闭翻译", "M4,4 L20,20 M20,4 L4,20", Dismiss); DockPanel.SetDock(close, Dock.Right); top.Children.Add(close);
@@ -48,14 +55,26 @@ public sealed class PopupWindow : Window
         pin = Ui.Button("固定", () => SetPinned(!Pinned)); DockPanel.SetDock(pin, Dock.Right); footer.Children.Add(pin);
         retry = Ui.Icon("重试（会再次调用服务）", "M20,9 A8,8 0 1 0 20,15 M20,3 L20,9 L14,9", () => Retry?.Invoke()); retry.Margin = new Thickness(4, 0, 4, 0); DockPanel.SetDock(retry, Dock.Right); footer.Children.Add(retry);
         copy = Ui.Button("复制译文", Copy); copy.HorizontalAlignment = HorizontalAlignment.Left; footer.Children.Add(copy); Grid.SetRow(footer, 4); grid.Children.Add(footer);
+        var enhancements = new StackPanel { Margin = new Thickness(0, 10, 0, 0) };
+        var switches = new StackPanel { Orientation = Orientation.Horizontal }; technicalSwitch.Margin = new Thickness(0, 0, 16, 0); switches.Children.Add(technicalSwitch); switches.Children.Add(englishSwitch); enhancements.Children.Add(switches);
+        wordNotes.TextWrapping = TextWrapping.Wrap; body.Children.Add(wordNotes);
+        speak = Ui.Button("朗读单词", () => { try { speech.Speak(speechText); } catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { error.Text = ex.Message; } }); enhancements.Children.Add(speak);
+        Grid.SetRow(enhancements, 5); grid.Children.Add(enhancements);
+        technicalSwitch.Click += (_, _) => ChangeOptions(); englishSwitch.Click += (_, _) => ChangeOptions();
         outer.Child = grid; Content = outer;
         SourceInitialized += (_, _) => { var h = (HwndSource)PresentationSource.FromVisual(this); Native.SetWindowLongPtr(h.Handle, -20, new IntPtr(Native.GetWindowLongPtr(h.Handle, -20).ToInt64() | 0x08000080L)); h.AddHook((IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) => { if (msg == 0x21) { handled = true; return new IntPtr(3); } return IntPtr.Zero; }); };
         SizeChanged += (_, _) => Position();
         DpiChanged += (_, _) => Dispatcher.BeginInvoke(Position, System.Windows.Threading.DispatcherPriority.Render);
     }
-    public void Begin(string text, AppSettings settings, int x, int y, long hwnd)
+    public void Begin(string text, AppSettings settings, int x, int y, long hwnd, string? originalText = null)
     {
-        anchorX = x; anchorY = y; source.Text = text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
+        loadingOptions = true; options = settings; technicalSwitch.IsChecked = settings.ExplainProgrammingTerms; englishSwitch.IsChecked = settings.LearnEnglish; loadingOptions = false;
+        bool word = System.Text.RegularExpressions.Regex.IsMatch(text.Trim(), @"^[A-Za-z]+(?:['-][A-Za-z]+)*$") && text.Length <= 80;
+        speechText = text.Trim();
+        string? details = settings.LearnEnglish ? YiKe.Translation.BundledEnglishDictionary.Details(text) : null;
+        wordNotes.Text = settings.LearnEnglish && (word || details is not null) ? details ?? "本地词库未收录此词条。" : "";
+        speak.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
+        anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;
         contentScroll.ScrollToTop();
         localMode = settings.TranslationMode == "local";
@@ -75,7 +94,10 @@ public sealed class PopupWindow : Window
         translation.Text = u.Text.Length == 0 ? u.Error is null ? "正在翻译所选文字…" : "暂时无法完成翻译" : u.Text;
         error.Text = u.Error ?? ""; status.Text = u.Error is not null ? "未完成 · 可主动重试" : u.ExplanationPending ? "译文已完成 · 正在补充计算机说明…" : u.Complete ? u.Cached ? "来自本次运行的缓存" : "翻译完成" : u.Text.Length == 0 ? localMode ? "本地离线 · 正在准备翻译" : "正在连接服务…" : "正在生成…"; copy.IsEnabled = u.Text.Length > 0;
     }
-    public void HideForSelection() => Hide(); // Keep the in-flight translation available for an identical re-selection.
+    void ChangeOptions() { if (!loadingOptions && options is not null) { speech.Stop(); OptionsChanged?.Invoke(options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true }); } }
+    public void StopSpeech() => speech.Stop();
+    public void DisposeSpeech() => speech.Dispose();
+    public void HideForSelection() { speech.Stop(); Hide(); } // Keep the in-flight translation available for an identical re-selection.
     public void Error(string message) { translation.Text = "暂时无法完成翻译"; error.Text = message; status.Text = "未完成 · 原文未发送"; }
     public void SelectionError(string message) { Error(message); translation.Text = "未能读取选区"; status.Text = "原文未发送 · 翻译尚未开始"; }
     void Copy()

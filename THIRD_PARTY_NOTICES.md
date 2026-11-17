@@ -18,3 +18,11 @@
 选区兼容通道使用 Windows MSAA / oleacc.dll，并依据 Linux Foundation IAccessible2 的 AccessibleText.idl 声明只读 COM 接口；接口定义适用 BSD 许可证。许可证原文随包位于 licenses/IAccessible2-BSD.txt，来源：https://github.com/LinuxA11y/IAccessible2/blob/master/api/AccessibleText.idl 。未分发额外的 IAccessible2 二进制文件。
 
 1.7.1 内置离线英汉词库来自 ECDICT（skywind3000/ECDICT），按该项目 MIT 许可分发。固定提交 bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b，来源、原始 CSV 与转换产物 SHA-256 及条目数量见 assets/word-dictionary-source.json / assets/word-dictionary.json；许可全文在 licenses/ECDICT-MIT.txt（源码路径 assets/local-licenses/ECDICT-MIT.txt）。只提取符合范围的英文词键及含中文的译义，转换为只读索引；保留另行整理的常用词覆盖，不把上游词条声称为本项目原创。来源：https://github.com/skywind3000/ECDICT 。词库不是所有语境的权威译法，单词多义与上游数据错误仍可能存在。Python 仅用于构建时转换，不是应用运行依赖。
+
+## 1.8.0 节能英译中组件
+
+Helsinki-NLP OPUS-MT en-zh（Apache-2.0），INT8转换文件来自 Second-Dawn-Lab/owll-language-packs，固定地址与哈希见 assets/nmt-source-lock.json。CTranslate2 4.8.4（MIT，OpenNMT/SYSTRAN）、SentencePiece 0.2.0（Apache-2.0）、CPython 3.12.10（PSF）、NumPy 2.2.6（BSD及其附带声明）、PyYAML 6.0.2（MIT）均在应用目录隔离分发；Python现在是节能组件的内部运行依赖，无需用户安装。CTranslate2 随附 Intel OpenMP 运行库使用 Intel Simplified Software License。未分发 CUDA/cuDNN。Microsoft CRT 沿用上文来源与许可。
+
+组件许可全文位于 translation-runtime/LICENSE.txt、translation-runtime/licenses/ 以及 Lib/site-packages 下的 dist-info 许可文件；模型许可位于 translation-runtime/model/APACHE-2.0.txt。Intel声明来源：https://github.com/intel/ScalableVectorSearch/blob/main/THIRD-PARTY-PROGRAMS 。CT2/SPM许可来源为各自官方仓库同版本标签。运行文件清单与SHA见 assets/nmt-package.json。
+
+ECDICT 1.8.0 除中文译义还保留音标、英文定义与词形数据，仍使用同一固定提交和MIT许可。只按索引读取命中的词条，不把整个词库加载进内存。朗读使用 Windows SAPI 和现有系统英语语音，不分发第三方语音模型。
