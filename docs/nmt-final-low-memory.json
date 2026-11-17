@@ -1,0 +1,31 @@
+{
+  "peakWorkingBytes": 135667712,
+  "privateBytes": 157757440,
+  "results": [
+    {
+      "source": "The meeting starts at nine tomorrow morning.",
+      "translation": "明早九点开会",
+      "milliseconds": 47
+    },
+    {
+      "source": "Do not close this window until the download has finished.",
+      "translation": "在下载完成之前不要关闭此窗口 。",
+      "milliseconds": 47
+    },
+    {
+      "source": "Unmarking a square does not uncover it.",
+      "translation": "解开方形标记不会暴露它...",
+      "milliseconds": 47
+    },
+    {
+      "source": "There are three mines next to this square.",
+      "translation": "这个广场旁边有三枚地雷",
+      "milliseconds": 31
+    },
+    {
+      "source": "Only restart the service if the configuration is valid.",
+      "translation": "只有在配置有效时才重新启动服务 。 @ label",
+      "milliseconds": 62
+    }
+  ]
+}

@@ -2,7 +2,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Microsoft.Win32;
 
 namespace YiKe.UI;
 
@@ -11,13 +10,11 @@ public static class Theme
     public static bool Dark { get; private set; }
     public static void Apply(string choice)
     {
-        bool systemDark = false;
-        if (choice == "system") try { systemDark = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "AppsUseLightTheme", 1) is int value && value == 0; } catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or System.IO.IOException) { }
-        Dark = choice == "dark" || choice == "system" && systemDark;
+        Dark = true;
         var r = Application.Current.Resources;
-        void Set(string key, string light, string dark) => r[key] = new SolidColorBrush(SystemParameters.HighContrast ? key switch { "Accent" => SystemColors.HighlightColor, "OnAccent" => SystemColors.HighlightTextColor, "Text" or "Muted" or "Line" or "Good" or "Error" => SystemColors.WindowTextColor, _ => SystemColors.WindowColor } : (Color)ColorConverter.ConvertFromString(Dark ? dark : light));
-        Set("Surface", "#FFFEFC", "#20232D"); Set("Canvas", "#F5F4F9", "#171A22"); Set("Soft", "#F1EFF8", "#2B2E3C"); Set("Line", "#E5E3ED", "#3C4152");
-        Set("Text", "#252839", "#F1F2F7"); Set("Muted", "#646B80", "#B0B7CC"); Set("Accent", "#6655D4", "#B3A7FF"); Set("AccentSoft", "#EDE9FC", "#37304E"); Set("OnAccent", "#FFFFFF", "#211B3B"); Set("Good", "#2E7765", "#8FD1BB"); Set("Error", "#AD3A48", "#FFACB6");
+        void Set(string key, string value) => r[key] = new SolidColorBrush(SystemParameters.HighContrast ? key switch { "Accent" => SystemColors.HighlightColor, "OnAccent" => SystemColors.HighlightTextColor, "Text" or "Muted" or "Line" or "Good" or "Error" => SystemColors.WindowTextColor, _ => SystemColors.WindowColor } : (Color)ColorConverter.ConvertFromString(value));
+        Set("Surface", "#111827"); Set("Canvas", "#090E1A"); Set("Soft", "#192237"); Set("Line", "#30415B");
+        Set("Text", "#F1F2F7"); Set("Muted", "#B0B7CC"); Set("Accent", "#67E8DD"); Set("AccentSoft", "#202642"); Set("OnAccent", "#081C24"); Set("Good", "#8FD1BB"); Set("Error", "#FFACB6");
         r["BodyFont"] = new FontFamily("Segoe UI Variable, Segoe UI, Microsoft YaHei UI");
     }
     public static void InstallStyles()
@@ -29,6 +26,7 @@ public static class Theme
 
 public static class Ui
 {
+    [System.Runtime.InteropServices.DllImport("dwmapi.dll")] static extern int DwmSetWindowAttribute(IntPtr window, int attribute, ref int value, int size);
     public static void ConstrainToWorkArea(Window window)
     {
         double width = window.Width, height = window.Height, minWidth = window.MinWidth, minHeight = window.MinHeight;
@@ -65,7 +63,7 @@ public static class Ui
         };
     }
     public static void WindowTheme(Window window)
-    { window.SetResourceReference(Control.BackgroundProperty, "Surface"); window.SetResourceReference(Control.ForegroundProperty, "Text"); window.SetResourceReference(Control.FontFamilyProperty, "BodyFont"); window.FontSize = 13; }
+    { window.SetResourceReference(Control.BackgroundProperty, "Surface"); window.SetResourceReference(Control.ForegroundProperty, "Text"); window.SetResourceReference(Control.FontFamilyProperty, "BodyFont"); window.FontSize = 13; window.SourceInitialized += (_, _) => { if (!SystemParameters.HighContrast) { int dark = 1; DwmSetWindowAttribute(new System.Windows.Interop.WindowInteropHelper(window).Handle, 20, ref dark, sizeof(int)); } }; }
     public static TextBlock Text(string text, double size = 13, string brush = "Text", bool bold = false)
     { var t = new TextBlock { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal }; t.SetResourceReference(TextBlock.ForegroundProperty, brush); return t; }
     public static Button Button(string text, Action action, bool primary = false)
@@ -86,4 +84,3 @@ public static class Ui
         var b = Button(label, action); b.Content = p; b.ToolTip = label; b.Padding = new Thickness(8); b.Background = Brushes.Transparent; b.BorderThickness = new Thickness(0); return b;
     }
 }
-

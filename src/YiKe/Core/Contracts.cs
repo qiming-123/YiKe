@@ -7,7 +7,7 @@ namespace YiKe.Core;
 
 public enum ReadStatus { Success, NoSelection, Unsupported, Timeout, AccessDenied, TargetGone, TooLong, NotTextSelection }
 public sealed record Gesture(long Sequence, long Window, int ProcessId, int X, int Y, int StartX, int StartY, DateTimeOffset Time, DateTimeOffset? StartedAt = null);
-public sealed record SelectionSnapshot(long Sequence, long Window, int ProcessId, string Text, int X, int Y, DateTimeOffset Time);
+public sealed record SelectionSnapshot(long Sequence, long Window, int ProcessId, string Text, int X, int Y, DateTimeOffset Time, string? OriginalText = null);
 public sealed record SelectionReadResult
 {
     public ReadStatus Status { get; }
@@ -21,23 +21,28 @@ public sealed record TranslationUpdate(long Sequence, string Text, bool Complete
 public sealed record AppSettings
 {
     public int SchemaVersion { get; init; } = 1;
+    public int EnhancementDefaultsVersion { get; init; }
     public Guid ConfigId { get; init; } = Guid.NewGuid();
     public long Revision { get; init; }
     public Guid ServiceId { get; init; } = Guid.NewGuid();
     public string TranslationMode { get; init; } = "local";
+    public string LocalEngine { get; init; } = "generic";
     public string Preset { get; init; } = "OpenAI";
     public string BaseUrl { get; init; } = "https://api.openai.com/v1";
     public string Model { get; init; } = "";
     public Guid ActiveOnlineProfileId { get; init; }
     public OnlineProfile[] OnlineProfiles { get; init; } = Array.Empty<OnlineProfile>();
     public string TargetLanguage { get; init; } = TranslationLanguages.Default;
-    public string Theme { get; init; } = "system";
+    public string Theme { get; init; } = "dark";
     public double FontSize { get; init; } = 15;
     public bool Enabled { get; init; } = true;
     public bool Stream { get; init; } = true;
     public bool TranslateCopiedPdf { get; init; } = true;
-    public bool ExplainProgrammingTerms { get; init; } = true;
-    public bool SupplementTechnicalTerms { get; init; } = true;
+    public bool ExplainProgrammingTerms { get; init; } = false;
+    public bool LearnEnglish { get; init; }
+    public bool SelectionIconMode { get; init; }
+    public bool CleanPdfText { get; init; } = true;
+    public bool SupplementTechnicalTerms { get; init; } = false;
     public int FirstResponseSeconds { get; init; } = 30;
     public int TotalSeconds { get; init; } = 90;
     public string InstructionRole { get; init; } = "system";
@@ -53,6 +58,7 @@ public sealed record AppSettings
             profiles.Length > 0 && !profiles.Any(p => p.Id == ActiveOnlineProfileId) || profiles.Length == 0 && ActiveOnlineProfileId != Guid.Empty) throw new ArgumentException("在线 API 配置标识无效。");
         var endpoint = Endpoint.Normalize(BaseUrl);
         string model = Model.Trim(), target = TargetLanguage.Trim();
+        if (LocalEngine is not ("generic" or "nmt")) throw new ArgumentException("离线引擎设置无效。");
         if (TranslationMode is not ("local" or "online")) throw new ArgumentException("翻译方式无效。");
         if ((requireModel && TranslationMode == "online" && model.Length == 0) || model.Length > 200 || target.Length is < 1 or > 80 || model.Any(char.IsControl) || target.Any(char.IsControl)) throw new ArgumentException("请填写有效的模型名称和目标语言，不要包含换行或控制字符。");
         if (Theme is not ("system" or "light" or "dark") || FontSize is < 12 or > 24 || !double.IsFinite(FontSize)) throw new ArgumentException("外观设置无效。");

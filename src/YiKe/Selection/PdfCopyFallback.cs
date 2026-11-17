@@ -23,6 +23,7 @@ internal static class PdfCopyPolicy
         return title.TrimEnd(' ', '*').EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
     }
     internal static bool CanWait(ReadStatus status) => status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout or ReadStatus.NotTextSelection;
+    internal static bool CanAutoCopy(ReadStatus status) => status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout;
     internal static bool Fresh(uint baseline, uint sequence, bool sourceCurrent, bool ownerMatches, bool fileDrop, bool unicodeText) =>
         baseline != sequence && sequence != 0 && sourceCurrent && ownerMatches && !fileDrop && unicodeText;
     internal static bool RendererOwner(string process, string? rootImage, string? ownerImage, bool descendant, bool startedAfterRoot) =>
@@ -40,11 +41,11 @@ internal interface IPdfCopySource
     string? Capture(Gesture gesture);
     bool IsCurrent(Gesture gesture, string title);
     Task<SelectionReadResult?> Read(Gesture gesture, string title, uint baseline, uint sequence);
+    Task<SelectionReadResult?> Copy(Gesture gesture, string title, Func<bool> active, IntPtr clipboardWindow) => Task.FromResult<SelectionReadResult?>(null);
 }
 
-// A genuine mouse selection candidate must fail normal accessibility reading first.
-// Only a subsequent fresh, source-owned copy is read. This class never copies,
-// writes, clears or restores the clipboard, and never reads it on startup.
+// Normal accessibility is preferred. WPS PDF fallback copies only after a genuine
+// selection failed direct reading; its native transaction restores the clipboard.
 internal sealed class PdfCopyFallback : IDisposable
 {
     readonly HwndSource source = new(new HwndSourceParameters("YiKe PDF copy observer") { ParentWindow = new IntPtr(-3) });
@@ -55,9 +56,9 @@ internal sealed class PdfCopyFallback : IDisposable
     Gesture? pending;
     string title = "";
     uint baseline;
-    long expires, generation;
+    long expires, generation, automaticGeneration = -1;
     int attempts;
-    bool ready, reading, disposed;
+    bool ready, reading, copying, disposed;
     internal event Action<Gesture, SelectionReadResult>? Copied;
     internal bool Available { get; }
     internal bool IsArmed => pending is not null;
@@ -69,7 +70,7 @@ internal sealed class PdfCopyFallback : IDisposable
         source.AddHook(Message); Available = AddClipboardFormatListener(source.Handle);
         retry.Tick += (_, _) => { retry.Stop(); Check(); };
     }
-    public void Clear() { pending = null; title = ""; baseline = 0; expires = 0; attempts = 0; ready = false; generation++; retry.Stop(); }
+    public void Clear() { pending = null; title = ""; baseline = 0; expires = 0; attempts = 0; ready = false; automaticGeneration = -1; generation++; retry.Stop(); }
     public void Arm(Gesture gesture)
     {
         Clear();
@@ -77,15 +78,39 @@ internal sealed class PdfCopyFallback : IDisposable
         string? caption = clipboard.Capture(gesture);
         if (caption is null) return;
         pending = gesture; title = caption; baseline = clipboard.Sequence;
-        expires = clipboard.Now + 15000; attempts = 0;
+        expires = clipboard.Now + 15000; attempts = 0; ready = true;
     }
     public void CompleteRead(Gesture gesture, ReadStatus status)
     {
         if (pending?.Sequence != gesture.Sequence) return;
         if (!PdfCopyPolicy.CanWait(status)) { Clear(); return; }
         ready = true;
+        if (PdfCopyPolicy.CanAutoCopy(status)) automaticGeneration = generation;
         // Let the automatic-read handler finish hiding its silent result first.
-        source.Dispatcher.BeginInvoke(Check, DispatcherPriority.Background);
+        if (automaticGeneration == generation) source.Dispatcher.BeginInvoke(AutomaticCopy, DispatcherPriority.Background);
+        else source.Dispatcher.BeginInvoke(Check, DispatcherPriority.Background);
+    }
+    async void AutomaticCopy()
+    {
+        if (disposed || copying || pending is not { } gesture || automaticGeneration != generation) return;
+        long version = generation; string expectedTitle = title; automaticGeneration = -1;
+        bool Active() => !disposed && version == generation && enabled() && !excluded(gesture.ProcessId) && clipboard.Now <= expires && clipboard.IsCurrent(gesture, expectedTitle);
+        if (!Active()) { Clear(); return; }
+        copying = true;
+        try
+        {
+            var result = await clipboard.Copy(gesture, expectedTitle, Active, source.Handle);
+            if (!Active() || result is null) return;
+            Clear(); LastCopyStatus = result.Status;
+            if (result.Status is ReadStatus.Success or ReadStatus.TooLong) Copied?.Invoke(gesture, result);
+        }
+        catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception or ArgumentException or System.Runtime.InteropServices.ExternalException) { if (version == generation) Clear(); }
+        finally
+        {
+            copying = false;
+            if (!disposed && automaticGeneration == generation) _ = source.Dispatcher.BeginInvoke(AutomaticCopy, DispatcherPriority.Background);
+            else if (!disposed) Check();
+        }
     }
     IntPtr Message(IntPtr hwnd, int message, IntPtr wp, IntPtr lp, ref bool handled)
     {
@@ -99,7 +124,7 @@ internal sealed class PdfCopyFallback : IDisposable
     }
     async void Check()
     {
-        if (disposed || pending is not { } gesture || !ready || reading) return;
+        if (disposed || pending is not { } gesture || !ready || reading || copying) return;
         if (!enabled() || excluded(gesture.ProcessId) || clipboard.Now > expires || !clipboard.IsCurrent(gesture, title)) { Clear(); return; }
         uint sequence = clipboard.Sequence;
         if (sequence == 0 || sequence == baseline) return;
@@ -127,7 +152,7 @@ internal sealed class PdfCopyFallback : IDisposable
             if (!disposed && pending is not null && ready && (recheck || version != generation)) _ = source.Dispatcher.BeginInvoke(Check, DispatcherPriority.Background);
         }
     }
-    static SelectionReadResult? ReadFresh(Gesture gesture, string title, uint baseline, uint sequence)
+    internal static SelectionReadResult? ReadFresh(Gesture gesture, string title, uint baseline, uint sequence)
     {
         if (!Current(gesture, title) || Native.GetClipboardSequenceNumber() != sequence) return new(ReadStatus.TargetGone);
         if (!OpenClipboard(IntPtr.Zero)) return null;
@@ -173,6 +198,7 @@ internal sealed class PdfCopyFallback : IDisposable
         }
         catch (Exception error) when (error is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception or UnauthorizedAccessException) { return false; }
     }
+    internal static bool SourceOwnsClipboard(Gesture gesture) => OwnerMatches(GetClipboardOwner(), gesture);
     static bool Current(Gesture gesture, string title)
     {
         var hwnd = new IntPtr(gesture.Window);
@@ -180,6 +206,7 @@ internal sealed class PdfCopyFallback : IDisposable
         try { using var process = Process.GetProcessById(gesture.ProcessId); return PdfCopyPolicy.IsWpsPdf(process.ProcessName, title); }
         catch (Exception error) when (error is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return false; }
     }
+    internal static bool IsPdfWindow(Gesture gesture) => Current(gesture, Caption(new IntPtr(gesture.Window)));
     static string Caption(IntPtr hwnd) { var text = new StringBuilder(1024); GetWindowText(hwnd, text, text.Capacity); return text.ToString(); }
     sealed class NativePdfCopySource : IPdfCopySource
     {
@@ -194,6 +221,7 @@ internal sealed class PdfCopyFallback : IDisposable
         }
         public bool IsCurrent(Gesture gesture, string title) => Current(gesture, title);
         public Task<SelectionReadResult?> Read(Gesture gesture, string title, uint baseline, uint sequence) => Task.Run(() => ReadFresh(gesture, title, baseline, sequence));
+        public Task<SelectionReadResult?> Copy(Gesture gesture, string title, Func<bool> active, IntPtr window) => PdfAutomaticCopy.Run(gesture, title, active, window);
     }
     public void Dispose()
     {

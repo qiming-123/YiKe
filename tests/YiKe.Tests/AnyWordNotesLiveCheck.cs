@@ -8,6 +8,7 @@ static class AnyWordNotesLiveCheck
 {
     public static async Task<int> Run(string directory, string output, bool light)
     {
+        if (!light && !LiveModelRequirement.StandardAvailable(directory, output)) return 77;
         using var local = new LocalTranslationProvider(directory, light ? () => new(8 * LocalHardware.GiB, 3 * LocalHardware.GiB, 4, true) : null);
         var provider = new Counted(local); var rows = new List<object>();
         var done = Completion(); var watch = new Stopwatch(); long firstCompletedMs = -1;
@@ -18,10 +19,11 @@ static class AnyWordNotesLiveCheck
         }, useCache: false);
         try
         {
+            if (!light) { await local.PrepareAsync(default); if (!LiveModelRequirement.LoadedStandard(local, output)) return 77; }
             foreach (string word in new[] { "how", "unmark", "squares", "banana" })
             {
                 done = Completion(); firstCompletedMs = -1; int before = provider.Calls; watch.Restart();
-                coordinator.Submit(word, new AppSettings(), "");
+                coordinator.Submit(word, new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "");
                 var result = await done.Task.WaitAsync(TimeSpan.FromSeconds(60));
                 bool model = result.ProgrammingNotes.Contains("模型补充");
                 if (result.Error is not null || !result.Complete || !result.Text.Any(ch => ch >= '\u3400' && ch <= '\u9fff') || !result.ProgrammingNotes.Contains("示例") || !result.ProgrammingNotes.Contains("效果")) throw new Exception("Any-word note missing: " + word + " / " + result.Error);

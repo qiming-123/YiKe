@@ -1,4 +1,4 @@
-param([string]$Version='1.7.8',[string]$Directory='')
+param([string]$Version='1.8.3',[string]$Directory='')
 $ErrorActionPreference='Stop'
 . "$PSScriptRoot/release-common.ps1"
 . "$PSScriptRoot/signature-common.ps1"
@@ -29,7 +29,7 @@ try {
  Assert-SafeZip $zip
  $rootNames=@('YiKe.exe','portable.flag','README.md','RELEASE_NOTES.md','LICENSE','THIRD_PARTY_NOTICES.md','DOTNET-LICENSE.txt','DOTNET-RUNTIME-NOTICES.txt','DOTNET-WPF-LICENSE.txt','DOTNET-WPF-NOTICES.txt')
  foreach($name in $rootNames){if(!$zip.GetEntry($name)){throw "Incomplete portable archive: $name"}}
- foreach($entry in $zip.Entries){if($entry.FullName -notin $rootNames -and !$entry.FullName.StartsWith('docs/') -and !($manifest.localPackage -and ($entry.FullName.StartsWith('local-runtime/') -or $entry.FullName.StartsWith('licenses/')))){throw 'Unexpected portable content'}}
+ foreach($entry in $zip.Entries){if($entry.FullName -notin $rootNames -and !$entry.FullName.StartsWith('docs/') -and !$entry.FullName.StartsWith('translation-runtime/') -and !($manifest.localPackage -and ($entry.FullName.StartsWith('local-runtime/') -or $entry.FullName.StartsWith('licenses/')))){throw 'Unexpected portable content'}}
  if($manifest.localPackage){
   $localNames=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
   foreach($file in $manifest.localPackage.files){
@@ -43,6 +43,14 @@ try {
    $stream=$entry.Open();try{$portableLicenses[$entry.FullName]=[Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant()}finally{$stream.Dispose()}
   }
  }
+ if(!$manifest.nmtPackage){throw 'Missing NMT identity'}
+ $nmtNames=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+ foreach($file in $manifest.nmtPackage.files){
+  if(!$nmtNames.Add('translation-runtime/'+$file.path)){throw 'Duplicate NMT identity'}
+  $item=$zip.GetEntry('translation-runtime/'+$file.path); if(!$item -or $item.Length -ne $file.bytes){throw 'Missing NMT file'}
+  $stream=$item.Open();try{if([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant() -ne $file.sha256){throw 'NMT hash mismatch'}}finally{$stream.Dispose()}
+ }
+ foreach($entry in $zip.Entries){if($entry.FullName.StartsWith('translation-runtime/') -and !$entry.FullName.EndsWith('/') -and !$nmtNames.Contains($entry.FullName)){throw 'Unexpected NMT file'}}
  $app=$zip.GetEntry('YiKe.exe');$stream=$app.Open()
  try{if([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream)).ToLowerInvariant() -ne $manifest.appSha256 -or $app.Length -ne $manifest.appBytes){throw 'Portable application identity mismatch'}}finally{$stream.Dispose()}
 }finally{$zip.Dispose()}
@@ -53,6 +61,10 @@ try {
  $stream=$source.GetEntry('SOURCE-MANIFEST.json').Open()
  try{$reader=[IO.StreamReader]::new($stream);$index=$reader.ReadToEnd() | ConvertFrom-Json}finally{$stream.Dispose()}
  if($index.format -ne 1 -or $index.files.Count -lt 20){throw 'Invalid source manifest'}
+ $nmtAsset=$source.GetEntry('assets/nmt-package.json'); if(!$nmtAsset){throw 'Missing pinned NMT manifest'}
+ $stream=$nmtAsset.Open();try{$reader=[IO.StreamReader]::new($stream);$expectedNmt=$reader.ReadToEnd()|ConvertFrom-Json}finally{$stream.Dispose()}
+ if($expectedNmt.files.Count -ne $manifest.nmtPackage.files.Count){throw 'NMT package differs from source'}
+ foreach($file in $expectedNmt.files){$actual=@($manifest.nmtPackage.files|Where-Object path -eq $file.path);if($actual.Count -ne 1 -or $actual[0].sha256 -ne $file.sha256 -or $actual[0].bytes -ne $file.bytes){throw 'NMT package differs from source'}}
  $localAsset=$source.GetEntry('assets/local-package.json')
  if($localAsset){
   $stream=$localAsset.Open();try{$reader=[IO.StreamReader]::new($stream);$expectedLocal=$reader.ReadToEnd()|ConvertFrom-Json}finally{$stream.Dispose()}

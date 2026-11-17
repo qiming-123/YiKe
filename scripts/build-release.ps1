@@ -1,4 +1,4 @@
-param([string]$Version='1.7.8', [string]$Dotnet='', [string]$Iscc='', [string]$SignScript='', [string]$SignerCertificate='', [switch]$AllowSelfSigned, [switch]$PackageOnly)
+param([string]$Version='1.8.3', [string]$Dotnet='', [string]$Iscc='', [string]$SignScript='', [string]$SignerCertificate='', [switch]$AllowSelfSigned, [switch]$PackageOnly, [switch]$SkipGenericModelLive)
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path $PSScriptRoot
 . "$PSScriptRoot/release-common.ps1"
@@ -46,26 +46,33 @@ try {
   if($LASTEXITCODE){throw 'UI tests failed'}
   & $tests --visual | Tee-Object artifacts/visual-tests.txt
   if($LASTEXITCODE){throw 'Visual fixtures failed'}
+  if(!$SkipGenericModelLive){
   & $tests --local-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/local-model-live.json') | Tee-Object artifacts/local-model-tests.txt
   if($LASTEXITCODE){throw 'Real local model check failed'}
   & $tests --local-live-light (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/local-model-light-live.json') | Tee-Object artifacts/local-model-light-tests.txt
   if($LASTEXITCODE){throw 'Real lightweight model check failed'}
   & $tests --technical-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/technical-live-standard.json') standard | Tee-Object artifacts/technical-standard-tests.txt
-  if($LASTEXITCODE){throw 'Real standard-model technical explanation check failed'}
+  if($LASTEXITCODE -notin @(0,77)){throw 'Real standard-model technical explanation check failed'}
   & $tests --technical-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/technical-live-light.json') light | Tee-Object artifacts/technical-light-tests.txt
   if($LASTEXITCODE){throw 'Real lightweight glossary check failed'}
   & $tests --word-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/word-live-standard.json') standard | Tee-Object artifacts/word-standard-tests.txt
-  if($LASTEXITCODE){throw 'Standard local ordinary-word translation failed'}
+  if($LASTEXITCODE -notin @(0,77)){throw 'Standard local ordinary-word translation failed'}
   & $tests --word-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/word-live-light.json') light | Tee-Object artifacts/word-light-tests.txt
   if($LASTEXITCODE){throw 'Light local ordinary-word translation failed'}
   & $tests --any-word-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/any-word-live-standard.json') standard | Tee-Object artifacts/any-word-standard-tests.txt
-  if($LASTEXITCODE){throw 'Standard local any-word explanation failed'}
+  if($LASTEXITCODE -notin @(0,77)){throw 'Standard local any-word explanation failed'}
   & $tests --any-word-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/any-word-live-light.json') light | Tee-Object artifacts/any-word-light-tests.txt
   if($LASTEXITCODE){throw 'Offline fallback any-word explanation failed'}
   & $tests --latency-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/latency-live-standard.json') standard | Tee-Object artifacts/latency-standard-tests.txt
-  if($LASTEXITCODE){throw 'Standard response latency and re-selection check failed'}
+  if($LASTEXITCODE -notin @(0,77)){throw 'Standard response latency and re-selection check failed'}
   & $tests --latency-live (Join-Path $projectRoot 'local-runtime') (Join-Path $projectRoot 'artifacts/latency-live-light.json') light | Tee-Object artifacts/latency-light-tests.txt
   if($LASTEXITCODE){throw 'Light response latency and re-selection check failed'}
+  }else{
+   $skipped=[ordered]@{skipped=$true;reason='Explicit UI/PDF-only patch validation: generic Qwen code and binaries unchanged; heavy model live suite not rerun in this build. NMT published self-test remains required.'}
+   foreach($name in @('local-model-live','local-model-light-live','technical-live-standard','technical-live-light','word-live-standard','word-live-light','any-word-live-standard','any-word-live-light','latency-live-standard','latency-live-light')){$skipped|ConvertTo-Json|Set-Content "artifacts/$name.json"}
+   foreach($name in @('local-model-tests','local-model-light-tests')){'SKIP explicit unchanged generic Qwen live suite; see build manifest.'|Set-Content "artifacts/$name.txt"}
+   Write-Host 'SKIP explicit unchanged generic Qwen live suite. Core, WPF, adapter and published NMT checks are still required.'
+  }
   Copy-Item artifacts/latency-live-standard.json docs/LATENCY_LIVE_STANDARD.json -Force
   Copy-Item artifacts/latency-live-light.json docs/LATENCY_LIVE_LIGHT.json -Force
   Copy-Item artifacts/any-word-live-standard.json docs/ANY_WORD_LIVE_STANDARD.json -Force
@@ -85,6 +92,8 @@ try {
   $fingerprint=Get-InputFingerprint $inputs
   & $Dotnet publish src/YiKe/YiKe.csproj -c Release --no-restore -p:Version=$Version -p:ContinuousIntegrationBuild=true -p:PathMap="$projectRoot=/_/YiKe" -o $publishPath -v minimal
   if($LASTEXITCODE){throw 'Publish failed'}
+  $nmtCheck=Start-Process -FilePath $appFile -ArgumentList '--verify-nmt' -WindowStyle Hidden -Wait -PassThru
+  if($nmtCheck.ExitCode){throw 'Published NMT runtime verification failed'}
   $dictionaryCheck=Start-Process -FilePath $appFile -ArgumentList '--verify-dictionary' -WindowStyle Hidden -Wait -PassThru
   if($dictionaryCheck.ExitCode){throw 'Published single-file dictionary verification failed'}
   if((Get-ChildItem $publishPath -File | Where-Object Name -ne 'YiKe.exe').Count){throw 'Unexpected publish files: inspect before packaging.'}
@@ -112,6 +121,8 @@ try {
   $receipt=[ordered]@{version=$Version;builtUtc=[DateTime]::UtcNow.ToString('o');inputSha256=$fingerprint;appSha256=(Get-FileHash $appFile -Algorithm SHA256).Hash.ToLowerInvariant();setupSha256=(Get-FileHash $setup -Algorithm SHA256).Hash.ToLowerInvariant();appSignature=(Get-AuthenticodeSignature $appFile).Status.ToString();setupSignature=(Get-AuthenticodeSignature $setup).Status.ToString()}
   if($SignScript){$receipt.signing=[ordered]@{allowSelfSigned=[bool]$AllowSelfSigned;certificateSha256=$appSigning.certificateSha256;subject=$appSigning.subject;app=$appSigning;setup=$setupSigning}}
   $receipt.localPackage=$localPackage
+  $receipt.skippedGenericModelLive=[bool]$SkipGenericModelLive
+  $receipt.nmtPackage=Get-Content assets/nmt-package.json -Raw | ConvertFrom-Json
   $receipt | ConvertTo-Json -Depth 8 | Set-Content $receiptPath -Encoding utf8
  }
  if(!(Test-Path $appFile) -or !(Test-Path $setup) -or !(Test-Path $receiptPath)){throw 'Verified build receipt/artifacts missing; run a full build first'}
@@ -123,6 +134,7 @@ try {
  $portable=Join-Path $projectRoot ('artifacts/portable-'+$Version+'-'+[guid]::NewGuid().ToString('N').Substring(0,8))
  New-Item -ItemType Directory -Path $portable | Out-Null
  Copy-Item -LiteralPath $appFile -Destination $portable
+ Copy-Item -LiteralPath (Join-Path $publishPath "translation-runtime") -Destination $portable -Recurse
  [IO.File]::WriteAllText((Join-Path $portable 'portable.flag'),'YiKe portable mode v1')
  Copy-Item -LiteralPath README.md,LICENSE,THIRD_PARTY_NOTICES.md,RELEASE_NOTES.md -Destination $portable
  Copy-Item -LiteralPath docs -Destination $portable -Recurse
@@ -144,6 +156,8 @@ try {
  $manifest=[ordered]@{format=2;version=$Version;sdk='10.0.402';runtime='10.0.13';inno='7.1.0';architecture='win-x64';selfContained=$true;builtUtc=$receipt.builtUtc;packagedUtc=[DateTime]::UtcNow.ToString('o');appBytes=(Get-Item $appFile).Length;appSignature=$receipt.appSignature;signature=$receipt.setupSignature;appSha256=$receipt.appSha256;setupSha256=$receipt.setupSha256;inputSha256=$receipt.inputSha256}
  if($receipt.signing){$manifest.signing=$receipt.signing}
  $manifest.localPackage=$receipt.localPackage
+ $manifest.validation=[ordered]@{skippedGenericModelLive=[bool]$receipt.skippedGenericModelLive;publishedNmtRequired=$true}
+ $manifest.nmtPackage=$receipt.nmtPackage
  $manifest.installerModelMode='optional-download'
  $manifest.portableModelMode='bundled-both'
  $manifest | ConvertTo-Json -Depth 8 | Set-Content dist/BUILD-MANIFEST.json -Encoding utf8

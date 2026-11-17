@@ -1,3 +1,7 @@
+PASS 180 defaults are translation only and options survive serialization
+PASS 180 PDF cleanup preserves paragraphs, code and uncertain hyphens
+PASS 180 DeepL uses its dedicated protocol and never retries a billable request
+PASS 180 offline engine selection persists and invalid values fail before use
 PASS HTTPS endpoint validation and path
 PASS Unicode scalar limit without truncation
 PASS DPAPI save/reload/update and endpoint binding
@@ -108,7 +112,7 @@ PASS Model changes and single-model availability produce distinct cache identiti
 PASS Programming keywords expose distinct cross-language semantics offline
 PASS Glossary identifies code, marked terms and programming prose without ordinary sentence noise
 PASS Glossary respects identifier boundaries, keyword case, deduplication and output bounds
-PASS Programming preference defaults on for legacy configs and roundtrips disabled
+PASS Programming preference defaults off and roundtrips disabled
 PASS Glossary stays separate from translation, adds no requests and refreshes on cached results
 PASS Glossary remains readable on provider failure without claiming translation completion
 PASS Linux commands describe options and effects without executing selected text
@@ -173,6 +177,7 @@ PASS PDF copy fallback never accepts unchanged clipboard data including startup 
 PASS PDF copy fallback rejects foreign clipboard owners focus changes files and nontext copies
 PASS PDF renderer clipboard ownership requires a child WPS PDF process from the same installation
 PASS PDF copy fallback waits only after silent unavailable selection reading, never after denied or confirmed text
+PASS PDF automatic copy excludes confirmed nontext controls, denied reads and completed text
 PASS PDF copy text preserves complete paragraphs Unicode and the 2000-scalar limit without fabrication
 PASS PDF copy preference defaults on and roundtrips without changing API configurations
-RESULT 177 passed, 0 failed
+RESULT 182 passed, 0 failed

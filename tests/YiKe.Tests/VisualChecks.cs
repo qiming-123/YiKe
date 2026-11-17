@@ -21,11 +21,13 @@ public static class VisualChecks
             try
             {
                 var app=new Application {ShutdownMode=ShutdownMode.OnExplicitShutdown};
-                Theme.Apply("light"); Theme.InstallStyles();
+                Theme.Apply("dark"); Theme.InstallStyles();
                 var directory=Path.Combine(Environment.CurrentDirectory,"artifacts","visual-qa");Directory.CreateDirectory(directory);
-                foreach(string theme in new[]{"light","dark"})
+                foreach(string theme in new[]{"dark"})
                 {
-                    Theme.Apply(theme);var settings=new AppSettings{Theme=theme,Model="QA fixture — no request"};
+                    Theme.Apply(theme);var settings=new AppSettings{Theme=theme,LocalEngine="nmt",Model="QA fixture — no request"};
+                    var selectionIcon=new SelectionIcon();selectionIcon.Present(new(1,0,Environment.ProcessId,"layout fixture",500,300,DateTimeOffset.UtcNow));
+                    Capture(selectionIcon,Path.Combine(directory,theme+"-selection-icon.png"));selectionIcon.Clear();selectionIcon.Close();
                     var window=new PopupWindow();
                     window.Begin("[UI layout fixture] First paragraph.\n\nSecond paragraph: 42.",settings,500,300,0);
                     window.BeginAnimation(UIElement.OpacityProperty,null);window.Opacity=1;
@@ -69,7 +71,7 @@ public static class VisualChecks
                     language.BringIntoView();language.IsDropDownOpen=true;CapturePopup(language,Path.Combine(directory,theme+"-languages.png"));language.IsDropDownOpen=false;
                     Capture(w,Path.Combine(directory,theme+"-language-settings.png"));w.Close();
                 }
-                app.Shutdown();Console.WriteLine("PASS WPF light/dark loading, long content, error, settings, model and language dropdown layout fixtures");
+                app.Shutdown();Console.WriteLine("PASS WPF cyberpunk loading, long content, error, settings, model and language dropdown layout fixtures");
             }
             catch(Exception ex){Console.WriteLine(ex);result=1;}
         });thread.SetApartmentState(ApartmentState.STA);thread.Start();thread.Join();return result;
@@ -77,7 +79,7 @@ public static class VisualChecks
     static void Capture(Window window,string path)
     {
         window.UpdateLayout();var frame=new DispatcherFrame();window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>frame.Continue=false));Dispatcher.PushFrame(frame);window.UpdateLayout();
-        if(window.ActualWidth<100 || window.ActualHeight<100)throw new Exception("Window failed to layout");
+        if(window.ActualWidth<1 || window.ActualHeight<1)throw new Exception("Window failed to layout");
         var bitmap=new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth*1.5),(int)Math.Ceiling(window.ActualHeight*1.5),144,144,PixelFormats.Pbgra32);bitmap.Render(window);
         var png=new PngBitmapEncoder();png.Frames.Add(BitmapFrame.Create(bitmap));using var file=File.Create(path);png.Save(file);
     }

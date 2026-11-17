@@ -37,9 +37,11 @@ public sealed class SettingsWindow : Window
     readonly TextBox exclusions = new() { MaxLength = 16384 }, first = new() { MaxLength = 3 }, total = new() { MaxLength = 3 };
     readonly PasswordBox key = new() { MaxLength = 8192 };
     readonly CheckBox stream = new() { Content = "逐步显示译文" }, startup = new() { Content = "登录 Windows 时启动译刻" };
-    readonly CheckBox copiedPdf = new() { Content = "WPS PDF：划选后按 Ctrl+C 翻译" };
-    readonly CheckBox programming = new() { Content = "为所有选区显示计算机用法解释" };
+    readonly CheckBox copiedPdf = new() { Content = "WPS PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
+    readonly CheckBox programming = new() { Content = "技术释义：计算机术语、命令与示例" };
     readonly CheckBox supplement = new() { Content = "让当前模型补充所有选区的计算机用法" };
+    readonly CheckBox learnEnglish = new() { Content = "英语研习：单词多释义和点击朗读" }, iconMode = new() { Content = "划词后显示图标，点击才翻译（关闭则自动翻译）" }, cleanPdf = new() { Content = "智能整理 PDF 正文断行" };
+    readonly ComboBox localEngine = new();
     readonly ComboBox preset = new(), theme = new(), font = new(), role = new(), mode = new();
     readonly StackPanel onlineFields = new();
     readonly TextBlock servicePrivacy = Ui.Text("", 11, "Muted");
@@ -84,9 +86,11 @@ public sealed class SettingsWindow : Window
         Title = "译刻 · 设置"; Width = 800; Height = 760; MinWidth = 680; MinHeight = 570;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Ui.ConstrainToWorkArea(this);
-        foreach (var value in new[] { "OpenAI", "自定义兼容服务" }) preset.Items.Add(value);
-        foreach (var value in new[] { "本地离线（自动适配）", "在线 API" }) mode.Items.Add(value);
-        foreach (var value in new[] { "跟随系统", "浅色", "深色" }) theme.Items.Add(value);
+        foreach (var value in new[] { "OpenAI", "自定义兼容服务", "DeepL" }) preset.Items.Add(value);
+        foreach (var value in new[] { "本地离线（选择引擎）", "在线 API" }) mode.Items.Add(value);
+        foreach (var value in new[] { "英译中节能引擎", "通用多语模型" }) localEngine.Items.Add(value);
+        localEngine.SelectionChanged += (_, _) => { if (!loading) { DraftChanged(); RefreshHardware(); } };
+        foreach (var value in new[] { "赛博朋克" }) theme.Items.Add(value);
         foreach (double size in new double[] { 12, 13, 14, 15, 16, 18, 20, 22, 24 }) font.Items.Add(size);
         foreach (var value in new[] { "system", "developer" }) role.Items.Add(value);
         foreach (var value in TranslationLanguages.Presets) target.Items.Add(value);
@@ -94,6 +98,7 @@ public sealed class SettingsWindow : Window
         target.Loaded += (_, _) => SetEditorLimit(target, 80);
         ReloadFromSaved();
         Theme.Apply(get().Theme);
+        Resources[typeof(Button)] = CyberPrism.ButtonStyle();
 
         var root = new Grid();
         root.ColumnDefinitions.Add(new() { Width = new GridLength(196) });
@@ -101,9 +106,9 @@ public sealed class SettingsWindow : Window
         var sidebar = new Grid { Margin = new Thickness(20, 26, 16, 20) };
         sidebar.RowDefinitions.Add(new() { Height = GridLength.Auto }); sidebar.RowDefinitions.Add(new());
         sidebar.RowDefinitions.Add(new() { Height = GridLength.Auto });
-        var brand = new StackPanel(); brand.Children.Add(Ui.Mark(44));
-        var name = Ui.Text("译刻", 25, bold: true); name.Margin = new Thickness(0, 14, 0, 4);
-        brand.Children.Add(name); brand.Children.Add(Ui.Text("让理解，自然发生。", 12, "Muted")); sidebar.Children.Add(brand);
+        var brand = new StackPanel(); brand.Children.Add(CyberPrism.Monogram(82));
+        var name = Ui.Text("Y I K E", 23, bold: true); name.Margin = new Thickness(0, 8, 0, 6);
+        brand.Children.Add(name); brand.Children.Add(Ui.Text("译刻 · 让理解自然发生", 11, "Muted")); sidebar.Children.Add(brand);
         var nav = new StackPanel { Margin = new Thickness(0, 42, 0, 0) };
         string[] titles = { "翻译服务", "外观与行为", "数据与迁移" };
         for (int i = 0; i < titles.Length; i++)
@@ -117,7 +122,7 @@ public sealed class SettingsWindow : Window
         var bottom = Ui.Text("YiKe " + typeof(SettingsWindow).Assembly.GetName().Version?.ToString(3) + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
         bottom.LineHeight = 20; Grid.SetRow(bottom, 2); sidebar.Children.Add(bottom);
         var sideBorder = new Border { Child = new ScrollViewer { Content = sidebar, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }, BorderThickness = new Thickness(0, 0, 1, 0) };
-        sideBorder.SetResourceReference(Border.BackgroundProperty, "Canvas"); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
+        sideBorder.Background = SystemParameters.HighContrast ? SystemColors.WindowBrush : new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#151E2B").Color, PrismPanel.Brush("#0A101C").Color, 90); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
         root.Children.Add(sideBorder);
         var right = new Grid { Margin = new Thickness(30, 26, 30, 20) };
         Grid.SetColumn(right, 1); right.RowDefinitions.Add(new()); right.RowDefinitions.Add(new() { Height = GridLength.Auto });
@@ -126,12 +131,13 @@ public sealed class SettingsWindow : Window
         var footer = new StackPanel { Margin = new Thickness(0, 18, 0, 0) };
         feedback.Margin = new Thickness(0, 0, 0, 10); footer.Children.Add(feedback);
         var actions = new DockPanel(); var save = Ui.Button("保存设置", SaveSettings, true); save.MinWidth = 112;
+        if (!SystemParameters.HighContrast) save.Background = new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#80FCF1").Color, PrismPanel.Brush("#DCB0FF").Color, 0);
         DockPanel.SetDock(save, Dock.Right); actions.Children.Add(save); actions.Children.Add(Ui.Text("保存后，下次启动自动使用", 12, "Muted"));
-        footer.Children.Add(actions); Grid.SetRow(footer, 1); right.Children.Add(footer); root.Children.Add(right); Content = root;
+        footer.Children.Add(actions); Grid.SetRow(footer, 1); right.Children.Add(footer); root.Children.Add(right); Content = CyberPrism.Frame(this, root);
         ShowPage(0);
         ApplyMode();
 
-        preset.SelectionChanged += (_, _) => { if (loading) return; if (preset.SelectedIndex == 0) url.Text = "https://api.openai.com/v1"; DraftChanged(); };
+        preset.SelectionChanged += (_, _) => { if (loading) return; if (preset.SelectedIndex == 0) url.Text = "https://api.openai.com/v1"; if ((string?)preset.SelectedItem == "DeepL") { url.Text = "https://api-free.deepl.com/v2"; model.Text = "DeepL"; } DraftChanged(); ScheduleModels(); };
         mode.SelectionChanged += (_, _) => { if (loading) return; DraftChanged(); ApplyMode(); ScheduleModels(); };
         theme.SelectionChanged += (_, _) => { if (!loading) Theme.Apply(ThemeChoice()); };
         foreach (var field in new[] { url, first, total }) field.TextChanged += (_, _) => DraftChanged();
@@ -169,12 +175,14 @@ public sealed class SettingsWindow : Window
             var settings = get();
             onlineDraft = OnlineProfiles.Upgrade(settings); pendingKeys.Clear();
             mode.SelectedIndex = settings.TranslationMode == "local" ? 0 : 1;
-            preset.SelectedIndex = settings.Preset == "OpenAI" ? 0 : 1;
+            localEngine.SelectedIndex = settings.LocalEngine == "nmt" ? 0 : 1;
+            preset.SelectedIndex = settings.Preset == "OpenAI" ? 0 : settings.Preset == "DeepL" ? 2 : 1;
             url.Text = settings.BaseUrl; model.Text = settings.Model; target.Text = settings.TargetLanguage;
             exclusions.Text = string.Join(Environment.NewLine, settings.ExcludedProcesses);
             first.Text = settings.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture);
             total.Text = settings.TotalSeconds.ToString(CultureInfo.InvariantCulture);
-            theme.SelectedIndex = settings.Theme == "dark" ? 2 : settings.Theme == "light" ? 1 : 0;
+            theme.SelectedIndex = 0;
+            learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
             if (!font.Items.Contains(settings.FontSize)) font.Items.Add(settings.FontSize);
             font.SelectedItem = settings.FontSize; role.SelectedItem = settings.InstructionRole;
             stream.IsChecked = settings.Stream; startup.IsChecked = StartupRegistration.Enabled;
@@ -212,7 +220,7 @@ public sealed class SettingsWindow : Window
         {
             var active = onlineDraft.OnlineProfiles.Single(p => p.Id == onlineDraft.ActiveOnlineProfileId);
             profileChoice.ItemsSource = onlineDraft.OnlineProfiles; profileChoice.SelectedValue = active.Id; profileName.Text = active.Name;
-            preset.SelectedIndex = active.Preset == "OpenAI" ? 0 : 1; url.Text = active.BaseUrl; model.Text = active.Model;
+            preset.SelectedIndex = active.Preset == "OpenAI" ? 0 : active.Preset == "DeepL" ? 2 : 1; url.Text = active.BaseUrl; model.Text = active.Model;
             first.Text = active.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture); total.Text = active.TotalSeconds.ToString(CultureInfo.InvariantCulture); role.SelectedItem = active.InstructionRole;
             hasKey = false; credentialNotice = null;
             try { hasKey = !string.IsNullOrEmpty(credentials.Read(active.Apply(onlineDraft))); }
@@ -251,6 +259,7 @@ public sealed class SettingsWindow : Window
         {
             navigation[i].SetResourceReference(Control.BackgroundProperty, i == index ? "AccentSoft" : "Canvas");
             navigation[i].FontWeight = i == index ? FontWeights.SemiBold : FontWeights.Normal;
+            navigation[i].BorderBrush = i == index && !SystemParameters.HighContrast ? PrismPanel.Neon() : System.Windows.Media.Brushes.Transparent;
             System.Windows.Automation.AutomationProperties.SetHelpText(navigation[i], i == index ? "当前设置页" : "打开此设置页");
         }
         if (cachedPages.TryGetValue(index, out var cached)) foreach (var child in cached) pages.Children.Add(child);
@@ -280,10 +289,12 @@ public sealed class SettingsWindow : Window
     {
         Field("翻译方式", mode);
         var localInfo = new StackPanel(); localInfo.Children.Add(localTitle);
+        Field("离线引擎", localEngine, container: localInfo);
         var localHint = Ui.Text("安装时可选择轻量、标准或两种模型；不下载也能安装程序。\n已下载模型无需地址、API Key、Ollama 或显卡驱动。需要更换或补充模型时重新运行安装包；已有模型会校验后复用。", 12, "Muted"); localHint.Margin = new Thickness(0, 8, 0, 0); localInfo.Children.Add(localHint);
         hardwareInfo.Margin = new Thickness(0, 10, 0, 0); localInfo.Children.Add(hardwareInfo);
-        localCard = Ui.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
+        localCard = CyberPrism.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
         Field("目标语言", target, "默认简体中文，自动识别原文语言；可选择其他语言，或直接输入语言名称。"); pages.Children.Add(stream);
+        pages.Children.Add(learnEnglish);
         programming.Margin = new Thickness(0, 12, 0, 5); pages.Children.Add(programming);
         System.Windows.Automation.AutomationProperties.SetName(programming, "计算机用法解释");
         supplement.Margin = new Thickness(0, 8, 0, 5); pages.Children.Add(supplement);
@@ -334,6 +345,7 @@ public sealed class SettingsWindow : Window
     }
     void RefreshHardware()
     {
+        if (IsLocal && localEngine.SelectedIndex == 0) { localTitle.Text = NmtTranslationProvider.Available ? "英译中节能引擎已安装" : "节能翻译组件未安装"; hardwareInfo.Text = "适用于英文 → 简体中文；按需运行，翻译完成后自动释放。其他方向请选择通用多语模型或在线服务。"; servicePrivacy.Text = "原文仅在本机处理，不会自动发送到在线服务。"; if (testButton is not null) testButton.IsEnabled = !testing && NmtTranslationProvider.Available; return; }
         var device = localHardware(); var support = LocalHardware.Evaluate(device);
         var installed = LocalInstallation.Evaluate(device);
         localTitle.Text = support.Permanent ? "此电脑不支持本地模型" : !LocalInstallation.HasAnyModel() ? "尚未安装本地模型 · 安装时可选下载" : installed.Supported ? "本地模型已安装" : "所选模型暂不可用";
@@ -345,12 +357,13 @@ public sealed class SettingsWindow : Window
     }
     void BehaviorPage()
     {
-        Field("主题", theme); Field("译文字号", font);
+        Field("视觉风格", theme); Field("译文字号", font);
+        pages.Children.Add(iconMode); pages.Children.Add(cleanPdf);
         exclusions.AcceptsReturn = true; exclusions.Height = 114; exclusions.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         Field("排除应用", exclusions, "每行一个进程名，例如 msedge 或 Code，不区分大小写。"); pages.Children.Add(startup);
         copiedPdf.Margin = new Thickness(0, 14, 0, 6); pages.Children.Add(copiedPdf);
         System.Windows.Automation.AutomationProperties.SetName(copiedPdf, "WPS PDF 复制后翻译");
-        pages.Children.Add(Ui.Text("直接取词不可用的 WPS PDF：用鼠标划选正文后，在 15 秒内按 Ctrl+C 即可翻译。只读取本次由 WPS 新复制的文字，不主动复制或改写剪贴板；暂停、固定及排除应用时不读取。扫描图片或禁止复制的内容需先取得可复制文字。", 11, "Muted"));
+        pages.Children.Add(Ui.Text("WPS PDF 划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted"));
         var adapter = Ui.Button("安装 / 更新 VS Code 适配", async () =>
         {
             if (adapting) return;
@@ -367,7 +380,7 @@ public sealed class SettingsWindow : Window
     }
     void DataPage()
     {
-        pages.Children.Add(Ui.Card(Ui.Text("凭据采用 Windows DPAPI CurrentUser 加密。普通导出不包含密钥；加密迁移包可在新电脑导入后重新绑定本机账户。", 12, "Muted")));
+        pages.Children.Add(CyberPrism.Card(Ui.Text("凭据采用 Windows DPAPI CurrentUser 加密。普通导出不包含密钥；加密迁移包可在新电脑导入后重新绑定本机账户。", 12, "Muted")));
         AddAction("导出普通配置", () => { var dialog = new SaveFileDialog { Filter = "译刻配置 (*.json)|*.json", FileName = "YiKe-settings.json" }; if (dialog.ShowDialog(this) == true) { SettingsStore.Export(dialog.FileName, get()); feedback.Text = "普通配置已导出，不含 API Key。"; } });
         AddAction("导入普通配置", () => { var dialog = new OpenFileDialog { Filter = "译刻配置 (*.json)|*.json" }; if (dialog.ShowDialog(this) == true) ApplyImported(SettingsStore.Import(dialog.FileName), null); });
         AddAction("导出加密迁移包", () =>
@@ -461,12 +474,13 @@ public sealed class SettingsWindow : Window
         if (closed || loading) return;
         CancelModels(); SetModels(Array.Empty<string>());
         if (IsLocal) return;
+        if ((string?)preset.SelectedItem == "DeepL") { modelState.Text = "DeepL 使用专用文本翻译接口，不获取模型列表。Free 地址 api-free.deepl.com/v2；Pro 地址 api.deepl.com/v2。"; return; }
         modelState.Text = "填写地址和 API Key 后自动获取模型；也可手动填写。";
         modelDelay.Start();
     }
     internal async Task RefreshModelsAsync()
     {
-        if (closed || IsLocal) return;
+        if (closed || IsLocal || (string?)preset.SelectedItem == "DeepL") return;
         CancelModels();
         long version = modelVersion;
         try
@@ -499,14 +513,16 @@ public sealed class SettingsWindow : Window
         }
     }
     internal string ModelStatusText => modelState.Text;
-    string ThemeChoice() => theme.SelectedIndex == 2 ? "dark" : theme.SelectedIndex == 1 ? "light" : "system";
+    string ThemeChoice() => "dark";
     AppSettings Draft() => (onlineDraft with
     {
         Enabled = get().Enabled,
         TranslationMode = IsLocal ? "local" : "online",
+        LocalEngine = localEngine.SelectedIndex == 0 ? "nmt" : "generic",
         Preset = IsLocal ? onlineDraft.Preset : (string)preset.SelectedItem, BaseUrl = IsLocal ? onlineDraft.BaseUrl : url.Text, Model = IsLocal ? onlineDraft.Model : model.Text, TargetLanguage = target.Text,
         Stream = stream.IsChecked == true, Theme = ThemeChoice(), FontSize = (double)(font.SelectedItem ?? 15d),
         TranslateCopiedPdf = copiedPdf.IsChecked == true,
+        LearnEnglish = learnEnglish.IsChecked == true, SelectionIconMode = iconMode.IsChecked == true, CleanPdfText = cleanPdf.IsChecked == true,
         ExplainProgrammingTerms = programming.IsChecked == true,
         SupplementTechnicalTerms = supplement.IsChecked == true,
         ExcludedProcesses = exclusions.Text.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries),
@@ -522,7 +538,7 @@ public sealed class SettingsWindow : Window
     internal void SaveSettings() => Guard(() =>
     {
         var draft = Draft(); bool startWithWindows = startup.IsChecked == true;
-        if (IsLocal && LocalHardware.Evaluate(localHardware()) is { Permanent: true } unsupported) throw new ArgumentException(unsupported.Error);
+        if (IsLocal && localEngine.SelectedIndex != 0 && LocalHardware.Evaluate(localHardware()) is { Permanent: true } unsupported) throw new ArgumentException(unsupported.Error);
         string? newKey = !IsLocal && replaceKey && key.Password.Length > 0 ? CredentialStore.ValidateSecret(key.Password) : null;
         if (!IsLocal) { CaptureOnlineDraft(); draft = OnlineProfiles.Capture(draft, profileName.Text); }
         var otherKeys = pendingKeys.Where(p => IsLocal || p.Key != draft.ActiveOnlineProfileId).ToDictionary(p => p.Key, p => p.Value);
@@ -560,7 +576,7 @@ public sealed class SettingsWindow : Window
         Guard(() =>
         {
             var draft = Draft();
-            if (IsLocal && LocalHardware.Evaluate(localHardware()) is { Supported: false } unsupported) throw new ArgumentException(unsupported.Error);
+            if (IsLocal && draft.LocalEngine != "nmt" && LocalHardware.Evaluate(localHardware()) is { Supported: false } unsupported) throw new ArgumentException(unsupported.Error);
             string? secret = IsLocal ? "" : OnlineSecret(draft.BaseUrl);
             if (!IsLocal && string.IsNullOrWhiteSpace(secret)) throw new ArgumentException("请先填写该服务的 API Key。");
             testing = true; if (testButton is not null) testButton.Content = "取消测试";

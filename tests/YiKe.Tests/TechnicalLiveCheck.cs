@@ -8,6 +8,7 @@ public static class TechnicalLiveCheck
 {
     public static async Task<int> Run(string directory, string output, bool light)
     {
+        if (!light && !LiveModelRequirement.StandardAvailable(directory, output)) return 77;
         using var local = new LocalTranslationProvider(directory, light ? () => new(8 * LocalHardware.GiB, 3 * LocalHardware.GiB, 4, true) : null);
         var provider = new Counted(local); var rows = new List<object>(); int maximumCallsObserved = 0;
         var result = new TaskCompletionSource<TranslationUpdate>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -16,6 +17,7 @@ public static class TechnicalLiveCheck
         try
         {
             await local.PrepareAsync(default);
+            if (!light && !LiveModelRequirement.LoadedStandard(local, output)) return 77;
             foreach (var sample in new[]
             {
                 (Text: "chmod 755 script.sh", Smart: true, Stream: true, Expected: "dictionary"),
@@ -29,7 +31,7 @@ public static class TechnicalLiveCheck
             })
             {
                 result = new(TaskCreationOptions.RunContinuationsAsynchronously); int before = provider.Calls; var watch = Stopwatch.StartNew();
-                coordinator.Submit(sample.Text, new AppSettings { SupplementTechnicalTerms = sample.Smart, Stream = sample.Stream }, "");
+                coordinator.Submit(sample.Text, new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = sample.Smart, Stream = sample.Stream }, "");
                 var update = await result.Task.WaitAsync(TimeSpan.FromMinutes(2));
                 if (update.Error is not null) throw new Exception(sample.Text + ": " + update.Error);
                 if (string.IsNullOrWhiteSpace(update.Text) || update.Text.Contains(TechnicalOutput.Marker) || update.Text.Contains("<think>") || update.Text.Contains("完整译文") || update.ProgrammingNotes.Contains("</YIKE_")) throw new Exception("Translation leaked a format label or was empty");

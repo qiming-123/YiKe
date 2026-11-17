@@ -38,7 +38,7 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
     {
         this.directory = Path.GetFullPath(directory ?? LocalModelPackage.DirectoryPath);
         this.hardware = hardware ?? LocalHardware.Detect;
-        idle = new(_ => ReleaseIdle(), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+        idle = new(_ => ReleaseIdle(), null, TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(15));
     }
     internal int EngineProcessId { get { lock (processGate) return engine?.Process.Id ?? 0; } }
     internal LocalRunProfile? ActiveProfile => profile;
@@ -221,13 +221,20 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
 public sealed class TranslationProvider : ITranslationProvider, IDisposable
 {
     readonly ITranslationProvider online, local;
+    readonly DeepLProvider deepL = new();
+    readonly NmtTranslationProvider nmt = new();
+    ITranslationProvider Select(AppSettings s) => s.TranslationMode == "local" ? (s.LocalEngine == "nmt" ? nmt : local) : s.Preset == "DeepL" ? deepL : online;
     public TranslationProvider(ITranslationProvider? online = null, ITranslationProvider? local = null) { this.online = online ?? new OpenAiCompatibleProvider(); this.local = local ?? new LocalTranslationProvider(); }
     public Task PrepareLocalAsync(CancellationToken token) => local is LocalTranslationProvider provider ? provider.PrepareAsync(token) : Task.CompletedTask;
-    public string CacheIdentity(AppSettings settings) => (settings.TranslationMode == "local" ? local : online).CacheIdentity(settings);
-    public bool CanExplainTechnical(AppSettings settings) => (settings.TranslationMode == "local" ? local : online).CanExplainTechnical(settings);
-    public bool CanRepairTranslation(AppSettings settings) => settings.TranslationMode == "local" && local.CanRepairTranslation(settings);
-    public bool CanExplainAnyWord(AppSettings settings) => (settings.TranslationMode == "local" ? local : online).CanExplainAnyWord(settings);
-    public IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, CancellationToken token) =>
-        (settings.TranslationMode == "local" ? local : online).TranslateAsync(request, settings, settings.TranslationMode == "local" ? "" : key, token);
-    public void Dispose() { (online as IDisposable)?.Dispose(); (local as IDisposable)?.Dispose(); }
+    public string CacheIdentity(AppSettings settings) => Select(settings).CacheIdentity(settings);
+    public bool CanExplainTechnical(AppSettings settings) => Select(settings).CanExplainTechnical(settings);
+    public bool CanRepairTranslation(AppSettings settings) => settings.TranslationMode == "local" && Select(settings).CanRepairTranslation(settings);
+    public bool CanExplainAnyWord(AppSettings settings) => Select(settings).CanExplainAnyWord(settings);
+    public async IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, [EnumeratorCancellation] CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!request.NotesOnly && settings.ExplainProgrammingTerms && request.TargetLanguage == TranslationLanguages.Default && ProgrammingGlossary.TranslateTerm(request.Text) is { } term) { yield return term; yield break; }
+        await foreach (var part in Select(settings).TranslateAsync(request, settings, settings.TranslationMode == "local" ? "" : key, token)) yield return part;
+    }
+    public void Dispose() { nmt.Dispose(); deepL.Dispose(); (online as IDisposable)?.Dispose(); (local as IDisposable)?.Dispose(); }
 }

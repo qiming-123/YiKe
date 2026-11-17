@@ -1,0 +1,44 @@
+{
+  "simulatedHardware": true,
+  "actualMemoryPressure": false,
+  "peakWorkingBytes": 1103216640,
+  "peakPrivateBytes": 808464384,
+  "profile": {
+    "ModelId": "Qwen3-0.6B-Q4_0",
+    "ModelFile": "models/Qwen3-0.6B-Q4_0.gguf",
+    "Name": "\u8F7B\u91CF",
+    "Threads": 2,
+    "Context": 3072,
+    "OutputTokens": 1536,
+    "Batch": 64,
+    "MicroBatch": 32,
+    "IdleMinutes": 1
+  },
+  "results": [
+    {
+      "source": "The meeting starts at nine tomorrow morning.",
+      "translation": "\u660E\u5929\u65E9\u4E0A\u4E5D\u70B9\u4F1A\u8BAE\u5F00\u59CB\u3002",
+      "milliseconds": 568
+    },
+    {
+      "source": "Do not close this window until the download has finished.",
+      "translation": "\u4E0D\u8981\u7B49\u5230\u4E0B\u8F7D\u5B8C\u6210\u624D\u5173\u95ED\u8FD9\u4E2A\u7A97\u53E3\u3002",
+      "milliseconds": 574
+    },
+    {
+      "source": "Unmarking a square does not uncover it.",
+      "translation": "\u672A\u6807\u8BB0\u7684\u6B63\u65B9\u5F62\u4E0D\u4F1A\u88AB\u63ED\u793A\u3002",
+      "milliseconds": 585
+    },
+    {
+      "source": "There are three mines next to this square.",
+      "translation": "\u6709\u4E09\u4E2A\u90BB\u8FD1\u8FD9\u4E2A\u5E7F\u573A\u7684\u77FF\u4E95\u3002",
+      "milliseconds": 603
+    },
+    {
+      "source": "Only restart the service if the configuration is valid.",
+      "translation": "\u53EA\u6709\u91CD\u542F\u670D\u52A1\uFF0C\u5982\u679C\u914D\u7F6E\u662F\u6709\u6548\u7684\u3002",
+      "milliseconds": 579
+    }
+  ]
+}

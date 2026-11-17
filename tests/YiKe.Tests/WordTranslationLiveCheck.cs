@@ -9,11 +9,13 @@ static class WordTranslationLiveCheck
 {
     public static async Task<int> Run(string directory, string output, bool light, bool probe = false)
     {
+        if (!light && !LiveModelRequirement.StandardAvailable(directory, output)) return 77;
         using var local = new LocalTranslationProvider(directory, light ? () => new(8 * LocalHardware.GiB, 3 * LocalHardware.GiB, 4, true) : null);
         var rows = new List<object>(); var knownLightIssues = new List<string>();
         try
         {
             await local.PrepareAsync(default);
+            if (!light && !LiveModelRequirement.LoadedStandard(local, output)) return 77;
             if (probe)
             {
                 foreach (string source in new[] { "how", "unmark", "squares", "square" })
@@ -21,7 +23,7 @@ static class WordTranslationLiveCheck
                 {
                     var request = new TranslationRequest(1, source, "auto", "简体中文", Guid.NewGuid(), Guid.NewGuid(), LocalModelPackage.ModelId, ExplainTechnical: technical);
                     var result = new TechnicalOutput(technical); var watch = Stopwatch.StartNew();
-                    await foreach (string delta in local.TranslateAsync(request, new AppSettings(), "", default)) result.Append(delta);
+                    await foreach (string delta in local.TranslateAsync(request, new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = true }, "", default)) result.Append(delta);
                     result.Finish();
                     rows.Add(new { source, technical, text = result.Text, notes = result.Notes, totalMs = watch.ElapsedMilliseconds });
                 }
@@ -51,7 +53,7 @@ static class WordTranslationLiveCheck
                 })
                 {
                     complete = new(TaskCreationOptions.RunContinuationsAsynchronously); int before = provider.Calls;
-                    var watch = Stopwatch.StartNew(); coordinator.Submit(sample.Text, new AppSettings { SupplementTechnicalTerms = false }, "");
+                    var watch = Stopwatch.StartNew(); coordinator.Submit(sample.Text, new AppSettings { ExplainProgrammingTerms = true, SupplementTechnicalTerms = false }, "");
                     var update = await complete.Task.WaitAsync(TimeSpan.FromSeconds(90));
                     bool sentence = sample.Text.StartsWith("Press F", StringComparison.Ordinal) || sample.Text.StartsWith("The board", StringComparison.Ordinal);
                     bool meaning = sample.Meaning.Any(update.Text.Contains);

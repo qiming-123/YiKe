@@ -20,6 +20,7 @@ static class PdfCopyLiveCheck
             using var copied = new PdfCopyFallback(() => true, _ => false);
             using var monitor = new SelectionMonitor(Dispatcher.CurrentDispatcher);
             const string expected = "The meeting starts at nine tomorrow morning.";
+            string? clipboardTextBefore = Clipboard.ContainsText() ? Clipboard.GetText() : null;
             Gesture? last = null;
             void Write(object value) => File.WriteAllText(output, JsonSerializer.Serialize(value, new JsonSerializerOptions { WriteIndented = true }));
             Write(new { phase = "waiting", listenerAvailable = copied.Available, syntheticPdfOnly = true });
@@ -31,7 +32,7 @@ static class PdfCopyLiveCheck
                 last = gesture;
                 copied.Arm(gesture);
                 var timer = Stopwatch.StartNew();
-                var result = await reader.ReadSettledAsync(gesture, CancellationToken.None);
+                var result = await reader.ReadSettledAsync(gesture, CancellationToken.None, pdf:true);
                 copied.CompleteRead(gesture, result.Status);
                 Write(new { phase = "selected", directReadStatus = result.Status.ToString(), elapsedMs = timer.ElapsedMilliseconds,
                     directExactText = result.Text?.Trim() == expected, rootProcessId = gesture.ProcessId, rootClass = Native.ClassName(new(gesture.Window)),
@@ -42,8 +43,8 @@ static class PdfCopyLiveCheck
                 bool exact = result.Text?.Trim() == expected;
                 Write(new { phase = "copied", status = result.Status.ToString(), exactText = exact, scalars = TextLimit.Count(result.Text ?? ""),
                     clipboardOwnerProcessId = Native.ProcessId(GetClipboardOwner()), rootProcessId = gesture.ProcessId,
-                    syntheticPdfOnly = true, clipboardNotWrittenByYiKe = true, realNativeReader = true, checkedUtc = DateTimeOffset.UtcNow });
-                if (exact) exit = 0;
+                    syntheticPdfOnly = true, automaticCopyWithoutManualCtrlC = true, clipboardTextRestored = clipboardTextBefore == (Clipboard.ContainsText() ? Clipboard.GetText() : null), realNativeReader = true, checkedUtc = DateTimeOffset.UtcNow });
+                if (exact) {exit = 0; app.Dispatcher.BeginInvoke(app.Shutdown);}
             };
             var limit = new DispatcherTimer { Interval = TimeSpan.FromSeconds(180) };
             uint observed = Native.GetClipboardSequenceNumber();

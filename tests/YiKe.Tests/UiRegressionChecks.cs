@@ -13,7 +13,7 @@ using YiKe.UI;
 
 public static class UiRegressionChecks
 {
-    public static int Run()
+    public static int Run(string? filter = null)
     {
         int failed = 0, passed = 0, skipped = 0;
         string root = Path.Combine(Environment.CurrentDirectory, "artifacts", "ui-regression-" + Guid.NewGuid().ToString("N"));
@@ -25,6 +25,7 @@ public static class UiRegressionChecks
             {
                 async Task Check(string name, Func<Task> action)
                 {
+                    if (filter is not null && !name.Contains(filter, StringComparison.OrdinalIgnoreCase)) return;
                     try { await action(); Console.WriteLine("PASS " + name); passed++; }
                     catch (DesktopUnavailableException error) { Console.WriteLine("SKIP " + name + " / " + error.Message); skipped++; }
                     catch (Exception error) { Console.WriteLine("FAIL " + name + " / " + error); failed++; }
@@ -32,6 +33,101 @@ public static class UiRegressionChecks
                 }
                 try
                 {
+                    await Check("NMT low memory test bypasses generic-model gate and translates locally", async () => {
+                        var config = new AppSettings { TranslationMode = "local", LocalEngine = "nmt" };
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "nmt-low-memory"));
+                        using var provider = new TranslationProvider();
+                        var window = new SettingsWindow(() => config, (_, _) => {}, store, new CredentialStore(store.UserDirectory),
+                            () => "synthetic low-memory fixture", testProvider: provider, modelCatalog: new RecordingModelCatalog(),
+                            localHardware: () => new(16 * LocalHardware.GiB, LocalHardware.GiB / 2, 8, true));
+                        window.Show(); await Idle(); window.TestConnection();
+                        for (int i = 0; i < 900 && !window.StatusText.Contains("本地翻译成功"); i++)
+                        {
+                            if (window.StatusText.Contains("不足") || window.StatusText.Contains("失败")) throw new Exception(window.StatusText);
+                            await Task.Delay(100);
+                        }
+                        Assert(window.StatusText.Contains("本地翻译成功"), window.StatusText);
+                        var engine = Walk(window).OfType<ComboBox>().Single(combo => combo.Items.Count == 2 && Equals(combo.Items[0], "英译中节能引擎"));
+                        engine.SelectedIndex = 1; await Idle(); window.TestConnection();
+                        Assert(window.StatusText.Contains("1.75 GB"), "Generic model must retain its memory gate");
+                        window.Close();
+                    });
+                    await Check("Prism titlebar maximizes restores minimizes and closes the settings window", async () => {
+                        using var fixture=new EditorFixture(root,"prism-window-controls");var window=fixture.Window;window.Show();await Idle();
+                        FindButton(window,"最大化 / 还原").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Idle();Assert(window.WindowState==WindowState.Maximized);
+                        FindButton(window,"最大化 / 还原").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Idle();Assert(window.WindowState==WindowState.Normal);
+                        FindButton(window,"最小化").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Idle();Assert(window.WindowState==WindowState.Minimized);
+                        SystemCommands.RestoreWindow(window);await Idle();FindButton(window,"关闭").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Assert(!window.IsVisible);
+                    });
+                    await Check("PDF automatically copies once after direct reading fails and does not copy for known controls", async () => {
+                        var source = new FakePdfCopySource { AutoReply = _ => Task.FromResult<SelectionReadResult?>(new(ReadStatus.Success,"automatic selection")) };
+                        using var fallback = new PdfCopyFallback(() => true, _ => false, source); int received=0;
+                        fallback.Copied += (_,result) => { Assert(result.Text=="automatic selection"); received++; };
+                        var gesture=new Gesture(1,123,7,30,20,10,20,DateTimeOffset.UtcNow);
+                        fallback.Arm(gesture); await Idle(); Assert(source.Copies==0);
+                        fallback.CompleteRead(gesture,ReadStatus.Unsupported); await Until(()=>received==1); Assert(source.Copies==1 && source.Reads==0);
+                        foreach(var status in new[]{ReadStatus.Success,ReadStatus.AccessDenied,ReadStatus.NotTextSelection}){fallback.Arm(gesture);fallback.CompleteRead(gesture,status);await Idle();Assert(source.Copies==1);}
+                    });
+                    await Check("PDF automatic copy never publishes after cancellation focus change pause or a new selection", async () => {
+                        var release = new TaskCompletionSource<SelectionReadResult?>();
+                        var source=new FakePdfCopySource {AutoReply=_=>release.Task}; bool enabled=true;
+                        using var fallback=new PdfCopyFallback(()=>enabled,_=>false,source);int received=0;fallback.Copied+=(_,_)=>received++;
+                        var gesture=new Gesture(1,123,7,30,20,10,20,DateTimeOffset.UtcNow);
+                        fallback.Arm(gesture);fallback.CompleteRead(gesture,ReadStatus.Timeout);await Until(()=>source.Copies==1);
+                        fallback.Clear();enabled=false;source.Current=false;release.SetResult(new(ReadStatus.Success,"obsolete"));await Idle();Assert(received==0);
+                    });
+                    await Check("Native clipboard snapshot restores Unicode HTML and RTF without overwriting a newer copy", async () => {
+                        using var owner=new System.Windows.Interop.HwndSource(new System.Windows.Interop.HwndSourceParameters("YiKe clipboard snapshot fixture"){ParentWindow=new IntPtr(-3)});
+                        var original=NativeClipboardSnapshot.Capture(); if(original is null)throw new DesktopUnavailableException("Original clipboard cannot be safely snapshotted; left untouched.");
+                        uint owned=0;
+                        try {
+                            var data=new DataObject();data.SetText("original fixture");data.SetData(DataFormats.Html,"<b>original fixture</b>");data.SetData(DataFormats.Rtf,@"{\rtf1 original fixture}");
+                            Clipboard.SetDataObject(data,true);owned=Native.GetClipboardSequenceNumber();var snapshot=NativeClipboardSnapshot.Capture() ?? throw new Exception("Missing native snapshot");
+                            Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();Assert(snapshot.Restore(owned,owner.Handle));owned=Native.GetClipboardSequenceNumber();
+                            Assert(Clipboard.GetText()=="original fixture" && Clipboard.GetData(DataFormats.Html) as string =="<b>original fixture</b>" && Clipboard.ContainsData(DataFormats.Rtf));
+                            Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();uint copied=owned;
+                            Clipboard.SetText("newer copy");owned=Native.GetClipboardSequenceNumber();Assert(!snapshot.Restore(copied,owner.Handle) && Clipboard.GetText()=="newer copy");
+                        } finally {original.Restore(owned,owner.Handle);}
+                        await Idle();
+                    });
+                    await Check("Native clipboard snapshot preserves image and file-drop contents", async () => {
+                        using var owner=new System.Windows.Interop.HwndSource(new System.Windows.Interop.HwndSourceParameters("YiKe clipboard formats fixture"){ParentWindow=new IntPtr(-3)});
+                        var original=NativeClipboardSnapshot.Capture();if(original is null)throw new DesktopUnavailableException("Original clipboard left untouched.");uint owned=0;
+                        try {
+                            var image=System.Windows.Media.Imaging.BitmapSource.Create(1,1,96,96,PixelFormats.Bgra32,null,new byte[]{10,20,30,255},4);Clipboard.SetImage(image);owned=Native.GetClipboardSequenceNumber();
+                            var snapshot=NativeClipboardSnapshot.Capture() ?? throw new Exception("Missing image snapshot");Clipboard.SetText("PDF copy");owned=Native.GetClipboardSequenceNumber();
+                            bool imageRestored=snapshot.Restore(owned,owner.Handle);
+                            if(!imageRestored)throw new Exception($"Image clipboard restoration failed; expected sequence {owned}, current {Native.GetClipboardSequenceNumber()}");
+                            owned=Native.GetClipboardSequenceNumber();if(Clipboard.GetImage()?.PixelWidth!=1)throw new Exception("Restored image unavailable; formats: "+string.Join(",",Clipboard.GetDataObject()?.GetFormats() ?? Array.Empty<string>()));
+                            var files=new System.Collections.Specialized.StringCollection {Path.Combine(root,"fixture.txt")};Clipboard.SetFileDropList(files);owned=Native.GetClipboardSequenceNumber();snapshot=NativeClipboardSnapshot.Capture() ?? throw new Exception("Missing files snapshot");Clipboard.SetText("PDF copy");owned=Native.GetClipboardSequenceNumber();Assert(snapshot.Restore(owned,owner.Handle));owned=Native.GetClipboardSequenceNumber();Assert(Clipboard.GetFileDropList().Contains(files[0]!));
+                        }finally{original.Restore(owned,owner.Handle);}await Idle();
+                    });
+                    await Check("Selection icon waits for a click and consumes its source exactly once", async () => {
+                        var icon = new SelectionIcon(); int calls = 0;
+                        var snapshot = new SelectionSnapshot(7, 0, Environment.ProcessId, "hello", 300, 250, DateTimeOffset.UtcNow);
+                        icon.Requested += selected => { Assert(selected == snapshot); calls++; };
+                        icon.Present(snapshot); await Idle(); Assert(calls == 0 && icon.Selection == snapshot);
+                        FindButton(icon, "译").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(calls == 1 && icon.Selection is null && !icon.IsVisible);
+                        FindButton(icon, "译").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(calls == 1); icon.Close();
+                    });
+                    await Check("Saved DeepL preset survives reopen and does not request AI model lists", async () => {
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "deepl-preset"));
+                        var config = new AppSettings { TranslationMode = "online", Preset = "DeepL", BaseUrl = "https://api-free.deepl.com/v2", Model = "DeepL" };
+                        var catalog = new RecordingModelCatalog();
+                        var window = new SettingsWindow(() => config, (draft, secret) => config = store.Save(draft), store, new CredentialStore(store.UserDirectory), () => "fixture", modelCatalog: catalog);
+                        window.Show(); await Idle(); Assert((string?)Find<ComboBox>(window, "服务预设").SelectedItem == "DeepL");
+                        window.SaveSettings(); Assert(config.Preset == "DeepL" && catalog.Requests.Count == 0);
+                    });
+                    await Check("English learning exposes word speech but never sentence speech", async () => {
+                        var popup = new PopupWindow(); popup.Begin("hello", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
+                        Assert(FindButton(popup, "朗读单词").IsVisible);
+                        Assert(Walk(popup).OfType<TextBlock>().Any(t => t.Text.Contains("你好") || t.Text.Contains("喂")));
+                        popup.Begin("The meeting starts tomorrow.", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
+                        Assert(!FindButton(popup, "朗读单词").IsVisible);
+                        popup.Begin("I love you", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
+                        Assert(!FindButton(popup, "朗读单词").IsVisible); popup.DisposeSpeech(); popup.Close();
+                    });
                     await Check("Mouse listener owns a separate message loop from a busy UI dispatcher", async () =>
                     {
                         using var monitor = new SelectionMonitor(Dispatcher.CurrentDispatcher);
@@ -151,14 +247,14 @@ public static class UiRegressionChecks
                         Assert(!fixture.Config.Enabled && fixture.Config.TranslationMode == "local" && fixture.Config.OnlineProfiles.Length == 2);
                         Assert(fixture.Credentials.Read(OnlineProfiles.Select(fixture.Config, added)) == "fake-local-retained");
                     });
-                    await Check("WPS PDF copy reads only a new sequence after failed selection reading and expires its intent", async () =>
+                    await Check("WPS PDF copy accepts fresh text during UIA reading and expires its intent", async () =>
                     {
                         var clipboard = new FakePdfCopySource(); bool enabled = true, excluded = false;
                         using var fallback = new PdfCopyFallback(() => enabled, _ => excluded, clipboard);
                         var copied = new List<string>(); fallback.Copied += (_, result) => copied.Add(result.Text!);
                         var gesture = new Gesture(1, 123, 7, 30, 20, 10, 20, DateTimeOffset.UtcNow);
                         fallback.Arm(gesture); clipboard.Sequence++;
-                        fallback.ClipboardChanged(); await Idle(); Assert(clipboard.Reads == 0);
+                        fallback.ClipboardChanged(); await Until(() => copied.Count == 1); Assert(clipboard.Reads == 1);
                         fallback.CompleteRead(gesture, ReadStatus.Unsupported); await Until(() => copied.Count == 1);
                         Assert(copied.Single() == "new PDF selection");
                         fallback.Arm(gesture with { Sequence = 2 }); fallback.CompleteRead(gesture with { Sequence = 2 }, ReadStatus.NoSelection);
@@ -272,7 +368,7 @@ public static class UiRegressionChecks
                         var save = FindButton(window, "保存设置"); var bounds = save.TransformToAncestor(window).TransformBounds(new Rect(save.RenderSize));
                         Assert(save.IsVisible && bounds.Top >= 0 && bounds.Bottom <= window.ActualHeight && bounds.Right <= window.ActualWidth);
                         FindButton(window, "外观与行为").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Idle();
-                        Assert(Find<ComboBox>(window, "主题").IsVisible);
+                        Assert(Find<ComboBox>(window, "视觉风格").IsVisible);
                     });
                     await Check("Fresh local mode needs no API fields, key, save or model discovery", async () =>
                     {
@@ -451,8 +547,8 @@ public static class UiRegressionChecks
                     await Check("Programming preference saves, reloads and imports independently from credentials", async () =>
                     {
                         using var fixture = new EditorFixture(root, "programming-preference"); var window = fixture.Window; window.Show(); await Idle();
-                        var box = Find<CheckBox>(window, "计算机用法解释"); Assert(box.IsChecked == true);
-                        var smart = Find<CheckBox>(window, "模型补充解释"); Assert(smart.IsChecked == true && smart.IsEnabled);
+                        var box = Find<CheckBox>(window, "计算机用法解释"); Assert(box.IsChecked == false);
+                        var smart = Find<CheckBox>(window, "模型补充解释"); Assert(smart.IsChecked == false && !smart.IsEnabled);
                         box.IsChecked = false; window.SaveSettings(); Assert(!fixture.Config.ExplainProgrammingTerms && box.IsChecked == false);
                         Assert(!smart.IsEnabled);
                         window.ApplyImported(fixture.Config with { ExplainProgrammingTerms = true }, null); await Idle();
@@ -530,7 +626,7 @@ public static class UiRegressionChecks
     { window.UpdateLayout(); return Walk(window).OfType<T>().Single(control => AutomationProperties.GetName(control) == name); }
     static Button FindButton(Window window, string name)
     { window.UpdateLayout(); return Walk(window).OfType<Button>().Single(button => AutomationProperties.GetName(button) == name); }
-    static void Assert(bool condition) { if (!condition) throw new Exception("UI regression assertion failed"); }
+    static void Assert(bool condition, string message = "UI regression assertion failed") { if (!condition) throw new Exception(message); }
     static async Task Idle() => await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
     static async Task Until(Func<bool> predicate)
     { var limit = DateTime.UtcNow.AddSeconds(3); while (!predicate()) { if (DateTime.UtcNow >= limit) throw new TimeoutException("UI result was not delivered"); await Task.Delay(20); } }
@@ -558,11 +654,14 @@ sealed class FakePdfCopySource : IPdfCopySource
     public long Now { get; set; }
     public bool Current = true;
     public int Reads;
+    public int Copies;
+    public Func<Func<bool>,Task<SelectionReadResult?>>? AutoReply;
     public Func<int, Task<SelectionReadResult?>>? Reply;
     public string? Capture(Gesture gesture) => Current ? "fixture.pdf - WPS Office" : null;
     public bool IsCurrent(Gesture gesture, string title) => Current;
     public Task<SelectionReadResult?> Read(Gesture gesture, string title, uint baseline, uint sequence)
     { Reads++; return Reply?.Invoke(Reads) ?? Task.FromResult<SelectionReadResult?>(new(ReadStatus.Success, "new PDF selection")); }
+    public Task<SelectionReadResult?> Copy(Gesture gesture,string title,Func<bool> active,IntPtr owner) {Copies++;return AutoReply?.Invoke(active) ?? Task.FromResult<SelectionReadResult?>(null);}
 }
 
 sealed class BlockingConnectionProvider(bool fail = false) : ITranslationProvider
