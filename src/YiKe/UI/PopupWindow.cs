@@ -22,13 +22,13 @@ public sealed class PopupWindow : Window
     public event Action<AppSettings>? OptionsChanged;
     readonly TextBlock programmingNotes = Ui.Text("", 12);
     readonly Expander programming;
-    readonly Button pin, copy, retry;
+    readonly Button pin, copy, retry, cancel;
     readonly Expander original;
     readonly ScrollViewer contentScroll;
     int anchorX, anchorY;
-    bool positioning, localMode;
+    bool positioning;
     public bool Pinned { get; private set; }
-    public event Action? Dismissed, Retry, Settings;
+    public event Action? Dismissed, Retry, Settings, CancelRequested;
     public event Action<bool>? PinChanged;
     public PopupWindow()
     {
@@ -54,12 +54,14 @@ public sealed class PopupWindow : Window
         var footer = new DockPanel { Margin = new Thickness(0, 8, 0, 0) };
         pin = Ui.Button("固定", () => SetPinned(!Pinned)); DockPanel.SetDock(pin, Dock.Right); footer.Children.Add(pin);
         retry = Ui.Icon("重试（会再次调用服务）", "M20,9 A8,8 0 1 0 20,15 M20,3 L20,9 L14,9", () => Retry?.Invoke()); retry.Margin = new Thickness(4, 0, 4, 0); DockPanel.SetDock(retry, Dock.Right); footer.Children.Add(retry);
+        cancel = Ui.Button("取消", () => { CancelRequested?.Invoke(); cancel!.Visibility = Visibility.Collapsed; status.Text = "已取消"; if (!copy!.IsEnabled) translation.Text = ""; });
+        DockPanel.SetDock(cancel, Dock.Right); footer.Children.Add(cancel);
         copy = Ui.Button("复制译文", Copy); copy.HorizontalAlignment = HorizontalAlignment.Left; footer.Children.Add(copy); Grid.SetRow(footer, 4); grid.Children.Add(footer);
         var enhancements = new StackPanel { Margin = new Thickness(0, 10, 0, 0) };
         var switches = new StackPanel { Orientation = Orientation.Horizontal }; technicalSwitch.Margin = new Thickness(0, 0, 16, 0); switches.Children.Add(technicalSwitch); switches.Children.Add(englishSwitch); enhancements.Children.Add(switches);
         wordNotes.TextWrapping = TextWrapping.Wrap; body.Children.Add(wordNotes);
-        speak = Ui.Button("朗读单词", () => { try { speech.Speak(speechText); } catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { error.Text = ex.Message; } }); enhancements.Children.Add(speak);
-        Grid.SetRow(enhancements, 5); grid.Children.Add(enhancements);
+        speak = Ui.Button("朗读单词", () => { try { speech.Speak(speechText); } catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { error.Text = ex.Message; } }); body.Children.Add(speak);
+        var extensions = new Expander { Header = "翻译扩展", Content = enhancements }; Grid.SetRow(extensions, 5); grid.Children.Add(extensions);
         technicalSwitch.Click += (_, _) => ChangeOptions(); englishSwitch.Click += (_, _) => ChangeOptions();
         outer.Child = grid; Content = outer;
         SourceInitialized += (_, _) => { var h = (HwndSource)PresentationSource.FromVisual(this); Native.SetWindowLongPtr(h.Handle, -20, new IntPtr(Native.GetWindowLongPtr(h.Handle, -20).ToInt64() | 0x08000080L)); h.AddHook((IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) => { if (msg == 0x21) { handled = true; return new IntPtr(3); } return IntPtr.Zero; }); };
@@ -77,12 +79,12 @@ public sealed class PopupWindow : Window
         anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;
         contentScroll.ScrollToTop();
-        localMode = settings.TranslationMode == "local";
+        cancel.Visibility = Visibility.Visible;
         copy.Content = "复制译文";
         pin.IsEnabled = true;
         retry.IsEnabled = text.Length > 0;
         original.IsEnabled = text.Length > 0;
-        language.Text = "自动 → " + settings.TargetLanguage; error.Text = ""; status.Text = settings.TranslationMode == "local" ? "本地离线 · 正在加载 / 翻译" : "正在连接 · " + settings.Preset; original.IsExpanded = false; copy.IsEnabled = false;
+        language.Text = settings.ServiceLabel + " · 自动 → " + settings.TargetLanguage; error.Text = ""; status.Text = "准备引擎"; original.IsExpanded = false; copy.IsEnabled = false;
         if (!IsVisible) { Show(); if (SystemParameters.ClientAreaAnimation) { BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150))); } }
         Position();
     }
@@ -92,13 +94,13 @@ public sealed class PopupWindow : Window
         programmingNotes.Text = u.ProgrammingNotes;
         programming.Visibility = u.ProgrammingNotes.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         translation.Text = u.Text.Length == 0 ? u.Error is null ? "正在翻译所选文字…" : "暂时无法完成翻译" : u.Text;
-        error.Text = u.Error ?? ""; status.Text = u.Error is not null ? "未完成 · 可主动重试" : u.ExplanationPending ? "译文已完成 · 正在补充计算机说明…" : u.Complete ? u.Cached ? "来自本次运行的缓存" : "翻译完成" : u.Text.Length == 0 ? localMode ? "本地离线 · 正在准备翻译" : "正在连接服务…" : "正在生成…"; copy.IsEnabled = u.Text.Length > 0;
+        error.Text = u.Error ?? ""; status.Text = u.StatusLabel; cancel.Visibility = u.Running ? Visibility.Visible : Visibility.Collapsed; copy.IsEnabled = u.Text.Length > 0;
     }
     void ChangeOptions() { if (!loadingOptions && options is not null) { speech.Stop(); OptionsChanged?.Invoke(options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true }); } }
     public void StopSpeech() => speech.Stop();
     public void DisposeSpeech() => speech.Dispose();
     public void HideForSelection() { speech.Stop(); Hide(); } // Keep the in-flight translation available for an identical re-selection.
-    public void Error(string message) { translation.Text = "暂时无法完成翻译"; error.Text = message; status.Text = "未完成 · 原文未发送"; }
+    public void Error(string message) { translation.Text = "暂时无法完成翻译"; error.Text = message; status.Text = "失败 · 原文未发送"; cancel.Visibility = Visibility.Collapsed; }
     public void SelectionError(string message) { Error(message); translation.Text = "未能读取选区"; status.Text = "原文未发送 · 翻译尚未开始"; }
     void Copy()
     {

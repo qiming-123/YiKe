@@ -16,10 +16,16 @@ public sealed record SelectionReadResult
     public SelectionReadResult(ReadStatus status, string? text = null) { Status = status; Text = status == ReadStatus.Success ? text : null; }
 }
 public sealed record TranslationRequest(long Sequence, string Text, string SourceLanguage, string TargetLanguage, Guid ConfigId, Guid ServiceId, string Model, string PromptVersion = "1", bool ExplainTechnical = false, string KnownTechnicalTerms = "", bool RefineTranslation = false, bool NotesOnly = false);
-public sealed record TranslationUpdate(long Sequence, string Text, bool Complete = false, string? Error = null, bool Cached = false, string ProgrammingNotes = "", bool ExplanationPending = false);
+public sealed record TranslationUpdate(long Sequence, string Text, bool Complete = false, string? Error = null, bool Cached = false, string ProgrammingNotes = "", bool ExplanationPending = false)
+{
+    public bool Running => Error is null && (!Complete || ExplanationPending);
+    public string StatusLabel => Error is not null ? "失败" : ExplanationPending ? "译文已完成 · 正在补充计算机说明…" : Complete ? Cached ? "翻译完成 · 缓存" : "翻译完成" : "翻译中";
+}
 
 public sealed record AppSettings
 {
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string ServiceLabel => TranslationMode == "local" ? LocalEngine == "nmt" ? "本地英译中" : "本地多语" : "在线 · " + Preset;
     public int SchemaVersion { get; init; } = 1;
     public int EnhancementDefaultsVersion { get; init; }
     public Guid ConfigId { get; init; } = Guid.NewGuid();

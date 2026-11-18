@@ -33,6 +33,31 @@ public static class UiRegressionChecks
                 }
                 try
                 {
+                    await Check("Manual window keeps source editable after failures and cancellation", async () =>
+                    {
+                        var config = new AppSettings { LocalEngine = "nmt" };
+                        var window = new ManualWindow(config); window.Show(); await Idle();
+                        var input = Find<TextBox>(window, "原文"); input.Text = "hello";
+                        window.Begin(config); Assert(input.IsReadOnly);
+                        window.Update(new(1, "你好", true));
+                        Assert(!input.IsReadOnly && Find<TextBox>(window, "译文").Text == "你好");
+                        window.Begin(config); window.Error("请缩短原文。");
+                        Assert(input.Text == "hello" && !input.IsReadOnly);
+                        bool cancelled = false; window.CancelRequested += () => cancelled = true;
+                        window.Begin(config); FindButton(window, "取消").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(cancelled && !input.IsReadOnly); window.Close();
+                    });
+                    await Check("Popup service, progress, extensions and cancellation", async () =>
+                    {
+                        var popup = new PopupWindow(); popup.Begin("hello", new AppSettings { LocalEngine = "nmt" }, 300, 250, 0); await Idle();
+                        bool Has(string label) => Walk(popup).OfType<TextBlock>().Any(t => t.Text.Contains(label));
+                        Assert(Has("本地英译中") && Has("准备引擎"));
+                        Assert(!Walk(popup).OfType<Expander>().Single(e => Equals(e.Header, "翻译扩展")).IsExpanded);
+                        popup.Update(new(1, "")); Assert(Has("翻译中"));
+                        bool cancelled = false; popup.CancelRequested += () => cancelled = true;
+                        FindButton(popup, "取消").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(cancelled && Has("已取消")); popup.Dismiss(); popup.Close();
+                    });
                     await Check("NMT low memory test bypasses generic-model gate and translates locally", async () => {
                         var config = new AppSettings { TranslationMode = "local", LocalEngine = "nmt" };
                         var store = new SettingsStore(userDirectory: Path.Combine(root, "nmt-low-memory"));
