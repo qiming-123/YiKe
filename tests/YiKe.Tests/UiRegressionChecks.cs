@@ -55,6 +55,10 @@ public static class UiRegressionChecks
                         Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("英文释义")));
                         string saved = ""; window.FavoriteRequested += w => saved = w;
                         FindButton(window,"收藏单词").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "read");
+                        input.Text = "take off"; await Idle();
+                        Assert(BundledEnglishDictionary.Details("take off") is { Length: > 15 });
+                        var savePhrase = FindButton(window,"收藏单词"); Assert(savePhrase.IsEnabled);
+                        savePhrase.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "take off");
                         window.Close();
                         using var fixture = new EditorFixture(root,"caption-position"); fixture.Window.Show(); await Idle();
                         var close = FindButton(fixture.Window,"关闭");

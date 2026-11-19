@@ -61,8 +61,9 @@ public sealed class ManualWindow : Window
             if (!study.IsExpanded) return;
             word = (source.SelectionLength > 0 ? source.SelectedText : source.Text).Trim();
             bool single = word.Length <= 80 && System.Text.RegularExpressions.Regex.IsMatch(word, @"^[A-Za-z]+(?:['-][A-Za-z]+)*$");
-            save.IsEnabled = speak.IsEnabled = single;
-            card.Text = single ? YiKe.Translation.BundledEnglishDictionary.Details(word) ?? "本地词库未收录此词。" : "输入一个英文单词，或在原文中选中一个词。";
+            var details = YiKe.Translation.BundledEnglishDictionary.Details(word);
+            speak.IsEnabled = single; save.IsEnabled = single || details != null;
+            card.Text = details ?? (single ? "本地词库未收录此词。" : "输入或选中英文单词、词组，例如 take off。");
         }
         study.Expanded += (_,_) => Lookup(); source.TextChanged += (_,_) => Lookup(); source.SelectionChanged += (_,_) => Lookup();
         study.Collapsed += (_,_) => speech.Stop(); Lookup();

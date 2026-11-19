@@ -54,15 +54,15 @@ internal sealed class StudyBook : Window
         language.SelectionChanged += (_,_) => { japaneseTools.Visibility = IsJapanese ? Visibility.Visible : Visibility.Collapsed; Run(Reload); };
         var query = new TextBox { ToolTip = "输入单词或词形" }; japaneseTools.Children.Add(Ui.Text("词包查词")); japaneseTools.Children.Add(query);
         var lookup = new WrapPanel(); japaneseTools.Children.Add(lookup);
-        lookup.Children.Add(Ui.Button("查词", () => definition.Text = pack.Find(query.Text)?.Card(query.Text.Trim()) ?? (pack.Installed ? "试用词包未收录。" : "请先安装对应词包。")));
+        lookup.Children.Add(Ui.Button("查词", () => definition.Text = pack.Find(query.Text)?.Card(query.Text.Trim()) ?? (pack.Installed ? "当前词典未收录。" : "请先安装对应词包。")));
         lookup.Children.Add(Ui.Button("收藏此词", () => status.Text = pack.Find(query.Text) is null ? "请先查询已收录的词形。" : SaveSelected()));
         string SaveSelected() { var message = Add(FilePath,query.Text); Reload(); return message; }
         var installers = new StackPanel(); foreach(var item in packs) installers.Children.Add(InstallButton(item,status));
         language.SelectionChanged += (_,_) => { for(int i=0;i<packs.Length;i++) installers.Children[i].Visibility = i+1==language.SelectedIndex ? Visibility.Visible : Visibility.Collapsed; };
         lookup.Children.Insert(0,installers);        lookup.Children.Add(Ui.Button("从文件安装", () => Run(() =>
         {
-            var dialog = new OpenFileDialog { Filter = "研习词包 (*.json)|*.json" };
-            if (dialog.ShowDialog(this) == true) { pack.Install(File.ReadAllBytes(dialog.FileName)); status.Text = "词包已安装，可以离线查词。"; }
+            var dialog = new OpenFileDialog { Filter = "离线词典 (*.ykdict;*.json)|*.ykdict;*.json" };
+            if (dialog.ShowDialog(this) == true) { if (Path.GetExtension(dialog.FileName).Equals(".ykdict",StringComparison.OrdinalIgnoreCase)) pack.InstallDictionary(dialog.FileName); else pack.Install(File.ReadAllBytes(dialog.FileName)); status.Text = "词包已安装，可以离线查词。"; }
         })));
         var address = new TextBox { ToolTip = "HTTPS 词包直链" };
         japaneseTools.Children.Add(Ui.Text("从网址安装（HTTPS 词包直链）")); japaneseTools.Children.Add(address);
@@ -108,8 +108,8 @@ internal sealed class StudyBook : Window
     }
     internal static Button InstallButton(JapanesePack pack, TextBlock status)
     {
-        var starter = new Button { Content = pack.Installed ? "已安装"+pack.Name+"词包" : "一键安装"+pack.Name+"试用包" };
-        starter.IsEnabled = !pack.Installed;
+        var starter = new Button { Content = pack.InstallLabel };
+        starter.IsEnabled = pack.Count == 0;
         starter.Click += async (_,_) =>
         {
             starter.IsEnabled = false;
@@ -118,15 +118,15 @@ internal sealed class StudyBook : Window
                 string catalog = Path.Combine(AppContext.BaseDirectory, pack.Code+"-starter-source.txt");
                 if (!File.Exists(catalog)) { status.Text = "此构建尚未配置该词包来源。"; return; }
                 string location = (await File.ReadAllTextAsync(catalog)).Trim();
-                if (Path.IsPathFullyQualified(location)) pack.Install(await File.ReadAllBytesAsync(location));
+                if (Path.IsPathFullyQualified(location)) await System.Threading.Tasks.Task.Run(() => pack.InstallDictionary(location));
                 else await pack.Download(location);
-                starter.Content = "已安装"+pack.Name+"词包"; status.Text = "已安装，可以离线查词。";
+                starter.Content = pack.InstallLabel; status.Text = "已安装，可以离线查词。";
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException or OperationCanceledException)
             { status.Text = "安装失败：" + ex.Message; }
-            finally { starter.IsEnabled = !pack.Installed; }
+            finally { starter.IsEnabled = pack.Count == 0; }
         };
-        starter.IsVisibleChanged += (_,_) => { if (pack.Installed) { starter.Content = "已安装"+pack.Name+"词包"; starter.IsEnabled = false; } };
+        starter.IsVisibleChanged += (_,_) => { if (pack.Count > 0) { starter.Content = pack.InstallLabel; starter.IsEnabled = false; } };
         return starter;
     }
     void Reload()

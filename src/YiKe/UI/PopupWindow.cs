@@ -80,7 +80,7 @@ public sealed class PopupWindow : Window
         string? details = settings.LearnEnglish ? YiKe.Translation.BundledEnglishDictionary.Details(text) : null;
         var japanese = settings.LearnJapanese ? Japanese?.Find(text) : null;
         wordNotes.Text = japanese?.Card(speechText) ?? ( settings.LearnEnglish && (word || details is not null) ? details ?? "本地词库未收录此词条。" : "");
-        favorite.Visibility = japanese is not null || settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
+        favorite.Visibility = japanese is not null || settings.LearnEnglish && (word || details != null) ? Visibility.Visible : Visibility.Collapsed;
         speak.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
         anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;

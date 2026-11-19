@@ -67,7 +67,8 @@ internal static class BundledEnglishDictionary
     }
     static string? Lookup(string source)
     {
-        string key = source.Trim().ToLowerInvariant();
+        if (source.Length > 256) return null;
+        string key = Regex.Replace(source.Trim().ToLowerInvariant(), @"\s+", " ");
         if (!Key.IsMatch(key)) return null;
         try
         {

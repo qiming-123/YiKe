@@ -10,6 +10,24 @@ using YiKe.Translation;
 if(args.Length>0&&args[0]=="--uia-worker")return YiKe.Program.Main(args);
 if(args.Length>0&&args[0]=="--installer-info")return YiKe.Program.Main(args);
 if(args.Length>0&&(args[0]=="--export-vscode"||args[0]=="--install-vscode"))return YiKe.Program.Main(args);
+if(args.Length==2 && args[0]=="--verify-study-packs")
+{
+    string scratchPath = Path.Combine(Path.GetTempPath(),"YiKe-lex-"+Guid.NewGuid().ToString("N"));
+    try
+    {
+        foreach(var (code,name) in JapanesePack.Languages)
+        {
+            var pack = new JapanesePack(scratchPath,code,name);
+            pack.InstallDictionary(Path.Combine(args[1],code+".ykdict"));
+            var word = code switch { "ja"=>"学校","ko"=>"학교","fr"=>"maison","de"=>"Haus",_=>"casa" };
+            var entry = new JapanesePack(scratchPath,code,name).Find(word);
+            if(pack.Count<10000 || string.IsNullOrWhiteSpace(entry?.Meaning)) throw new InvalidDataException(code+" lookup failed");
+            Console.WriteLine($"{code} {pack.Count} {word} {entry.Meaning.Split('\n')[0]}");
+        }
+    }
+    finally { if(Directory.Exists(scratchPath)) Directory.Delete(scratchPath,true); }
+    return 0;
+}
 if(args.Length==2&&args[0]=="--vscode-desktop-check")return VsCodeDesktopCheck.Run(args[1]);
 if(args.Length==3&&args[0]=="--vscode-terminal-live")return await VsCodeTerminalLiveCheck.Run(args[1],args[2]);
 if(args.Length==2&&args[0]=="--worker-fixture")return await WorkerFixtures.Run(args[1]);
