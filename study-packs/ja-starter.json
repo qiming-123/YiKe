@@ -1,0 +1,11 @@
+{
+  "Language": "ja",
+  "Entries": [
+    {"Headword":"食べる","Reading":"たべる","Meaning":"动词 · 吃，食用。","Example":"朝ご飯を食べた。\n吃了早饭。","Forms":["食べた","食べます","食べて"]},
+    {"Headword":"読む","Reading":"よむ","Meaning":"动词 · 阅读，读。","Example":"電車で本を読む。\n在电车上看书。","Forms":["読んだ","読みます","読んで"]},
+    {"Headword":"書く","Reading":"かく","Meaning":"动词 · 写，书写。","Example":"名前を書いてください。\n请写下名字。","Forms":["書いた","書きます","書いて"]},
+    {"Headword":"行く","Reading":"いく","Meaning":"动词 · 去，前往。","Example":"明日、駅へ行く。\n明天去车站。","Forms":["行った","行きます","行って"]},
+    {"Headword":"見る","Reading":"みる","Meaning":"动词 · 看，观看。","Example":"週末に映画を見る。\n周末看电影。","Forms":["見た","見ます","見て"]},
+    {"Headword":"静か","Reading":"しずか","Meaning":"形容动词 · 安静。修饰名词时接「な」。","Example":"ここは静かな公園です。\n这里是一个安静的公园。","Forms":["静かな","静かに"]}
+  ]
+}

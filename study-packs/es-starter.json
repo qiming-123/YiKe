@@ -1,0 +1,58 @@
+{
+  "Language": "es",
+  "Entries": [
+    {
+      "Headword": "leer",
+      "Reading": "leˈeɾ",
+      "Meaning": "读",
+      "Example": "Leo un libro.\n我读一本书。",
+      "Forms": [
+        "leo",
+        "lee"
+      ]
+    },
+    {
+      "Headword": "escribir",
+      "Reading": "eskɾiˈβiɾ",
+      "Meaning": "写",
+      "Example": "Ella escribe una carta.\n她写一封信。",
+      "Forms": [
+        "escribe",
+        "escribo"
+      ]
+    },
+    {
+      "Headword": "ir",
+      "Reading": "iɾ",
+      "Meaning": "去",
+      "Example": "Vamos a casa.\n我们回家。",
+      "Forms": [
+        "voy",
+        "vamos"
+      ]
+    },
+    {
+      "Headword": "agua",
+      "Reading": "ˈaɣwa",
+      "Meaning": "水（阴性名词）",
+      "Example": "El agua está fría.\n水是凉的。",
+      "Forms": []
+    },
+    {
+      "Headword": "libro",
+      "Reading": "ˈliβɾo",
+      "Meaning": "书（阳性名词）",
+      "Example": "Este libro es nuevo.\n这本书是新的。",
+      "Forms": [
+        "libros"
+      ]
+    },
+    {
+      "Headword": "gracias",
+      "Reading": "ˈɡɾasjas",
+      "Meaning": "谢谢",
+      "Example": "Gracias por venir.\n谢谢你来。",
+      "Forms": []
+    }
+  ]
+}

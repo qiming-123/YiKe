@@ -14,7 +14,9 @@ public sealed class PopupWindow : Window
     readonly TextBlock translation = Ui.Text("", 15), status = Ui.Text("", 12, "Muted"), language = Ui.Text("", 12, "Muted"), source = Ui.Text("", 12, "Muted");
     readonly TextBlock error = Ui.Text("", 12, "Error");
     readonly WordSpeech speech = new();
+    internal YiKe.Data.JapanesePack? Japanese { get; set; }
     string speechText = "";
+    readonly CheckBox japaneseSwitch = new() { Content = "日语研习" };
     readonly CheckBox technicalSwitch = new() { Content = "技术释义" }, englishSwitch = new() { Content = "英语研习" };
     readonly TextBlock wordNotes = Ui.Text("", 12);
     readonly Button speak, favorite;
@@ -59,12 +61,12 @@ public sealed class PopupWindow : Window
         DockPanel.SetDock(cancel, Dock.Right); footer.Children.Add(cancel);
         copy = Ui.Button("复制译文", Copy); copy.HorizontalAlignment = HorizontalAlignment.Left; footer.Children.Add(copy); Grid.SetRow(footer, 4); grid.Children.Add(footer);
         var enhancements = new StackPanel { Margin = new Thickness(0, 10, 0, 0) };
-        var switches = new StackPanel { Orientation = Orientation.Horizontal }; technicalSwitch.Margin = new Thickness(0, 0, 16, 0); switches.Children.Add(technicalSwitch); switches.Children.Add(englishSwitch); enhancements.Children.Add(switches);
+        var switches = new StackPanel { Orientation = Orientation.Horizontal }; technicalSwitch.Margin = new Thickness(0, 0, 16, 0); switches.Children.Add(technicalSwitch); switches.Children.Add(englishSwitch); switches.Children.Add(japaneseSwitch); enhancements.Children.Add(switches);
         wordNotes.TextWrapping = TextWrapping.Wrap; body.Children.Add(wordNotes);
         speak = Ui.Button("朗读单词", () => { try { speech.Speak(speechText); } catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { error.Text = ex.Message; } }); body.Children.Add(speak);
         var extensions = new Expander { Header = "翻译扩展", Content = enhancements }; Grid.SetRow(extensions, 5); grid.Children.Add(extensions);
         favorite = Ui.Button("收藏单词", () => { error.Text = FavoriteRequested?.Invoke(speechText) ?? ""; }); body.Children.Add(favorite);
-        technicalSwitch.Click += (_, _) => ChangeOptions(); englishSwitch.Click += (_, _) => ChangeOptions();
+        japaneseSwitch.Click += (_, _) => ChangeOptions(); technicalSwitch.Click += (_, _) => ChangeOptions(); englishSwitch.Click += (_, _) => ChangeOptions();
         outer.Child = grid; Content = outer;
         SourceInitialized += (_, _) => { var h = (HwndSource)PresentationSource.FromVisual(this); Native.SetWindowLongPtr(h.Handle, -20, new IntPtr(Native.GetWindowLongPtr(h.Handle, -20).ToInt64() | 0x08000080L)); h.AddHook((IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) => { if (msg == 0x21) { handled = true; return new IntPtr(3); } return IntPtr.Zero; }); };
         SizeChanged += (_, _) => Position();
@@ -72,12 +74,13 @@ public sealed class PopupWindow : Window
     }
     public void Begin(string text, AppSettings settings, int x, int y, long hwnd, string? originalText = null)
     {
-        loadingOptions = true; options = settings; technicalSwitch.IsChecked = settings.ExplainProgrammingTerms; englishSwitch.IsChecked = settings.LearnEnglish; loadingOptions = false;
+        loadingOptions = true; options = settings; technicalSwitch.IsChecked = settings.ExplainProgrammingTerms; englishSwitch.IsChecked = settings.LearnEnglish; japaneseSwitch.IsChecked = settings.LearnJapanese; japaneseSwitch.IsEnabled = Japanese?.Installed == true; loadingOptions = false;
         bool word = System.Text.RegularExpressions.Regex.IsMatch(text.Trim(), @"^[A-Za-z]+(?:['-][A-Za-z]+)*$") && text.Length <= 80;
         speechText = text.Trim();
         string? details = settings.LearnEnglish ? YiKe.Translation.BundledEnglishDictionary.Details(text) : null;
-        wordNotes.Text = settings.LearnEnglish && (word || details is not null) ? details ?? "本地词库未收录此词条。" : "";
-        favorite.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
+        var japanese = settings.LearnJapanese ? Japanese?.Find(text) : null;
+        wordNotes.Text = japanese?.Card(speechText) ?? ( settings.LearnEnglish && (word || details is not null) ? details ?? "本地词库未收录此词条。" : "");
+        favorite.Visibility = japanese is not null || settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
         speak.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
         anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;
@@ -99,7 +102,7 @@ public sealed class PopupWindow : Window
         translation.Text = u.Text.Length == 0 ? u.Error is null ? "正在翻译所选文字…" : "暂时无法完成翻译" : u.Text;
         error.Text = u.Error ?? ""; status.Text = u.StatusLabel; cancel.Visibility = u.Running ? Visibility.Visible : Visibility.Collapsed; copy.IsEnabled = u.Text.Length > 0;
     }
-    void ChangeOptions() { if (!loadingOptions && options is not null) { speech.Stop(); OptionsChanged?.Invoke(options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true }); } }
+    void ChangeOptions() { if (!loadingOptions && options is not null) { speech.Stop(); OptionsChanged?.Invoke(options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnJapanese = japaneseSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true }); } }
     public void StopSpeech() => speech.Stop();
     public void DisposeSpeech() => speech.Dispose();
     public void HideForSelection() { speech.Stop(); Hide(); } // Keep the in-flight translation available for an identical re-selection.

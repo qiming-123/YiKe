@@ -48,6 +48,45 @@ public static class UiRegressionChecks
                         var picker = Find<ComboBox>(window, "视觉风格"); picker.SelectedIndex = 1;
                         Assert(!Theme.Dark); window.SaveSettings(); Assert(fixture.Config.Theme == "light");
                     });
+                    await Check("Manual English study looks up and collects a selected word", async () =>
+                    {
+                        var window = new ManualWindow(new AppSettings { LearnEnglish = true }); window.Show(); await Idle();
+                        var input = Find<TextBox>(window,"原文"); input.Text = "read the book"; input.Select(0,4);
+                        Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("英文释义")));
+                        string saved = ""; window.FavoriteRequested += w => saved = w;
+                        FindButton(window,"收藏单词").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "read");
+                        window.Close();
+                        using var fixture = new EditorFixture(root,"caption-position"); fixture.Window.Show(); await Idle();
+                        var close = FindButton(fixture.Window,"关闭");
+                        Assert(close.TranslatePoint(new Point(),fixture.Window).X > fixture.Window.ActualWidth * .8);
+                    });
+                    await Check("Japanese pack is optional and retains collected inflections offline", async () =>
+                    {
+                        var folder = Path.Combine(root,"optional-ja"); Directory.CreateDirectory(folder);
+                        File.WriteAllText(Path.Combine(folder,"yike-data-root.txt"), Path.Combine(folder,"workspace-data"));
+                        Assert(new SettingsStore(folder).DefaultDirectory == Path.Combine(folder,"workspace-data"));
+                        var pack = new JapanesePack(folder);
+                        Assert(!pack.Installed && pack.Find("食べた") is null);
+                        foreach (var (code,name) in JapanesePack.Languages.Skip(1))
+                        {
+                            var optional = new JapanesePack(folder,code,name);
+                            Assert(!optional.Installed);
+                            optional.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory,"study-packs",code+"-starter.json")));
+                            var form = code switch { "fr" => "lis", "ko" => "읽어요", "de" => "liest", _ => "leo" };
+                            Assert(new JapanesePack(folder,code,name).Find(form)?.Meaning.Contains("读") == true);
+                        }
+                        pack.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory,"study-packs","ja-starter.json")));
+                        Assert(new JapanesePack(folder).Find("食べた")?.Headword == "食べる");
+                        var manual = new ManualWindow(new AppSettings(), pack); manual.Show(); await Idle();
+                        Walk(manual).OfType<Expander>().Single(e => Equals(e.Header,"日语研习")).IsExpanded = true;
+                        Find<TextBox>(manual,"原文").Text = "食べた"; await Idle();
+                        Assert(Walk(manual).OfType<TextBlock>().Any(t => t.Text.Contains("食べる")));
+                        Assert(FindButton(manual,"收藏日语词条").IsEnabled); manual.Close();
+                        var book = StudyBook.JapaneseFile(Path.Combine(folder,"YiKe-vocabulary.json"));
+                        StudyBook.Add(book,"食べた"); Assert(StudyBook.Read(book).Single() == "食べた");
+                        var popup = new PopupWindow { Japanese = pack }; popup.Begin("食べた",new AppSettings(),300,250,0); await Idle();
+                        Assert(FindButton(popup,"收藏单词").IsVisible); popup.Dismiss(); popup.Close();
+                    });
                     await Check("Study words persist across data relocation and manual direction reaches the form", async () =>
                     {
                         var store = new SettingsStore(userDirectory: Path.Combine(root, "study-default"));
@@ -140,7 +179,9 @@ public static class UiRegressionChecks
                             Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();Assert(snapshot.Restore(owned,owner.Handle));owned=Native.GetClipboardSequenceNumber();
                             Assert(Clipboard.GetText()=="original fixture" && Clipboard.GetData(DataFormats.Html) as string =="<b>original fixture</b>" && Clipboard.ContainsData(DataFormats.Rtf));
                             Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();uint copied=owned;
-                            Clipboard.SetText("newer copy");owned=Native.GetClipboardSequenceNumber();Assert(!snapshot.Restore(copied,owner.Handle) && Clipboard.GetText()=="newer copy");
+                            Clipboard.SetText("newer copy");owned=Native.GetClipboardSequenceNumber();bool restored = snapshot.Restore(copied,owner.Handle);
+                            Assert(!restored, $"Restored stale snapshot: copy sequence {copied}, newer {owned}.");
+                            Assert(Clipboard.GetText()=="newer copy", $"Stale restore declined; expected fixture missing. Newer sequence {owned}, current {Native.GetClipboardSequenceNumber()}.");
                         } finally {original.Restore(owned,owner.Handle);}
                         await Idle();
                     });

@@ -47,6 +47,7 @@ public sealed record AppSettings
     public bool Stream { get; init; } = true;
     public bool TranslateCopiedPdf { get; init; } = true;
     public bool ExplainProgrammingTerms { get; init; } = false;
+    public bool LearnJapanese { get; init; } = true;
     public bool LearnEnglish { get; init; }
     public bool SelectionIconMode { get; init; }
     public bool CleanPdfText { get; init; } = true;

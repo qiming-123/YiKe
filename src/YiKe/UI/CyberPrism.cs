@@ -94,13 +94,13 @@ internal static class CyberPrism
         window.WindowStyle=WindowStyle.None;window.AllowsTransparency=true;window.Background=Brushes.Transparent;
         WindowChrome.SetWindowChrome(window,new WindowChrome {CaptionHeight=34,ResizeBorderThickness=new Thickness(6),GlassFrameThickness=new Thickness(0),CornerRadius=new CornerRadius(0),UseAeroCaptionButtons=false});
         var grid=new Grid();grid.RowDefinitions.Add(new(){Height=new GridLength(34)});grid.RowDefinitions.Add(new());
-        var caption=new DockPanel {Margin=new Thickness(24,0,22,0)};
+        var caption=new DockPanel {LastChildFill=false,Margin=new Thickness(24,0,22,0)};
         var controls=new StackPanel {Orientation=Orientation.Horizontal};DockPanel.SetDock(controls,Dock.Right);
         foreach(var item in new[]{("最小化","−",(Action)(()=>SystemCommands.MinimizeWindow(window))),("最大化 / 还原","□",()=>{if(window.WindowState==WindowState.Maximized)SystemCommands.RestoreWindow(window);else SystemCommands.MaximizeWindow(window);}),("关闭","×",window.Close)})
         {
             var button=Ui.Button(item.Item1,item.Item3);button.Content=item.Item2;button.ToolTip=item.Item1;button.Padding=new Thickness(8,0,8,0);button.MinHeight=24;button.MinWidth=30;button.Background=Brushes.Transparent;button.BorderBrush=Brushes.Transparent;WindowChrome.SetIsHitTestVisibleInChrome(button,true);controls.Children.Add(button);
         }
-        caption.Children.Add(controls);var title=Ui.Text("译刻 · 偏好设置",10,"Accent");title.VerticalAlignment=VerticalAlignment.Center;caption.Children.Add(title);grid.Children.Add(caption);
+        caption.Children.Add(controls);grid.Children.Add(caption);
         var divider=new Border{BorderBrush=PrismPanel.Brush("#324063"),BorderThickness=new Thickness(0,1,0,0),Child=body};Grid.SetRow(divider,1);grid.Children.Add(divider);
         var frame = new PrismPanel {Kind=PrismKind.Window,Padding=new Thickness(10,7,10,10),Child=grid}; frame.SetResourceReference(Border.BackgroundProperty,"FrameFinish"); return frame;
     }

@@ -40,6 +40,7 @@ public sealed class SettingsWindow : Window
     readonly CheckBox copiedPdf = new() { Content = "WPS PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
     readonly CheckBox programming = new() { Content = "技术释义：计算机术语、命令与示例" };
     readonly CheckBox supplement = new() { Content = "让当前模型补充所有选区的计算机用法" };
+    readonly CheckBox learnJapanese = new() { Content = "日语研习（需在日语收藏本安装词包）" };
     readonly CheckBox learnEnglish = new() { Content = "英语研习：单词多释义和点击朗读" }, iconMode = new() { Content = "划词后显示图标，点击才翻译（关闭则自动翻译）" }, cleanPdf = new() { Content = "智能整理 PDF 正文断行" };
     readonly ComboBox localEngine = new();
     readonly ComboBox preset = new(), theme = new(), font = new(), role = new(), mode = new();
@@ -68,6 +69,12 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
+    readonly StackPanel otherOptions = new();
+    internal void ShowPackInstaller(JapanesePack pack)
+    {
+        var message = Ui.Text("", 12, "Muted"); message.TextWrapping = TextWrapping.Wrap;
+        otherOptions.Children.Add(StudyBook.InstallButton(pack, message)); otherOptions.Children.Add(message);
+    }
     public event Action? ManualRequested, StudyRequested, GuideDismissed;
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
         CredentialStore credentials, Func<string> diagnostics, Action? credentialDeleted = null, ITranslationProvider? testProvider = null, IModelCatalog? modelCatalog = null, Func<LocalHardwareSnapshot>? localHardware = null)
@@ -121,7 +128,7 @@ public sealed class SettingsWindow : Window
         }
         var manual = Ui.Button("手动翻译", () => ManualRequested?.Invoke(), true);
         manual.Margin = new Thickness(0, 12, 0, 8); nav.Children.Add(manual);
-        nav.Children.Add(Ui.Button("英语收藏本", () => StudyRequested?.Invoke()));
+        nav.Children.Add(Ui.Button("研习收藏本", () => StudyRequested?.Invoke()));
         var guide = new StackPanel { Margin = new Thickness(0, 8, 0, 8), Visibility = get().GuideSeen ? Visibility.Collapsed : Visibility.Visible };
         var tips = Ui.Text("① 在其他应用中选中文字，查看浮窗译文。\n\n② 遇到无法划选的文字，可打开手动翻译并粘贴原文。\n\n③ 在「外观与行为」切换深浅主题，保存后生效。");
         tips.TextWrapping = TextWrapping.Wrap;
@@ -192,7 +199,7 @@ public sealed class SettingsWindow : Window
             first.Text = settings.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture);
             total.Text = settings.TotalSeconds.ToString(CultureInfo.InvariantCulture);
             theme.SelectedIndex = settings.Theme == "light" ? 1 : 0;
-            learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
+            learnJapanese.IsChecked = settings.LearnJapanese; learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
             if (!font.Items.Contains(settings.FontSize)) font.Items.Add(settings.FontSize);
             font.SelectedItem = settings.FontSize; role.SelectedItem = settings.InstructionRole;
             stream.IsChecked = settings.Stream; startup.IsChecked = StartupRegistration.Enabled;
@@ -305,6 +312,8 @@ public sealed class SettingsWindow : Window
         localCard = CyberPrism.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
         Field("目标语言", target, "默认简体中文，自动识别原文语言；可选择其他语言，或直接输入语言名称。"); pages.Children.Add(stream);
         pages.Children.Add(learnEnglish);
+        otherOptions.Children.Insert(0, learnJapanese);
+        pages.Children.Add(new Expander { Header = "其他选项", Content = otherOptions, Margin = new Thickness(0,8,0,8) });
         programming.Margin = new Thickness(0, 12, 0, 5); pages.Children.Add(programming);
         System.Windows.Automation.AutomationProperties.SetName(programming, "计算机用法解释");
         supplement.Margin = new Thickness(0, 8, 0, 5); pages.Children.Add(supplement);
@@ -540,7 +549,7 @@ public sealed class SettingsWindow : Window
         Preset = IsLocal ? onlineDraft.Preset : (string)preset.SelectedItem, BaseUrl = IsLocal ? onlineDraft.BaseUrl : url.Text, Model = IsLocal ? onlineDraft.Model : model.Text, TargetLanguage = target.Text,
         Stream = stream.IsChecked == true, Theme = ThemeChoice(), FontSize = (double)(font.SelectedItem ?? 15d),
         TranslateCopiedPdf = copiedPdf.IsChecked == true,
-        LearnEnglish = learnEnglish.IsChecked == true, SelectionIconMode = iconMode.IsChecked == true, CleanPdfText = cleanPdf.IsChecked == true,
+        LearnJapanese = learnJapanese.IsChecked == true, LearnEnglish = learnEnglish.IsChecked == true, SelectionIconMode = iconMode.IsChecked == true, CleanPdfText = cleanPdf.IsChecked == true,
         ExplainProgrammingTerms = programming.IsChecked == true,
         SupplementTechnicalTerms = supplement.IsChecked == true,
         ExcludedProcesses = exclusions.Text.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries),

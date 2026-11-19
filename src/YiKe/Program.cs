@@ -60,6 +60,8 @@ public sealed class YiKeApplication : Application
     readonly SelectionReader reader = new();
     readonly TranslationProvider provider = new();
     readonly CredentialStore credentials;
+    readonly JapanesePack[] packs;
+    JapanesePack japanese => packs[0];
     AppSettings config;
     ManualWindow? manual;
     bool AcceptSelection => manual is null && session.CanReceiveSelection;
@@ -80,6 +82,7 @@ public sealed class YiKeApplication : Application
     public YiKeApplication()
     {
         config = store.Load();
+        packs = JapanesePack.Languages.Select(l => new JapanesePack(store.DefaultDirectory,l.Code,l.Name)).ToArray();
         if (config.EnhancementDefaultsVersion == 0) config = config with { EnhancementDefaultsVersion = 1, LocalEngine = NmtTranslationProvider.Available && config.TargetLanguage == TranslationLanguages.Default ? "nmt" : config.LocalEngine, ExplainProgrammingTerms = false, SupplementTechnicalTerms = false, LearnEnglish = false };
         session = new(config.Enabled); credentials = new(store.DefaultDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Startup += Start; Exit += Cleanup;
@@ -90,7 +93,7 @@ public sealed class YiKeApplication : Application
         Theme.Apply(config.Theme); Theme.InstallStyles();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
         selectionIcon = new(); selectionIcon.Requested += snapshot => { if (AcceptSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
-        popup = new(); popup.FavoriteRequested += word => StudyBook.Add(StudyFile, word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup = new() { Japanese = japanese }; popup.FavoriteRequested += word => StudyBook.Add(japanese.Find(word) is null ? StudyFile : StudyBook.JapaneseFile(StudyFile), word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
         popup.PinChanged += pinned => { pdfCopy?.Clear(); session.SetPinned(pinned); selecting?.Cancel(); };
         coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (manual is not null && u.Sequence == coordinator!.Sequence) manual.Update(u); else if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
         var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(config.Enabled ? "暂停自动翻译" : "恢复自动翻译"); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
@@ -273,8 +276,8 @@ public sealed class YiKeApplication : Application
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
-        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); settings.ManualRequested += Paste;
-        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder })) { Owner = settings }.ShowDialog();
+        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); foreach (var pack in packs) settings.ShowPackInstaller(pack); settings.ManualRequested += Paste;
+        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder }), packs) { Owner = settings }.ShowDialog();
         settings.GuideDismissed += () =>
         {
             try { config = store.Save(config with { GuideSeen = true }); }
@@ -287,7 +290,9 @@ public sealed class YiKeApplication : Application
     {
         if (manual is not null) { manual.Activate(); return; }
         popup!.Dismiss();
-        var window = new ManualWindow(config);
+        var window = new ManualWindow(config,japanese,packs);
+        window.LanguageFavoriteRequested += (code,word) => StudyBook.Add(StudyBook.LanguageFile(StudyFile,code),word);
+        window.FavoriteRequested += word => StudyBook.Add(StudyFile, word);
         manual = window;
         window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options); Submit(text, options, false, _ => { }, window.Error, window.From); };
         window.CancelRequested += () => coordinator!.Invalidate();
