@@ -23,9 +23,9 @@ public static class Theme
         }
         void Metal(string key, string first, string middle, string last) =>
             r[key] = SystemParameters.HighContrast ? SystemColors.WindowBrush : MaterialMark.Metal(first, middle, last);
-        Metal("FrameFinish", Dark ? "#101827" : "#CBE7F7", Dark ? "#19192D" : "#FAFAFF", Dark ? "#241B37" : "#DCD1F6");
-        Metal("RailFinish", Dark ? "#151E2B" : "#D2DDF3", Dark ? "#101827" : "#FFFFFF", Dark ? "#0A101C" : "#CAC1E9");
-        Metal("CardFinish", Dark ? "#17273B" : "#D8F3FC", Dark ? "#212238" : "#FEFDFF", Dark ? "#30213F" : "#DDD6F3");
+        Metal("FrameFinish", Dark ? "#101827" : "#DEF2FA", Dark ? "#19192D" : "#FAFAFF", Dark ? "#241B37" : "#ECE5FA");
+        Metal("RailFinish", Dark ? "#151E2B" : "#E2EAF7", Dark ? "#101827" : "#FFFFFF", Dark ? "#0A101C" : "#E1DAF3");
+        Metal("CardFinish", Dark ? "#17273B" : "#E7F8FD", Dark ? "#212238" : "#FEFDFF", Dark ? "#30213F" : "#EEE9F9");
         r["BodyFont"] = new FontFamily("Segoe UI Variable, Segoe UI, Microsoft YaHei UI");
     }
     public static void InstallStyles()

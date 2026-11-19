@@ -39,6 +39,7 @@ public sealed record AppSettings
     public Guid ActiveOnlineProfileId { get; init; }
     public OnlineProfile[] OnlineProfiles { get; init; } = Array.Empty<OnlineProfile>();
     public string TargetLanguage { get; init; } = TranslationLanguages.Default;
+    public string StudyDirectory { get; init; } = "";
     public bool GuideSeen { get; init; }
     public string Theme { get; init; } = "dark";
     public double FontSize { get; init; } = 15;
@@ -58,6 +59,7 @@ public sealed record AppSettings
     public AppSettings Validate(bool requireModel = false)
     {
         if (BaseUrl is null || Model is null || TargetLanguage is null || Theme is null || Preset is null || InstructionRole is null || ExcludedProcesses is null || ExcludedProcesses.Any(p => p is null)) throw new ArgumentException("配置包含无效的空字段。");
+        if (!string.IsNullOrEmpty(StudyDirectory) && !System.IO.Path.IsPathFullyQualified(StudyDirectory)) throw new ArgumentException("收藏目录必须为绝对路径。");
         if (SchemaVersion != 1 || ConfigId == Guid.Empty || ServiceId == Guid.Empty || Revision < 0) throw new ArgumentException("配置格式无效或版本较新，请升级译刻。");
         if (OnlineProfiles is null || OnlineProfiles.Length > 32 || OnlineProfiles.Any(p => p is null)) throw new ArgumentException("在线 API 配置最多保存 32 组。");
         var profiles = OnlineProfiles.Select(p => p.Validate()).ToArray();

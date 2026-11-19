@@ -144,7 +144,7 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
     public async IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, [EnumeratorCancellation] CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        if (!request.NotesOnly && !request.ExplainTechnical && request.KnownTechnicalTerms.Length == 0 && CommonWordTranslations.Find(request.Text, request.TargetLanguage) is { } word)
+        if (!request.NotesOnly && !request.ExplainTechnical && request.KnownTechnicalTerms.Length == 0 && (request.SourceLanguage == "auto" || request.SourceLanguage.StartsWith("英语")) && CommonWordTranslations.Find(request.Text, request.TargetLanguage) is { } word)
         {
             if (disposed) throw new ObjectDisposedException(nameof(LocalTranslationProvider));
             yield return word; yield break;
@@ -157,8 +157,9 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
             lock (processGate) if (engine is null || engine.Process.HasExited || !OwnedLocalProcess.OwnsPort(port, engine.Process.Id)) throw new TranslationException("local-owner", "本地引擎连接已失效，请重试。");
             if (request.NotesOnly && profile!.ModelId != LocalModelPackage.ModelId) throw new TranslationException("local-notes-profile", "当前轻量模型使用本机离线说明。");
             bool technical = !request.NotesOnly && request.ExplainTechnical && profile!.ModelId == LocalModelPackage.ModelId && !request.RefineTranslation;
-            bool vocabulary = !request.NotesOnly && !technical && TranslationQuality.IsVocabulary(request.Text, request.KnownTechnicalTerms);
+            bool vocabulary = (request.SourceLanguage == "auto" || request.SourceLanguage.StartsWith("英语")) && !request.NotesOnly && !technical && TranslationQuality.IsVocabulary(request.Text, request.KnownTechnicalTerms);
             string instruction = request.NotesOnly ? ComputingWordNotes.Instruction : technical ? TechnicalOutput.For(request) : vocabulary ? WordInstruction(request.TargetLanguage, request.RefineTranslation) : Instruction(request.TargetLanguage, request.RefineTranslation);
+            if (request.SourceLanguage != "auto") instruction = "Source language: " + request.SourceLanguage + ". " + instruction;
             if (!request.NotesOnly && !technical && request.KnownTechnicalTerms.Length > 0) instruction += " Computing context for this selection: " + request.KnownTechnicalTerms + ". Use the computing or command sense, not an unrelated everyday homonym. Output only the translation.";
             using var message = new HttpRequestMessage(HttpMethod.Post, Address("v1/chat/completions"));
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", secret);
@@ -233,7 +234,7 @@ public sealed class TranslationProvider : ITranslationProvider, IDisposable
     public async IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, [EnumeratorCancellation] CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        if (!request.NotesOnly && settings.ExplainProgrammingTerms && request.TargetLanguage == TranslationLanguages.Default && ProgrammingGlossary.TranslateTerm(request.Text) is { } term) { yield return term; yield break; }
+        if (!request.NotesOnly && settings.ExplainProgrammingTerms && request.TargetLanguage == TranslationLanguages.Default && (request.SourceLanguage == "auto" || request.SourceLanguage.StartsWith("英语")) && ProgrammingGlossary.TranslateTerm(request.Text) is { } term) { yield return term; yield break; }
         await foreach (var part in Select(settings).TranslateAsync(request, settings, settings.TranslationMode == "local" ? "" : key, token)) yield return part;
     }
     public void Dispose() { nmt.Dispose(); deepL.Dispose(); (online as IDisposable)?.Dispose(); (local as IDisposable)?.Dispose(); }

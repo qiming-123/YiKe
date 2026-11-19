@@ -48,6 +48,20 @@ public static class UiRegressionChecks
                         var picker = Find<ComboBox>(window, "视觉风格"); picker.SelectedIndex = 1;
                         Assert(!Theme.Dark); window.SaveSettings(); Assert(fixture.Config.Theme == "light");
                     });
+                    await Check("Study words persist across data relocation and manual direction reaches the form", async () =>
+                    {
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "study-default"));
+                        var path = Path.Combine(store.UserDirectory, "YiKe-vocabulary.json");
+                        Assert(StudyBook.Add(path, "Light") == "已收藏。" && StudyBook.Add(path, "light") == "已在收藏本中。");
+                        var config = new AppSettings();
+                        store.ChangeDirectory(Path.Combine(root,"study-moved"), config);
+                        Assert(StudyBook.Read(Path.Combine(store.UserDirectory, "YiKe-vocabulary.json")).Single() == "light");
+                        Assert(new SettingsStore(userDirectory: store.DefaultDirectory).UserDirectory == store.UserDirectory);
+                        Assert(BundledEnglishDictionary.Details("light")!.Contains("搭配与例句"));
+                        var window = new ManualWindow(config with { TranslationMode = "online" }); window.Show(); await Idle();
+                        Find<ComboBox>(window, "源语言").SelectedIndex = 3; Find<ComboBox>(window,"目标语言").SelectedIndex = 4;
+                        Assert(window.From == TranslationLanguages.Presets[2] && window.To == TranslationLanguages.Presets[4]); window.Close();
+                    });
                     await Check("Manual window keeps source editable after failures and cancellation", async () =>
                     {
                         var config = new AppSettings { LocalEngine = "nmt" };
@@ -415,7 +429,7 @@ public static class UiRegressionChecks
                         var store = new SettingsStore(Path.Combine(root, "fresh-local", "app"), Path.Combine(root, "fresh-local", "data"));
                         var credentials = new CredentialStore(store.UserDirectory); AppSettings config = new();
                         var provider = new RecordingConnectionProvider(); var catalog = new RecordingModelCatalog();
-                        var window = new SettingsWindow(() => config, (draft, secret) => config = ConfigurationService.Commit(config, draft, secret, store, credentials), store, credentials, () => "fixture", testProvider: provider, modelCatalog: catalog);
+                        var window = new SettingsWindow(() => config, (draft, secret) => config = ConfigurationService.Commit(config, draft, secret, store, credentials), store, credentials, () => "fixture", testProvider: provider, modelCatalog: catalog, localHardware: () => new(16 * LocalHardware.GiB, 8 * LocalHardware.GiB, 8, true));
                         window.Show(); await Idle();
                         Assert(Find<ComboBox>(window, "翻译方式").SelectedIndex == 0 && !Find<TextBox>(window, "Base URL").IsVisible && !Find<PasswordBox>(window, "API Key").IsVisible);
                         Assert(Find<ComboBox>(window, "目标语言").Text == "简体中文" && !File.Exists(store.UserFile));
@@ -682,7 +696,7 @@ public static class UiRegressionChecks
         {
             Store = new SettingsStore(Path.Combine(root, name, "app"), Path.Combine(root, name, "data")); Credentials = new(Store.UserDirectory);
             Config = ConfigurationService.Commit(new AppSettings(), new AppSettings { TranslationMode = "online", Model = "original-model" }, "fake-existing-secret", Store, Credentials);
-            Window = new(() => Config, (draft, key) => { Config = ConfigurationService.Commit(Config, draft, key, Store, Credentials); LastCommittedSecret = key; Commits++; }, Store, Credentials, () => "synthetic QA", testProvider: provider ?? new RecordingConnectionProvider(), modelCatalog: catalog ?? new RecordingModelCatalog());
+            Window = new(() => Config, (draft, key) => { Config = ConfigurationService.Commit(Config, draft, key, Store, Credentials); LastCommittedSecret = key; Commits++; }, Store, Credentials, () => "synthetic QA", testProvider: provider ?? new RecordingConnectionProvider(), modelCatalog: catalog ?? new RecordingModelCatalog(), localHardware: () => new(16 * LocalHardware.GiB, 8 * LocalHardware.GiB, 8, true));
         }
         public void Dispose() { if (Window.IsLoaded) Window.Close(); }
     }

@@ -68,7 +68,7 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
-    public event Action? ManualRequested, GuideDismissed;
+    public event Action? ManualRequested, StudyRequested, GuideDismissed;
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
         CredentialStore credentials, Func<string> diagnostics, Action? credentialDeleted = null, ITranslationProvider? testProvider = null, IModelCatalog? modelCatalog = null, Func<LocalHardwareSnapshot>? localHardware = null)
     {
@@ -121,6 +121,7 @@ public sealed class SettingsWindow : Window
         }
         var manual = Ui.Button("手动翻译", () => ManualRequested?.Invoke(), true);
         manual.Margin = new Thickness(0, 12, 0, 8); nav.Children.Add(manual);
+        nav.Children.Add(Ui.Button("英语收藏本", () => StudyRequested?.Invoke()));
         var guide = new StackPanel { Margin = new Thickness(0, 8, 0, 8), Visibility = get().GuideSeen ? Visibility.Collapsed : Visibility.Visible };
         var tips = Ui.Text("① 在其他应用中选中文字，查看浮窗译文。\n\n② 遇到无法划选的文字，可打开手动翻译并粘贴原文。\n\n③ 在「外观与行为」切换深浅主题，保存后生效。");
         tips.TextWrapping = TextWrapping.Wrap;
@@ -129,7 +130,7 @@ public sealed class SettingsWindow : Window
         guide.Children.Add(done);
         nav.Children.Add(Ui.Button("使用指南", () => guide.Visibility = Visibility.Visible)); nav.Children.Add(guide);
         Grid.SetRow(nav, 1); sidebar.Children.Add(nav);
-        var bottom = Ui.Text("YiKe " + typeof(SettingsWindow).Assembly.GetName().Version?.ToString(3) + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
+        var bottom = Ui.Text("YiKe " + System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(typeof(SettingsWindow).Assembly)?.InformationalVersion.Split('+')[0] + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
         bottom.LineHeight = 20; Grid.SetRow(bottom, 2); sidebar.Children.Add(bottom);
         var sideBorder = new Border { Child = new ScrollViewer { Content = sidebar, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }, BorderThickness = new Thickness(0, 0, 1, 0) };
         sideBorder.SetResourceReference(Border.BackgroundProperty, "RailFinish"); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
@@ -389,6 +390,14 @@ public sealed class SettingsWindow : Window
     }
     void DataPage()
     {
+        var location = Ui.Text("数据目录：" + store.UserDirectory, 12, "Muted"); location.TextWrapping = TextWrapping.Wrap; pages.Children.Add(location);
+        AddAction("更改数据目录", () =>
+        {
+            var dialog = new OpenFolderDialog { Title = "选择新的数据目录（设置和默认收藏本）" };
+            if (dialog.ShowDialog(this) != true) return;
+            store.ChangeDirectory(dialog.FolderName, get());
+            location.Text = "数据目录：" + store.UserDirectory + "。旧文件已保留。";
+        });
         pages.Children.Add(CyberPrism.Card(Ui.Text("凭据采用 Windows DPAPI CurrentUser 加密。普通导出不包含密钥；加密迁移包可在新电脑导入后重新绑定本机账户。", 12, "Muted")));
         AddAction("导出普通配置", () => { var dialog = new SaveFileDialog { Filter = "译刻配置 (*.json)|*.json", FileName = "YiKe-settings.json" }; if (dialog.ShowDialog(this) == true) { SettingsStore.Export(dialog.FileName, get()); feedback.Text = "普通配置已导出，不含 API Key。"; } });
         AddAction("导入普通配置", () => { var dialog = new OpenFileDialog { Filter = "译刻配置 (*.json)|*.json" }; if (dialog.ShowDialog(this) == true) ApplyImported(SettingsStore.Import(dialog.FileName), null); });
@@ -424,7 +433,7 @@ public sealed class SettingsWindow : Window
             settings = ConfigurationService.StageProfileKeys(settings, profileKeys.Where(p => p.Key != settings.ActiveOnlineProfileId).ToDictionary(p => p.Key, p => p.Value), credentials);
             if (profileKeys.TryGetValue(settings.ActiveOnlineProfileId, out var activeKey)) secret = activeKey;
         }
-        commit(settings, secret);
+        commit(settings with { StudyDirectory = get().StudyDirectory }, secret);
         ReloadFromSaved();
         feedback.Text = credentialNotice ?? store.Notice ?? (secret is null ? "配置已导入，页面已更新；请填写此服务的 API Key。" : "迁移成功，密钥已加密保存，页面已更新。下次启动自动使用。");
     }
@@ -525,7 +534,7 @@ public sealed class SettingsWindow : Window
     string ThemeChoice() => theme.SelectedIndex == 1 ? "light" : "dark";
     AppSettings Draft() => (onlineDraft with
     {
-        Enabled = get().Enabled, GuideSeen = get().GuideSeen,
+        StudyDirectory = get().StudyDirectory, Enabled = get().Enabled, GuideSeen = get().GuideSeen,
         TranslationMode = IsLocal ? "local" : "online",
         LocalEngine = localEngine.SelectedIndex == 0 ? "nmt" : "generic",
         Preset = IsLocal ? onlineDraft.Preset : (string)preset.SelectedItem, BaseUrl = IsLocal ? onlineDraft.BaseUrl : url.Text, Model = IsLocal ? onlineDraft.Model : model.Text, TargetLanguage = target.Text,

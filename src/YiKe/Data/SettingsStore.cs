@@ -22,7 +22,8 @@ public static class AtomicFile
 public sealed class SettingsStore
 {
     public static readonly JsonSerializerOptions Json = new() { WriteIndented = true, PropertyNameCaseInsensitive = false };
-    public string UserDirectory { get; }
+    public string UserDirectory { get; private set; }
+    public string DefaultDirectory { get; }
     public string UserFile => Path.Combine(UserDirectory, "settings.json");
     public string? PortableFile { get; }
     public string? Notice { get; private set; }
@@ -30,8 +31,27 @@ public sealed class SettingsStore
     public SettingsStore(string? baseDirectory = null, string? userDirectory = null)
     {
         baseDirectory ??= AppContext.BaseDirectory;
-        UserDirectory = userDirectory ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "YiKe");
+        DefaultDirectory = userDirectory ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "YiKe");
+        string pointer = Path.Combine(DefaultDirectory, "data-location.txt");
+        UserDirectory = File.Exists(pointer) ? File.ReadAllText(pointer).Trim() : DefaultDirectory;
         if (File.Exists(Path.Combine(baseDirectory, "portable.flag"))) PortableFile = Path.Combine(baseDirectory, "data", "settings.json");
+    }
+    public void ChangeDirectory(string folder, AppSettings current)
+    {
+        if (string.Equals(folder, UserDirectory, StringComparison.OrdinalIgnoreCase)) return;
+        var destination = Path.Combine(folder, "settings.json");
+        if (File.Exists(destination)) throw new IOException("该目录已有设置，请选择空目录。");
+        Directory.CreateDirectory(folder);
+        string sourceBook = Path.Combine(UserDirectory, "YiKe-vocabulary.json");
+        if (string.IsNullOrEmpty(current.StudyDirectory) && File.Exists(sourceBook))
+        {
+            string nextBook = Path.Combine(folder, "YiKe-vocabulary.json");
+            if (File.Exists(nextBook)) throw new IOException("目标目录已有收藏本，请选择空目录。");
+            File.Copy(sourceBook, nextBook);
+        }
+        AtomicFile.Write(destination, JsonSerializer.SerializeToUtf8Bytes(current, Json));
+        AtomicFile.Write(Path.Combine(DefaultDirectory, "data-location.txt"), Encoding.UTF8.GetBytes(folder));
+        UserDirectory = folder;
     }
     AppSettings? Read(string? path)
     {

@@ -81,7 +81,7 @@ public sealed class YiKeApplication : Application
     {
         config = store.Load();
         if (config.EnhancementDefaultsVersion == 0) config = config with { EnhancementDefaultsVersion = 1, LocalEngine = NmtTranslationProvider.Available && config.TargetLanguage == TranslationLanguages.Default ? "nmt" : config.LocalEngine, ExplainProgrammingTerms = false, SupplementTechnicalTerms = false, LearnEnglish = false };
-        session = new(config.Enabled); credentials = new(store.UserDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        session = new(config.Enabled); credentials = new(store.DefaultDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Startup += Start; Exit += Cleanup;
         DispatcherUnhandledException += (_, e) => { diagnostic = "界面操作失败：" + e.Exception.GetType().Name; e.Handled = true; if (settings is not null) MessageBox.Show(settings, "操作失败，现有配置已保留。请检查文件权限或重新启动译刻。", "译刻"); };
     }
@@ -90,7 +90,7 @@ public sealed class YiKeApplication : Application
         Theme.Apply(config.Theme); Theme.InstallStyles();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
         selectionIcon = new(); selectionIcon.Requested += snapshot => { if (AcceptSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
-        popup = new(); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup = new(); popup.FavoriteRequested += word => StudyBook.Add(StudyFile, word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
         popup.PinChanged += pinned => { pdfCopy?.Clear(); session.SetPinned(pinned); selecting?.Cancel(); };
         coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (manual is not null && u.Sequence == coordinator!.Sequence) manual.Update(u); else if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
         var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(config.Enabled ? "暂停自动翻译" : "恢复自动翻译"); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
@@ -195,7 +195,7 @@ public sealed class YiKeApplication : Application
         session.SetCurrent(snapshot); popup!.Begin(snapshot.Text, activeOptions, snapshot.X, snapshot.Y, snapshot.Window, snapshot.OriginalText);
         Submit(snapshot.Text, activeOptions, force, session.ShowTranslation, popup.Error);
     }
-    void Submit(string text, AppSettings options, bool force, Action<long> started, Action<string> failed)
+    void Submit(string text, AppSettings options, bool force, Action<long> started, Action<string> failed, string sourceLanguage = "auto")
     {
         try
         {
@@ -203,7 +203,7 @@ public sealed class YiKeApplication : Application
             var key = options.TranslationMode == "local" ? "" : credentials.Read(options);
             if (options.TranslationMode == "online" && string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("请在设置中填写当前服务的密钥。");
-            started(coordinator!.Submit(text, options, key ?? "", force));
+            started(coordinator!.Submit(text, options, key ?? "", force, sourceLanguage));
         }
         catch (Exception ex) when (ex is ArgumentException or CryptographicException or IOException or UnauthorizedAccessException)
         {
@@ -267,12 +267,14 @@ public sealed class YiKeApplication : Application
     {
         // Write a new immutable credential binding before committing the pointer in settings.
         // If the config write fails, the previous credential and configuration remain valid.
-        config = ConfigurationService.Commit(config, value, key, store, credentials); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+        config = ConfigurationService.Commit(config, value, key, store, credentials); manual?.Close(); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
     }
+    string StudyFile => Path.Combine(string.IsNullOrEmpty(config.StudyDirectory) ? store.UserDirectory : config.StudyDirectory, "YiKe-vocabulary.json");
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
         popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); settings.ManualRequested += Paste;
+        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder })) { Owner = settings }.ShowDialog();
         settings.GuideDismissed += () =>
         {
             try { config = store.Save(config with { GuideSeen = true }); }
@@ -287,7 +289,7 @@ public sealed class YiKeApplication : Application
         popup!.Dismiss();
         var window = new ManualWindow(config);
         manual = window;
-        window.Requested += text => { window.Begin(config); Submit(text, config, false, _ => { }, window.Error); };
+        window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options); Submit(text, options, false, _ => { }, window.Error, window.From); };
         window.CancelRequested += () => coordinator!.Invalidate();
         window.Closed += (_, _) => { coordinator!.Invalidate(); manual = null; };
         window.Show();

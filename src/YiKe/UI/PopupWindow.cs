@@ -17,7 +17,8 @@ public sealed class PopupWindow : Window
     string speechText = "";
     readonly CheckBox technicalSwitch = new() { Content = "技术释义" }, englishSwitch = new() { Content = "英语研习" };
     readonly TextBlock wordNotes = Ui.Text("", 12);
-    readonly Button speak;
+    readonly Button speak, favorite;
+    public event Func<string,string>? FavoriteRequested;
     AppSettings? options; bool loadingOptions;
     public event Action<AppSettings>? OptionsChanged;
     readonly TextBlock programmingNotes = Ui.Text("", 12);
@@ -62,6 +63,7 @@ public sealed class PopupWindow : Window
         wordNotes.TextWrapping = TextWrapping.Wrap; body.Children.Add(wordNotes);
         speak = Ui.Button("朗读单词", () => { try { speech.Speak(speechText); } catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { error.Text = ex.Message; } }); body.Children.Add(speak);
         var extensions = new Expander { Header = "翻译扩展", Content = enhancements }; Grid.SetRow(extensions, 5); grid.Children.Add(extensions);
+        favorite = Ui.Button("收藏单词", () => { error.Text = FavoriteRequested?.Invoke(speechText) ?? ""; }); body.Children.Add(favorite);
         technicalSwitch.Click += (_, _) => ChangeOptions(); englishSwitch.Click += (_, _) => ChangeOptions();
         outer.Child = grid; Content = outer;
         SourceInitialized += (_, _) => { var h = (HwndSource)PresentationSource.FromVisual(this); Native.SetWindowLongPtr(h.Handle, -20, new IntPtr(Native.GetWindowLongPtr(h.Handle, -20).ToInt64() | 0x08000080L)); h.AddHook((IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) => { if (msg == 0x21) { handled = true; return new IntPtr(3); } return IntPtr.Zero; }); };
@@ -75,6 +77,7 @@ public sealed class PopupWindow : Window
         speechText = text.Trim();
         string? details = settings.LearnEnglish ? YiKe.Translation.BundledEnglishDictionary.Details(text) : null;
         wordNotes.Text = settings.LearnEnglish && (word || details is not null) ? details ?? "本地词库未收录此词条。" : "";
+        favorite.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
         speak.Visibility = settings.LearnEnglish && word ? Visibility.Visible : Visibility.Collapsed;
         anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;

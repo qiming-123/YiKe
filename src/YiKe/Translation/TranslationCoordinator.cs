@@ -32,13 +32,13 @@ public sealed class TranslationCoordinator : IDisposable
     {
         lock (gate) { sequence++; pending = null; latestUpdate = null; active?.Cancel(); return sequence; }
     }
-    public long Submit(string text, AppSettings s, string key, bool force = false)
+    public long Submit(string text, AppSettings s, string key, bool force = false, string sourceLanguage = "auto")
     {
         lock (gate)
         {
             if (disposed) throw new ObjectDisposedException(nameof(TranslationCoordinator));
             if (!TextLimit.Allowed(text)) throw new ArgumentException("请选择 1–2,000 个 Unicode 字符（按码点计数），不会截断原文。");
-            bool Same(Work work) => work.Request.Text == text && work.Settings == s && work.Key == key && work.Request.Sequence == sequence;
+            bool Same(Work work) => work.Request.SourceLanguage == sourceLanguage && work.Request.Text == text && work.Settings == s && work.Key == key && work.Request.Sequence == sequence;
             if (!force && pending is not null && Same(pending)) return sequence;
             if (!force && pending is null && executing is not null && active is { IsCancellationRequested: false } && Same(executing) && latestUpdate?.Error is null && latestUpdate is not { Complete: true, ExplanationPending: false })
             {
@@ -47,7 +47,7 @@ public sealed class TranslationCoordinator : IDisposable
             }
             long id = ++sequence; active?.Cancel();
             latestUpdate = null;
-            pending = new(new(id, text, "auto", s.TargetLanguage, s.ConfigId, s.ServiceId, s.TranslationMode == "local" ? LocalModelPackage.ModelId : s.Model, s.TranslationMode == "local" ? "local-3" : "3"), s, key, force);
+            pending = new(new(id, text, sourceLanguage, s.TargetLanguage, s.ConfigId, s.ServiceId, s.TranslationMode == "local" ? LocalModelPackage.ModelId : s.Model, s.TranslationMode == "local" ? "local-3" : "3"), s, key, force);
             if (!running) { running = true; _ = Task.Run(Pump); }
             return id;
         }

@@ -45,7 +45,7 @@ public sealed class OpenAiCompatibleProvider : ITranslationProvider, IDisposable
         using var first = CancellationTokenSource.CreateLinkedTokenSource(total.Token); first.CancelAfter(TimeSpan.FromSeconds(settings.FirstResponseSeconds));
         using var message = new HttpRequestMessage(HttpMethod.Post, Endpoint.Completions(settings.BaseUrl));
         message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
-        message.Content = new StringContent(JsonSerializer.Serialize(new { model = request.Model, stream = settings.Stream, messages = new[] { new { role = settings.InstructionRole, content = request.NotesOnly ? ComputingWordNotes.Instruction : request.ExplainTechnical ? TechnicalOutput.For(request) : Instruction(request.TargetLanguage) }, new { role = "user", content = request.Text } } }), Encoding.UTF8, "application/json");
+        message.Content = new StringContent(JsonSerializer.Serialize(new { model = request.Model, stream = settings.Stream, messages = new[] { new { role = settings.InstructionRole, content = (request.SourceLanguage == "auto" ? "" : "Source language: " + request.SourceLanguage + ". ") + (request.NotesOnly ? ComputingWordNotes.Instruction : request.ExplainTechnical ? TechnicalOutput.For(request) : Instruction(request.TargetLanguage)) }, new { role = "user", content = request.Text } } }), Encoding.UTF8, "application/json");
         using var response = await client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, first.Token).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
         {
