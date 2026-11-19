@@ -68,6 +68,7 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
+    public event Action? ManualRequested, GuideDismissed;
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
         CredentialStore credentials, Func<string> diagnostics, Action? credentialDeleted = null, ITranslationProvider? testProvider = null, IModelCatalog? modelCatalog = null, Func<LocalHardwareSnapshot>? localHardware = null)
     {
@@ -90,7 +91,7 @@ public sealed class SettingsWindow : Window
         foreach (var value in new[] { "本地离线（选择引擎）", "在线 API" }) mode.Items.Add(value);
         foreach (var value in new[] { "英译中节能引擎", "通用多语模型" }) localEngine.Items.Add(value);
         localEngine.SelectionChanged += (_, _) => { if (!loading) { DraftChanged(); RefreshHardware(); } };
-        foreach (var value in new[] { "赛博朋克" }) theme.Items.Add(value);
+        foreach (var value in new[] { "深色 · 赛博朋克", "浅色 · Y2K 银晶" }) theme.Items.Add(value);
         foreach (double size in new double[] { 12, 13, 14, 15, 16, 18, 20, 22, 24 }) font.Items.Add(size);
         foreach (var value in new[] { "system", "developer" }) role.Items.Add(value);
         foreach (var value in TranslationLanguages.Presets) target.Items.Add(value);
@@ -118,11 +119,20 @@ public sealed class SettingsWindow : Window
             button.Margin = new Thickness(0, 0, 0, 8); button.HorizontalContentAlignment = HorizontalAlignment.Left;
             button.BorderThickness = new Thickness(0); navigation.Add(button); nav.Children.Add(button);
         }
+        var manual = Ui.Button("手动翻译", () => ManualRequested?.Invoke(), true);
+        manual.Margin = new Thickness(0, 12, 0, 8); nav.Children.Add(manual);
+        var guide = new StackPanel { Margin = new Thickness(0, 8, 0, 8), Visibility = get().GuideSeen ? Visibility.Collapsed : Visibility.Visible };
+        var tips = Ui.Text("① 在其他应用中选中文字，查看浮窗译文。\n\n② 遇到无法划选的文字，可打开手动翻译并粘贴原文。\n\n③ 在「外观与行为」切换深浅主题，保存后生效。");
+        tips.TextWrapping = TextWrapping.Wrap;
+        guide.Children.Add(tips);
+        var done = Ui.Button("跳过 / 完成教程", () => { GuideDismissed?.Invoke(); guide.Visibility = Visibility.Collapsed; });
+        guide.Children.Add(done);
+        nav.Children.Add(Ui.Button("使用指南", () => guide.Visibility = Visibility.Visible)); nav.Children.Add(guide);
         Grid.SetRow(nav, 1); sidebar.Children.Add(nav);
         var bottom = Ui.Text("YiKe " + typeof(SettingsWindow).Assembly.GetName().Version?.ToString(3) + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
         bottom.LineHeight = 20; Grid.SetRow(bottom, 2); sidebar.Children.Add(bottom);
         var sideBorder = new Border { Child = new ScrollViewer { Content = sidebar, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }, BorderThickness = new Thickness(0, 0, 1, 0) };
-        sideBorder.Background = SystemParameters.HighContrast ? SystemColors.WindowBrush : new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#151E2B").Color, PrismPanel.Brush("#0A101C").Color, 90); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
+        sideBorder.SetResourceReference(Border.BackgroundProperty, "RailFinish"); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
         root.Children.Add(sideBorder);
         var right = new Grid { Margin = new Thickness(30, 26, 30, 20) };
         Grid.SetColumn(right, 1); right.RowDefinitions.Add(new()); right.RowDefinitions.Add(new() { Height = GridLength.Auto });
@@ -131,7 +141,6 @@ public sealed class SettingsWindow : Window
         var footer = new StackPanel { Margin = new Thickness(0, 18, 0, 0) };
         feedback.Margin = new Thickness(0, 0, 0, 10); footer.Children.Add(feedback);
         var actions = new DockPanel(); var save = Ui.Button("保存设置", SaveSettings, true); save.MinWidth = 112;
-        if (!SystemParameters.HighContrast) save.Background = new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#80FCF1").Color, PrismPanel.Brush("#DCB0FF").Color, 0);
         DockPanel.SetDock(save, Dock.Right); actions.Children.Add(save); actions.Children.Add(Ui.Text("保存后，下次启动自动使用", 12, "Muted"));
         footer.Children.Add(actions); Grid.SetRow(footer, 1); right.Children.Add(footer); root.Children.Add(right); Content = CyberPrism.Frame(this, root);
         ShowPage(0);
@@ -181,7 +190,7 @@ public sealed class SettingsWindow : Window
             exclusions.Text = string.Join(Environment.NewLine, settings.ExcludedProcesses);
             first.Text = settings.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture);
             total.Text = settings.TotalSeconds.ToString(CultureInfo.InvariantCulture);
-            theme.SelectedIndex = 0;
+            theme.SelectedIndex = settings.Theme == "light" ? 1 : 0;
             learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
             if (!font.Items.Contains(settings.FontSize)) font.Items.Add(settings.FontSize);
             font.SelectedItem = settings.FontSize; role.SelectedItem = settings.InstructionRole;
@@ -513,10 +522,10 @@ public sealed class SettingsWindow : Window
         }
     }
     internal string ModelStatusText => modelState.Text;
-    string ThemeChoice() => "dark";
+    string ThemeChoice() => theme.SelectedIndex == 1 ? "light" : "dark";
     AppSettings Draft() => (onlineDraft with
     {
-        Enabled = get().Enabled,
+        Enabled = get().Enabled, GuideSeen = get().GuideSeen,
         TranslationMode = IsLocal ? "local" : "online",
         LocalEngine = localEngine.SelectedIndex == 0 ? "nmt" : "generic",
         Preset = IsLocal ? onlineDraft.Preset : (string)preset.SelectedItem, BaseUrl = IsLocal ? onlineDraft.BaseUrl : url.Text, Model = IsLocal ? onlineDraft.Model : model.Text, TargetLanguage = target.Text,

@@ -48,7 +48,7 @@ internal sealed class PrismPanel : Border
         dc.DrawGeometry(MaterialMark.Metal("#8EACBA", "#323B51", "#AC85BC"),
             new Pen(Brush("#C1C7D3"), .55), Outline(ActualWidth,ActualHeight,2,Kind));
         var glass = Outline(ActualWidth,ActualHeight,bevel,Kind);
-        dc.DrawGeometry(fill, new Pen(Brush("#080E1C"),1.2),glass);
+        dc.DrawGeometry(fill, new Pen(Brush(Theme.Dark ? "#080E1C" : "#A6AEC8"),1.2),glass);
         dc.DrawGeometry(null, new Pen(MaterialMark.Metal("#92F0F1", "#45536E", "#BE91D9"),.65),
             Outline(ActualWidth,ActualHeight,bevel+2,Kind));
         dc.PushClip(glass);
@@ -74,7 +74,7 @@ internal static class CyberPrism
     { Width=size, Height=size, HorizontalAlignment=HorizontalAlignment.Left };
     internal static FrameworkElement Monogram(int size=76) => new MaterialMark
     { Width=size, Height=size, Monogram=true, HorizontalAlignment=HorizontalAlignment.Left };
-    internal static Border Card(UIElement child,int padding=16) => new PrismPanel {Kind=PrismKind.Card,Child=child,Padding=new Thickness(padding+3),Background=new LinearGradientBrush(PrismPanel.Brush("#17273B").Color,PrismPanel.Brush("#30213F").Color,15)};
+    internal static Border Card(UIElement child,int padding=16) { var panel = new PrismPanel { Kind=PrismKind.Card, Child=child, Padding=new Thickness(padding+3) }; panel.SetResourceReference(Border.BackgroundProperty,"CardFinish"); return panel; }
     internal static Style ButtonStyle()
     {
         var style=new Style(typeof(Button),(Style)Application.Current.FindResource(typeof(Button)));
@@ -102,6 +102,6 @@ internal static class CyberPrism
         }
         caption.Children.Add(controls);var title=Ui.Text("译刻 · 偏好设置",10,"Accent");title.VerticalAlignment=VerticalAlignment.Center;caption.Children.Add(title);grid.Children.Add(caption);
         var divider=new Border{BorderBrush=PrismPanel.Brush("#324063"),BorderThickness=new Thickness(0,1,0,0),Child=body};Grid.SetRow(divider,1);grid.Children.Add(divider);
-        return new PrismPanel {Kind=PrismKind.Window,Padding=new Thickness(10,7,10,10),Background=new LinearGradientBrush(PrismPanel.Brush("#101827").Color,PrismPanel.Brush("#241B37").Color,15),Child=grid};
+        var frame = new PrismPanel {Kind=PrismKind.Window,Padding=new Thickness(10,7,10,10),Child=grid}; frame.SetResourceReference(Border.BackgroundProperty,"FrameFinish"); return frame;
     }
 }

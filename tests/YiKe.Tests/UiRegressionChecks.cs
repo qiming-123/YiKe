@@ -33,6 +33,21 @@ public static class UiRegressionChecks
                 }
                 try
                 {
+                    await Check("Settings shows manual entry, skippable guide and live light theme", async () =>
+                    {
+                        using var fixture = new EditorFixture(root, "theme-guide");
+                        var window = fixture.Window; window.Show(); await Idle();
+                        bool manual = false, dismissed = false;
+                        window.ManualRequested += () => manual = true; window.GuideDismissed += () => dismissed = true;
+                        FindButton(window, "手动翻译").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        var done = FindButton(window, "跳过 / 完成教程");
+                        done.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(manual && dismissed && !done.IsVisible);
+                        FindButton(window, "使用指南").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(done.IsVisible);
+                        FindButton(window, "外观与行为").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        var picker = Find<ComboBox>(window, "视觉风格"); picker.SelectedIndex = 1;
+                        Assert(!Theme.Dark); window.SaveSettings(); Assert(fixture.Config.Theme == "light");
+                    });
                     await Check("Manual window keeps source editable after failures and cancellation", async () =>
                     {
                         var config = new AppSettings { LocalEngine = "nmt" };

@@ -113,6 +113,7 @@ public sealed class YiKeApplication : Application
         else if (!store.Found) tray.ShowBalloonTip(6000, "译刻已准备好", "已按电脑配置选择本地模型。选中文字即可使用，无需配置；首次加载模型需要稍候。", Forms.ToolTipIcon.Info);
         else if (store.Notice is not null) tray.ShowBalloonTip(6000, "译刻", store.Notice, Forms.ToolTipIcon.Warning);
         // Models load on the first actual sentence request, never on startup.
+        OpenSettings();
         _ = PrepareReader();
     }
     async Task PrepareReader()
@@ -271,7 +272,14 @@ public sealed class YiKeApplication : Application
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
-        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); settings.Closed += (_, _) => settings = null; settings.Show();
+        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); settings.ManualRequested += Paste;
+        settings.GuideDismissed += () =>
+        {
+            try { config = store.Save(config with { GuideSeen = true }); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { MessageBox.Show(settings, "本次已关闭教程。设置无法保存，下次启动时将再次显示。", "译刻"); }
+        };
+        settings.Closed += (_, _) => settings = null; settings.Show();
     }
     void Paste()
     {

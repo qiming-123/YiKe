@@ -39,6 +39,7 @@ public sealed record AppSettings
     public Guid ActiveOnlineProfileId { get; init; }
     public OnlineProfile[] OnlineProfiles { get; init; } = Array.Empty<OnlineProfile>();
     public string TargetLanguage { get; init; } = TranslationLanguages.Default;
+    public bool GuideSeen { get; init; }
     public string Theme { get; init; } = "dark";
     public double FontSize { get; init; } = 15;
     public bool Enabled { get; init; } = true;

@@ -41,7 +41,7 @@ public sealed class PopupWindow : Window
         var top = new DockPanel { Margin = new Thickness(0, 0, 0, 12) };
         var close = Ui.Icon("关闭翻译", "M4,4 L20,20 M20,4 L4,20", Dismiss); DockPanel.SetDock(close, Dock.Right); top.Children.Add(close);
         var settings = Ui.Icon("打开设置", "M12,3 L12,7 M12,17 L12,21 M3,12 L7,12 M17,12 L21,12 M5,5 L8,8 M16,16 L19,19 M5,19 L8,16 M16,8 L19,5 M16,12 A4,4 0 1 1 8,12 A4,4 0 1 1 16,12", () => Settings?.Invoke()); DockPanel.SetDock(settings, Dock.Right); top.Children.Add(settings);
-        top.Children.Add(new StackPanel { Orientation = Orientation.Horizontal, Children = { Ui.Mark(30), new TextBlock { Text = "译刻", FontSize = 16, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) } } }); grid.Children.Add(top);
+        top.Children.Add(new StackPanel { Orientation = Orientation.Horizontal, Children = { CyberPrism.Badge(30), new TextBlock { Text = "译刻", FontSize = 16, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) } } }); grid.Children.Add(top);
         var body = new StackPanel(); language.Margin = new Thickness(0, 0, 0, 12); body.Children.Add(language);
         translation.LineHeight = 24; body.Children.Add(translation); error.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(error);
         programmingNotes.LineHeight = 20;

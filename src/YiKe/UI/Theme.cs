@@ -10,11 +10,22 @@ public static class Theme
     public static bool Dark { get; private set; }
     public static void Apply(string choice)
     {
-        Dark = true;
+        Dark = choice != "light";
         var r = Application.Current.Resources;
         void Set(string key, string value) => r[key] = new SolidColorBrush(SystemParameters.HighContrast ? key switch { "Accent" => SystemColors.HighlightColor, "OnAccent" => SystemColors.HighlightTextColor, "Text" or "Muted" or "Line" or "Good" or "Error" => SystemColors.WindowTextColor, _ => SystemColors.WindowColor } : (Color)ColorConverter.ConvertFromString(value));
         Set("Surface", "#111827"); Set("Canvas", "#090E1A"); Set("Soft", "#192237"); Set("Line", "#30415B");
         Set("Text", "#F1F2F7"); Set("Muted", "#B0B7CC"); Set("Accent", "#67E8DD"); Set("AccentSoft", "#202642"); Set("OnAccent", "#081C24"); Set("Good", "#8FD1BB"); Set("Error", "#FFACB6");
+        if (!Dark)
+        {
+            Set("Surface", "#FDFBFF"); Set("Canvas", "#EAEAF8"); Set("Soft", "#F0F2FC"); Set("Line", "#919AB4");
+            Set("Text", "#22263D"); Set("Muted", "#505972"); Set("Accent", "#5143A7"); Set("AccentSoft", "#E4DFFC");
+            Set("OnAccent", "#FFFFFF"); Set("Good", "#17644E"); Set("Error", "#9A294A");
+        }
+        void Metal(string key, string first, string middle, string last) =>
+            r[key] = SystemParameters.HighContrast ? SystemColors.WindowBrush : MaterialMark.Metal(first, middle, last);
+        Metal("FrameFinish", Dark ? "#101827" : "#CBE7F7", Dark ? "#19192D" : "#FAFAFF", Dark ? "#241B37" : "#DCD1F6");
+        Metal("RailFinish", Dark ? "#151E2B" : "#D2DDF3", Dark ? "#101827" : "#FFFFFF", Dark ? "#0A101C" : "#CAC1E9");
+        Metal("CardFinish", Dark ? "#17273B" : "#D8F3FC", Dark ? "#212238" : "#FEFDFF", Dark ? "#30213F" : "#DDD6F3");
         r["BodyFont"] = new FontFamily("Segoe UI Variable, Segoe UI, Microsoft YaHei UI");
     }
     public static void InstallStyles()
@@ -63,7 +74,7 @@ public static class Ui
         };
     }
     public static void WindowTheme(Window window)
-    { window.SetResourceReference(Control.BackgroundProperty, "Surface"); window.SetResourceReference(Control.ForegroundProperty, "Text"); window.SetResourceReference(Control.FontFamilyProperty, "BodyFont"); window.FontSize = 13; window.SourceInitialized += (_, _) => { if (!SystemParameters.HighContrast) { int dark = 1; DwmSetWindowAttribute(new System.Windows.Interop.WindowInteropHelper(window).Handle, 20, ref dark, sizeof(int)); } }; }
+    { window.SetResourceReference(Control.BackgroundProperty, "Surface"); window.SetResourceReference(Control.ForegroundProperty, "Text"); window.SetResourceReference(Control.FontFamilyProperty, "BodyFont"); window.FontSize = 13; window.SourceInitialized += (_, _) => { if (!SystemParameters.HighContrast) { int dark = Theme.Dark ? 1 : 0; DwmSetWindowAttribute(new System.Windows.Interop.WindowInteropHelper(window).Handle, 20, ref dark, sizeof(int)); } }; }
     public static TextBlock Text(string text, double size = 13, string brush = "Text", bool bold = false)
     { var t = new TextBlock { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal }; t.SetResourceReference(TextBlock.ForegroundProperty, brush); return t; }
     public static Button Button(string text, Action action, bool primary = false)
