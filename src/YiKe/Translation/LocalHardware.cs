@@ -14,7 +14,7 @@ public sealed record LocalSupport(LocalRunProfile? Profile, string? Error, bool 
 public static class LocalHardware
 {
     public const ulong GiB = 1024UL * 1024 * 1024;
-    public const ulong MinimumAvailable = GiB * 7 / 4;
+    public const ulong MinimumAvailable = GiB * 5 / 4;
     public static LocalHardwareSnapshot Detect()
     {
         var memory = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };
@@ -28,14 +28,14 @@ public static class LocalHardware
         if (!hardware.CompatibleCpu || hardware.Processors < 4 || hardware.TotalBytes < 7 * GiB)
             return new(null, "此电脑不支持本地模型：需要约 8 GB 内存、至少 4 个逻辑处理器及支持 SSE4.2 的 x64 CPU。请在设置中选择在线 API；不会自动发送原文。", true);
         if (hardware.AvailableBytes < MinimumAvailable)
-            return new(null, "当前可用内存不足 1.75 GB，已暂停加载本地模型以避免卡顿。请关闭占用内存的程序后重试，或选择在线 API。", false);
+            return new(null, "当前可用内存不足 1.25 GiB，已暂停加载本地模型以避免卡顿。请关闭占用内存的程序后重试，或选择在线 API。", false);
         bool standard = hardware.TotalBytes >= 14 * GiB && hardware.AvailableBytes >= 5 * GiB && hardware.Processors >= 8;
         if (choice == "standard" && !standard)
             return new(null, "所选标准模型需要约 16 GB 内存、8 个逻辑处理器及至少 5 GB 当前空闲内存。请释放内存，或重新运行安装程序选择轻量模型。", hardware.TotalBytes < 14 * GiB || hardware.Processors < 8);
         if (choice == "light") standard = false;
         return new(standard
             ? new(LocalModelPackage.ModelId, LocalModelPackage.ModelFile, "标准", Math.Clamp(hardware.Processors / 2 - 1, 2, 6), 6144, 3072, 256, 128, 15)
-            : new(LocalModelPackage.LightModelId, LocalModelPackage.LightModelFile, "轻量", Math.Clamp(hardware.Processors / 2, 1, 2), 3072, 1536, 64, 32, 1), null, false);
+            : new(LocalModelPackage.LightModelId, LocalModelPackage.LightModelFile, "轻量", Math.Clamp(hardware.Processors / 2, 1, 2), 3072, 1536, 16, 8, 1), null, false);
     }
     public static string Describe(LocalHardwareSnapshot hardware)
     {

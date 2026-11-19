@@ -13,7 +13,7 @@ internal sealed class SelectionIcon : Window
     internal event Action<SelectionSnapshot>? Requested;
     internal SelectionIcon()
     {
-        Title = "译刻 · 点击翻译"; Width = 58; Height = 60;
+        Title = "译刻 · 点击翻译"; Width = 44; Height = 38;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize;
         ShowInTaskbar = false; ShowActivated = false; Topmost = true;
         Ui.WindowTheme(this);
@@ -21,8 +21,8 @@ internal sealed class SelectionIcon : Window
         var button = Ui.Button("译", () => { var selected = Selection; Clear(); if (selected is not null) Requested?.Invoke(selected); });
         var template = new ControlTemplate(typeof(System.Windows.Controls.Button));
         var presenter = new FrameworkElementFactory(typeof(System.Windows.Controls.ContentPresenter)); presenter.SetValue(System.Windows.Controls.ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center); presenter.SetValue(System.Windows.Controls.ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center); template.VisualTree = presenter;
-        button.Template = template; button.Content = CyberPrism.Badge(54); button.Padding = new Thickness(0); button.ToolTip = "点击翻译所选文字";
-        button.MouseEnter += (_, _) => button.Opacity = .84; button.MouseLeave += (_, _) => button.Opacity = 1;
+        button.Template = template; button.Content = new MaterialMark { SelectionLens = true, Width = 38, Height = 38 }; button.Padding = new Thickness(0); button.ToolTip = "点击翻译所选文字";
+        button.MouseEnter += (_, _) => button.Opacity = .78; button.MouseLeave += (_, _) => button.Opacity = 1;
         Content = button;
         SourceInitialized += (_, _) => {
             var h = (HwndSource)PresentationSource.FromVisual(this);

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace YiKe.Data;
 
-internal sealed record JapaneseEntry(string Headword, string Reading, string Meaning, string Example, string[] Forms)
+internal sealed record StudyDictionaryEntry(string Headword, string Reading, string Meaning, string Example, string[] Forms)
 {
     internal string Card(string form) => form + (form == Headword ? "" : "  →  " + Headword) + "\n" + Reading + "\n\n" + Meaning + "\n\n" + Example;
 }
-internal sealed record JapaneseData(string Language, JapaneseEntry[] Entries);
+internal sealed record StudyDictionaryData(string Language, StudyDictionaryEntry[] Entries);
 
-internal sealed class JapanesePack
+internal sealed class StudyDictionaryPack
 {
     readonly string path;
-    Dictionary<string,JapaneseEntry> index = new(StringComparer.OrdinalIgnoreCase);
+    Dictionary<string,StudyDictionaryEntry> index = new(StringComparer.OrdinalIgnoreCase);
     string DictionaryPath => Path.ChangeExtension(path, ".ykdict");
     internal int Count { get; private set; }
     internal bool Installed => Count > 0 || index.Count > 0;
@@ -37,16 +37,19 @@ internal sealed class JapanesePack
         string tmp = DictionaryPath+"."+Guid.NewGuid()+".tmp";
         try { File.Copy(source,tmp); File.Move(tmp,DictionaryPath,true); Count=count; } finally { File.Delete(tmp); }
     }
+    internal static StudyDictionaryPack[] Selected(StudyDictionaryPack[] packs, YiKe.Core.AppSettings settings) =>
+        settings.LearnJapanese ? Array.FindAll(packs,p => !settings.DisabledStudyLanguages.Contains(p.Code)) : Array.Empty<StudyDictionaryPack>();
+
     internal static readonly (string Code,string Name)[] Languages = { ("ja","日语"), ("ko","韩语"), ("fr","法语"), ("de","德语"), ("es","西班牙语") };
     internal string Code { get; }
     internal string Name { get; }
-    internal JapanesePack(string directory,string code="ja",string name="日语")
+    internal StudyDictionaryPack(string directory,string code="ja",string name="日语")
     {
         Code = code; Name = name; path = Path.Combine(directory, "packs", code+".json");
         if (File.Exists(DictionaryPath)) { using var reader = new BinaryReader(File.OpenRead(DictionaryPath)); Count = ReadHeader(reader,Code,out _); }
         if (File.Exists(path)) index = Parse(File.ReadAllBytes(path));
     }
-    internal JapaneseEntry? Find(string word)
+    internal StudyDictionaryEntry? Find(string word)
     {
         word = word.Trim();
         if (Count == 0 || word.Length == 0 || word.Length > 256) return index.GetValueOrDefault(word);
@@ -62,15 +65,15 @@ internal sealed class JapanesePack
             int cmp=key.AsSpan().SequenceCompareTo(reader.ReadBytes(length));
             if (cmp < 0) hi=mid-1;
             else if (cmp > 0) lo=mid+1;
-            else { reader.BaseStream.Position=pos; return JsonSerializer.Deserialize<JapaneseEntry>(reader.ReadBytes(size)); }
+            else { reader.BaseStream.Position=pos; return JsonSerializer.Deserialize<StudyDictionaryEntry>(reader.ReadBytes(size)); }
         }
         return index.GetValueOrDefault(word);
     }
-    Dictionary<string,JapaneseEntry> Parse(byte[] bytes)
+    Dictionary<string,StudyDictionaryEntry> Parse(byte[] bytes)
     {
-        var pack = JsonSerializer.Deserialize<JapaneseData>(bytes);
+        var pack = JsonSerializer.Deserialize<StudyDictionaryData>(bytes);
         if (pack is not { Entries.Length: > 0 } || pack.Language != Code) throw new InvalidDataException("请选择对应语言的研习词包。");
-        var entries = new Dictionary<string,JapaneseEntry>(StringComparer.OrdinalIgnoreCase);
+        var entries = new Dictionary<string,StudyDictionaryEntry>(StringComparer.OrdinalIgnoreCase);
         foreach (var item in pack.Entries)
         {
             if (item is null || string.IsNullOrWhiteSpace(item.Headword) || string.IsNullOrWhiteSpace(item.Reading) || string.IsNullOrWhiteSpace(item.Meaning) || item.Forms is null)

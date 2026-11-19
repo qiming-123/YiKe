@@ -8,6 +8,7 @@ internal sealed class MaterialMark : FrameworkElement
 {
     static readonly DependencyProperty FinishProperty = DependencyProperty.Register("Finish", typeof(Brush), typeof(MaterialMark), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
     public MaterialMark() => SetResourceReference(FinishProperty, "RailFinish");
+    internal bool SelectionLens { get; init; }
     internal bool Monogram { get; init; }
     static readonly Geometry TranslationGlyph = CreateTranslationGlyph();
     static Geometry CreateTranslationGlyph()
@@ -52,6 +53,19 @@ internal sealed class MaterialMark : FrameworkElement
                 Facet("M22,36 L36,22 89,22 96,29 96,85 87,94 22,94 Z", SystemColors.WindowBrush, SystemColors.WindowTextBrush);
                 dc.DrawGeometry(SystemColors.WindowTextBrush, null, TranslationGlyph);
             }
+        }
+        else if (SelectionLens)
+        {
+            // A polished edge encloses a single speech bubble. Keep the lettering clear at tray scale.
+            Facet("M24,7 H76 Q94,7 94,25 V60 Q94,76 78,76 H45 L26,93 L27,77 Q7,76 7,60 V25 Q7,7 24,7 Z",
+                Metal("#C8FFFF","#808CD5","#EBD1FF"), dark);
+            Facet("M25,12 H76 Q89,12 89,26 V59 Q89,70 76,71 H43 L32,81 L33,71 H25 Q12,71 12,59 V26 Q12,12 25,12 Z",
+                Theme.Dark ? Metal("#277C94","#263255","#533469") : Metal("#D0FFFA","#B3CAED","#B9A0DC"));
+            Facet("M14,28 Q14,14 27,14 H75 Q82,14 85,19 L64,25 L18,40 Z",
+                Metal("#BCFFFFFF","#538AEEEF","#00EAF3FB"));
+            dc.PushTransform(new TranslateTransform(-9,-15));
+            dc.DrawGeometry(Theme.Dark ? Brushes.White : PrismPanel.Brush("#172C4B"),null,TranslationGlyph);
+            dc.Pop();
         }
         else if (Monogram)
         {

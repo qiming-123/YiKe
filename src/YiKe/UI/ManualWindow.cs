@@ -14,12 +14,14 @@ public sealed class ManualWindow : Window
     public string From => from.SelectedIndex == 0 ? "auto" : (string)from.SelectedItem;
     public string To => (string)to.SelectedItem;
     readonly Button translate, cancel;
+    internal Func<string,string,bool>? IsSaved { get; set; }
     public event Action<string>? Requested;
+    internal event Action<string,string>? ContextRequested;
     public event Func<string,string>? FavoriteRequested;
     public event Action? CancelRequested;
     internal event Func<string,string,string>? LanguageFavoriteRequested;
     public ManualWindow(AppSettings settings) : this(settings,null) { }
-    internal ManualWindow(AppSettings settings, YiKe.Data.JapanesePack? pack, YiKe.Data.JapanesePack[]? packs = null)
+    internal ManualWindow(AppSettings settings, YiKe.Data.StudyDictionaryPack? pack, YiKe.Data.StudyDictionaryPack[]? packs = null)
     {
         Title = "译刻 · 手动翻译"; Width = 560; Height = 520; WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Ui.WindowTheme(this); Ui.ConstrainToWorkArea(this);
@@ -32,6 +34,11 @@ public sealed class ManualWindow : Window
         cancel.IsEnabled = false; actions.Children.Add(translate); actions.Children.Add(cancel);
         var direction = new WrapPanel { Margin = new Thickness(0,0,0,8) };
         bool restricted = settings.TranslationMode == "local" && settings.LocalEngine == "nmt";
+        var contextAction = Ui.Button("按原句译选词", () => ContextRequested?.Invoke(source.SelectedText,source.Text));
+        contextAction.ToolTip = "把原文作为语境，只翻译选中的词语"; contextAction.Visibility = Visibility.Collapsed;
+        actions.Children.Add(contextAction);
+        source.SelectionChanged += (_,_) => contextAction.Visibility = !restricted && source.SelectionLength > 0 && source.SelectionLength < source.Text.Length ? Visibility.Visible : Visibility.Collapsed;
+        contextAction.SetBinding(IsEnabledProperty,new System.Windows.Data.Binding("IsEnabled") { Source = translate });
         from.Items.Add("自动识别");
         foreach (var lang in TranslationLanguages.Presets)
         {
@@ -43,63 +50,43 @@ public sealed class ManualWindow : Window
         from.IsEnabled = to.IsEnabled = !restricted;
         direction.Children.Add(from); direction.Children.Add(Ui.Text("  →  ",16)); direction.Children.Add(to);
         System.Windows.Automation.AutomationProperties.SetName(from,"源语言"); System.Windows.Automation.AutomationProperties.SetName(to,"目标语言");
-        var study = new Expander { Header = "英语研习", IsExpanded = settings.LearnEnglish };
-        var card = Ui.Text("", 14); card.TextWrapping = TextWrapping.Wrap;
-        var speech = new WordSpeech(); Closed += (_,_) => speech.Dispose();
-        string word = "";
-        var save = Ui.Button("收藏单词", () => status.Text = FavoriteRequested?.Invoke(word) ?? "");
-        var speak = Ui.Button("朗读单词", () =>
+        dictionaries = YiKe.Data.StudyDictionaryPack.Selected(packs ?? (pack == null ? Array.Empty<YiKe.Data.StudyDictionaryPack>() : new[] { pack }),settings);
+        var card = new DictionaryCard { IsSaved = (code,word) => IsSaved?.Invoke(code,word) == true };
+        var hint = Ui.Text("",12,"Muted");
+        card.SaveWord += (code, word) => code == "en" ? FavoriteRequested?.Invoke(word) ?? "" : LanguageFavoriteRequested?.Invoke(code, word) ?? "";
+        var panel = new StackPanel(); panel.Children.Add(hint); panel.Children.Add(card);
+        var study = new Expander { Header = "单词研习", IsExpanded = settings.LearnEnglish, Content = new ScrollViewer { Content = panel, MaxHeight = 180, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } };
+        void Lookup(string term)
         {
-            try { speech.Speak(word); }
-            catch (Exception ex) when (ex is InvalidOperationException or System.Runtime.InteropServices.COMException) { status.Text = "无法朗读：" + ex.Message; }
-        });
-        var tools = new WrapPanel(); tools.Children.Add(save); tools.Children.Add(speak);
-        var studyPanel = new StackPanel(); studyPanel.Children.Add(tools); studyPanel.Children.Add(card);
-        study.Content = new ScrollViewer { Content = studyPanel, MaxHeight = 145, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        void Lookup()
-        {
-            if (!study.IsExpanded) return;
-            word = (source.SelectionLength > 0 ? source.SelectedText : source.Text).Trim();
-            bool single = word.Length <= 80 && System.Text.RegularExpressions.Regex.IsMatch(word, @"^[A-Za-z]+(?:['-][A-Za-z]+)*$");
-            var details = YiKe.Translation.BundledEnglishDictionary.Details(word);
-            speak.IsEnabled = single; save.IsEnabled = single || details != null;
-            card.Text = details ?? (single ? "本地词库未收录此词。" : "输入或选中英文单词、词组，例如 take off。");
+            if (study.IsExpanded) hint.Text = card.Lookup(term,dictionaries) ? "" : "输入或选中原文、译文中的单词或词组。当前词典未命中。";
         }
-        study.Expanded += (_,_) => Lookup(); source.TextChanged += (_,_) => Lookup(); source.SelectionChanged += (_,_) => Lookup();
-        study.Collapsed += (_,_) => speech.Stop(); Lookup();
-        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var japanese = new Expander { Header = "日语研习" };
-        var notes = Ui.Text("",14); notes.TextWrapping = TextWrapping.Wrap;
-        string form = "";
-        var picker = new ComboBox();
-        foreach(var item in packs ?? (pack == null ? Array.Empty<YiKe.Data.JapanesePack>() : new[] { pack })) picker.Items.Add(item.Name);
-        picker.SelectedIndex = 0;
-        var collect = Ui.Button("收藏日语词条", () => status.Text = LanguageFavoriteRequested?.Invoke(pack!.Code,form) ?? "");
-        var panel = new StackPanel(); panel.Children.Add(picker); panel.Children.Add(collect); panel.Children.Add(notes);
-        japanese.Content = new ScrollViewer { Content = panel, MaxHeight = 145, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        void LookupJapanese()
+        void SourceLookup() => Lookup(source.SelectionLength > 0 ? source.SelectedText : source.Text);
+        study.Expanded += (_,_) => SourceLookup(); study.Collapsed += (_,_) => card.Stop();
+        source.TextChanged += (_,_) => SourceLookup(); source.SelectionChanged += (_,_) => SourceLookup();
+        result.SelectionChanged += (_,_) => { if (result.SelectionLength > 0) { study.IsExpanded = true; Lookup(result.SelectedText); alternatives.ShowTerm(result.SelectedText,To,dictionaries); } };
+        result.PreviewMouseLeftButtonUp += (_, e) =>
         {
-            if (!japanese.IsExpanded) return;
-            form = (source.SelectionLength > 0 ? source.SelectedText : source.Text).Trim();
-            var entry = pack?.Find(form);
-            notes.Text = entry?.Card(form) ?? (pack?.Installed != true ? "请先到翻译服务 → 英语研习下方的「其他选项」安装对应词包。" : form.Length == 0 ? "输入单词或词形，或在原文中选中一个词。" : "当前词包未收录所选内容。");
-            collect.IsEnabled = entry is not null;
-        }
-        picker.SelectionChanged += (_,_) => { if (packs == null) return; pack = packs[picker.SelectedIndex]; japanese.Header = pack.Name + "研习"; collect.Content = "收藏" + pack.Name + "词条"; LookupJapanese(); };
-        if (packs != null) japanese.Header = "更多语言研习（日语等）";
-        japanese.Expanded += (_,_) => { study.IsExpanded = false; LookupJapanese(); };
-        study.Expanded += (_,_) => japanese.IsExpanded = false;
-        source.TextChanged += (_,_) => LookupJapanese(); source.SelectionChanged += (_,_) => LookupJapanese();
+            if (result.SelectionLength > 0) return;
+            int index = result.GetCharacterIndexFromPoint(e.GetPosition(result), false);
+            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(result.Text, @"[\p{L}\p{M}]+(?:['’-][\p{L}\p{M}]+)*"))
+                if (index >= match.Index && index < match.Index + match.Length) { result.Select(match.Index, match.Length); break; }
+        };
+        Closed += (_,_) => card.DisposeSpeech(); SourceLookup();
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var controls = new UIElement[] { direction, source, actions, Ui.Text("译文", 16), result, study, japanese, status };
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        source.TextChanged += (_,_) => alternatives.Clear();
+        var controls = new UIElement[] { direction, source, actions, Ui.Text("译文", 16), result, alternatives, study, status };
         for (int i = 0; i < controls.Length; i++) { Grid.SetRow(controls[i], i); grid.Children.Add(controls[i]); }
         status.Text = settings.ServiceLabel + " → " + settings.TargetLanguage; Content = grid; Loaded += (_, _) => source.Focus();
         System.Windows.Automation.AutomationProperties.SetName(source, "原文");
         System.Windows.Automation.AutomationProperties.SetName(result, "译文");
     }
-    string service = "";
-    public void Begin(AppSettings settings)
+    readonly AlternateMeanings alternatives = new();
+    readonly YiKe.Data.StudyDictionaryPack[] dictionaries;
+    string submittedTerm = "", submittedFrom = "", submittedTo = "", service = "";
+    public void Begin(AppSettings settings,string? term = null)
     {
+        alternatives.Clear(); submittedTerm = term ?? source.Text; submittedFrom = From; submittedTo = To;
         service = settings.ServiceLabel + " → " + settings.TargetLanguage;
         from.IsHitTestVisible = to.IsHitTestVisible = false; from.Focusable = to.Focusable = false;
         source.IsReadOnly = true; result.Clear(); translate.IsEnabled = false; cancel.IsEnabled = true;
@@ -110,7 +97,12 @@ public sealed class ManualWindow : Window
     {
         result.Text = update.Text;
         if (update.Running) status.Text = service + " · " + update.StatusLabel;
-        else Finish(update.StatusLabel + (update.Error is null ? "" : " · " + update.Error));
+        else
+        {
+            if (update.Error == null && update.Text.Length > 0 && !alternatives.ShowTerm(submittedTerm,submittedFrom,dictionaries))
+                alternatives.ShowTerm(update.Text,submittedTo,dictionaries);
+            Finish(update.StatusLabel + (update.Error is null ? "" : " · " + update.Error));
+        }
     }
     void Finish(string label)
     {

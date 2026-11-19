@@ -60,8 +60,8 @@ public sealed class YiKeApplication : Application
     readonly SelectionReader reader = new();
     readonly TranslationProvider provider = new();
     readonly CredentialStore credentials;
-    readonly JapanesePack[] packs;
-    JapanesePack japanese => packs[0];
+    readonly StudyDictionaryPack[] packs;
+    StudyDictionaryPack japanese => packs[0];
     AppSettings config;
     ManualWindow? manual;
     bool AcceptSelection => manual is null && session.CanReceiveSelection;
@@ -82,7 +82,7 @@ public sealed class YiKeApplication : Application
     public YiKeApplication()
     {
         config = store.Load();
-        packs = JapanesePack.Languages.Select(l => new JapanesePack(store.DefaultDirectory,l.Code,l.Name)).ToArray();
+        packs = StudyDictionaryPack.Languages.Select(l => new StudyDictionaryPack(store.DefaultDirectory,l.Code,l.Name)).ToArray();
         if (config.EnhancementDefaultsVersion == 0) config = config with { EnhancementDefaultsVersion = 1, LocalEngine = NmtTranslationProvider.Available && config.TargetLanguage == TranslationLanguages.Default ? "nmt" : config.LocalEngine, ExplainProgrammingTerms = false, SupplementTechnicalTerms = false, LearnEnglish = false };
         session = new(config.Enabled); credentials = new(store.DefaultDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Startup += Start; Exit += Cleanup;
@@ -93,7 +93,16 @@ public sealed class YiKeApplication : Application
         Theme.Apply(config.Theme); Theme.InstallStyles();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
         selectionIcon = new(); selectionIcon.Requested += snapshot => { if (AcceptSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
-        popup = new() { Japanese = japanese }; popup.FavoriteRequested += word => StudyBook.Add(japanese.Find(word) is null ? StudyFile : StudyBook.JapaneseFile(StudyFile), word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup = new() { Packs = packs, IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) }; popup.FavoriteRequested += (code,word) => StudyBook.Add(code == "en" ? StudyFile : StudyBook.LanguageFile(StudyFile,code), word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup.FeatureEnabled += (target,flag,message) =>
+        {
+            if ((config.StudyTipsSeen & flag) == 0) { Ui.Tip(target,message); RememberTip(flag); }
+        };
+        popup.EnglishShown += button => Dispatcher.BeginInvoke(() =>
+        {
+            if (button.IsVisible && (config.StudyTipsSeen & 4) == 0)
+            { Ui.Tip(button,"点 ☆ 收藏当前英语词条，在「单词收藏本」里复习。"); RememberTip(4); }
+        });
         popup.PinChanged += pinned => { pdfCopy?.Clear(); session.SetPinned(pinned); selecting?.Cancel(); };
         coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (manual is not null && u.Sequence == coordinator!.Sequence) manual.Update(u); else if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
         var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(config.Enabled ? "暂停自动翻译" : "恢复自动翻译"); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
@@ -198,7 +207,7 @@ public sealed class YiKeApplication : Application
         session.SetCurrent(snapshot); popup!.Begin(snapshot.Text, activeOptions, snapshot.X, snapshot.Y, snapshot.Window, snapshot.OriginalText);
         Submit(snapshot.Text, activeOptions, force, session.ShowTranslation, popup.Error);
     }
-    void Submit(string text, AppSettings options, bool force, Action<long> started, Action<string> failed, string sourceLanguage = "auto")
+    void Submit(string text, AppSettings options, bool force, Action<long> started, Action<string> failed, string sourceLanguage = "auto", string context = "")
     {
         try
         {
@@ -206,7 +215,7 @@ public sealed class YiKeApplication : Application
             var key = options.TranslationMode == "local" ? "" : credentials.Read(options);
             if (options.TranslationMode == "online" && string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException("请在设置中填写当前服务的密钥。");
-            started(coordinator!.Submit(text, options, key ?? "", force, sourceLanguage));
+            started(coordinator!.Submit(text, options, key ?? "", force, sourceLanguage, context));
         }
         catch (Exception ex) when (ex is ArgumentException or CryptographicException or IOException or UnauthorizedAccessException)
         {
@@ -273,11 +282,17 @@ public sealed class YiKeApplication : Application
         config = ConfigurationService.Commit(config, value, key, store, credentials); manual?.Close(); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
     }
     string StudyFile => Path.Combine(string.IsNullOrEmpty(config.StudyDirectory) ? store.UserDirectory : config.StudyDirectory, "YiKe-vocabulary.json");
+    void RememberTip(int flag)
+    {
+        try { config = store.Save(config with { StudyTipsSeen = config.StudyTipsSeen | flag }); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { diagnostic = "无法保存教程进度：" + ex.Message; }
+    }
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
         popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); foreach (var pack in packs) settings.ShowPackInstaller(pack); settings.ManualRequested += Paste;
-        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder }), packs) { Owner = settings }.ShowDialog();
+        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder }), packs,config) { Owner = settings }.ShowDialog();
+        settings.TipShown += RememberTip;
         settings.GuideDismissed += () =>
         {
             try { config = store.Save(config with { GuideSeen = true }); }
@@ -290,11 +305,16 @@ public sealed class YiKeApplication : Application
     {
         if (manual is not null) { manual.Activate(); return; }
         popup!.Dismiss();
-        var window = new ManualWindow(config,japanese,packs);
+        var window = new ManualWindow(config,japanese,packs) { IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) };
         window.LanguageFavoriteRequested += (code,word) => StudyBook.Add(StudyBook.LanguageFile(StudyFile,code),word);
         window.FavoriteRequested += word => StudyBook.Add(StudyFile, word);
         manual = window;
         window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options); Submit(text, options, false, _ => { }, window.Error, window.From); };
+        window.ContextRequested += (term,context) =>
+        {
+            var options = config with { TargetLanguage = window.To, ExplainProgrammingTerms = false };
+            window.Begin(options,term); Submit(term,options,false,_ => { },window.Error,window.From,context);
+        };
         window.CancelRequested += () => coordinator!.Invalidate();
         window.Closed += (_, _) => { coordinator!.Invalidate(); manual = null; };
         window.Show();

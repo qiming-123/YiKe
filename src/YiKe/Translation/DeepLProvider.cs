@@ -34,6 +34,7 @@ internal sealed class DeepLProvider : ITranslationProvider, IDisposable
         using var message = new HttpRequestMessage(HttpMethod.Post, settings.BaseUrl.TrimEnd('/') + "/translate");
         message.Headers.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", key);
         var payload = new Dictionary<string,object> { ["text"] = new[] { request.Text }, ["target_lang"] = Language(request.TargetLanguage) };
+        if (request.Context.Length > 0) payload["context"] = request.Context;
         if (request.SourceLanguage != "auto") payload["source_lang"] = Language(request.SourceLanguage).Split('-')[0];
         message.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
         using var response = await client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, deadline.Token).ConfigureAwait(false);

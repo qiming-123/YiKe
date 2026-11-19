@@ -45,6 +45,15 @@ public static class LocalModelLiveCheck
                 if (string.IsNullOrWhiteSpace(answer.ToString()) || answer.ToString().Contains("<think>")) throw new Exception("Empty translation or visible reasoning");
                 results.Add(new { source = text, target = language, stream = settings.Stream, translation = answer.ToString(), firstTokenMs = first, totalMs = timer.ElapsedMilliseconds });
             }
+            foreach (var (term,sentence,target) in new[] { ("bank","They sat on the bank of the river.","简体中文"), ("苹果","她削了一个苹果。","英语（English）") })
+            {
+                var settings = new AppSettings { TargetLanguage = target };
+                var request = new TranslationRequest(1,term,"auto",target,settings.ConfigId,settings.ServiceId,LocalModelPackage.ModelId,Context: sentence);
+                var answer = new StringBuilder();
+                await foreach (var delta in provider.TranslateAsync(request,settings,"",default)) answer.Append(delta);
+                results.Add(new { term, sentence, translation = answer.ToString() });
+                Console.WriteLine($"Context: {term} => {answer}");
+            }
             using (var cancel = new CancellationTokenSource())
             {
                 var settings = new AppSettings();
@@ -57,11 +66,12 @@ public static class LocalModelLiveCheck
                 await foreach (string delta in provider.TranslateAsync(retry, settings, "", default)) text.Append(delta);
                 if (text.Length == 0) throw new Exception("Local engine did not recover after cancellation");
             }
+            using var releasedEngine = Process.GetProcessById(provider.EngineProcessId);
             var previousDevice = deviceOverride;
-            deviceOverride = new(16 * LocalHardware.GiB, LocalHardware.GiB / 2, 8, true);
+            deviceOverride = new(16 * LocalHardware.GiB, LocalHardware.GiB / 3, 8, true);
             bool memoryBlocked = false;
             try { await provider.PrepareAsync(default); } catch (TranslationException error) when (error.Code == "local-memory") { memoryBlocked = true; }
-            if (!memoryBlocked || provider.EngineProcessId != 0) throw new Exception("Memory pressure did not release the real engine");
+            if (!memoryBlocked || provider.EngineProcessId != 0 || !releasedEngine.WaitForExit(5000)) throw new Exception("Memory pressure did not release the real engine");
             int verificationPasses = provider.VerificationPasses;
             deviceOverride = previousDevice; await provider.PrepareAsync(default);
             if (provider.VerificationPasses != verificationPasses) throw new Exception("Unchanged model was hashed again after engine release");

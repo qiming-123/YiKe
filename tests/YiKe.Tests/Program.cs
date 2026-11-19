@@ -15,12 +15,12 @@ if(args.Length==2 && args[0]=="--verify-study-packs")
     string scratchPath = Path.Combine(Path.GetTempPath(),"YiKe-lex-"+Guid.NewGuid().ToString("N"));
     try
     {
-        foreach(var (code,name) in JapanesePack.Languages)
+        foreach(var (code,name) in StudyDictionaryPack.Languages)
         {
-            var pack = new JapanesePack(scratchPath,code,name);
+            var pack = new StudyDictionaryPack(scratchPath,code,name);
             pack.InstallDictionary(Path.Combine(args[1],code+".ykdict"));
             var word = code switch { "ja"=>"学校","ko"=>"학교","fr"=>"maison","de"=>"Haus",_=>"casa" };
-            var entry = new JapanesePack(scratchPath,code,name).Find(word);
+            var entry = new StudyDictionaryPack(scratchPath,code,name).Find(word);
             if(pack.Count<10000 || string.IsNullOrWhiteSpace(entry?.Meaning)) throw new InvalidDataException(code+" lookup failed");
             Console.WriteLine($"{code} {pack.Count} {word} {entry.Meaning.Split('\n')[0]}");
         }

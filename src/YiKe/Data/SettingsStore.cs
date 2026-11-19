@@ -43,7 +43,7 @@ public sealed class SettingsStore
         var destination = Path.Combine(folder, "settings.json");
         if (File.Exists(destination)) throw new IOException("该目录已有设置，请选择空目录。");
         Directory.CreateDirectory(folder);
-        foreach (var book in JapanesePack.Languages.Select(l => $"YiKe-vocabulary-{l.Code}.json").Prepend("YiKe-vocabulary.json"))
+        foreach (var book in StudyDictionaryPack.Languages.Select(l => $"YiKe-vocabulary-{l.Code}.json").Prepend("YiKe-vocabulary.json"))
         {
         string sourceBook = Path.Combine(UserDirectory, book);
         if (string.IsNullOrEmpty(current.StudyDirectory) && File.Exists(sourceBook))
