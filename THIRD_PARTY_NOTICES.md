@@ -26,3 +26,13 @@ Helsinki-NLP OPUS-MT en-zh（Apache-2.0），INT8转换文件来自 Second-Dawn-
 组件许可全文位于 translation-runtime/LICENSE.txt、translation-runtime/licenses/ 以及 Lib/site-packages 下的 dist-info 许可文件；模型许可位于 translation-runtime/model/APACHE-2.0.txt。Intel声明来源：https://github.com/intel/ScalableVectorSearch/blob/main/THIRD-PARTY-PROGRAMS 。CT2/SPM许可来源为各自官方仓库同版本标签。运行文件清单与SHA见 assets/nmt-package.json。
 
 ECDICT 1.8.0 除中文译义还保留音标、英文定义与词形数据，仍使用同一固定提交和MIT许可。只按索引读取命中的词条，不把整个词库加载进内存。朗读使用 Windows SAPI 和现有系统英语语音，不分发第三方语音模型。
+
+## 离线研习词典
+
+五个 .ykdict 文件由中文维基词典贡献者的词条经 Wiktextract / kaikki.org 提取。数据快照为 2026-11-01。译刻将释义、词形和例句重新整理并建立离线索引，词典数据按 CC BY-SA 4.0 分发。
+- 上游数据与提取说明：https://kaikki.org/zhwiktionary/rawdata.html
+- 条目及作者历史：https://zh.wiktionary.org/wiki/ ，按词头打开页面并查看历史。
+- 许可证：https://creativecommons.org/licenses/by-sa/4.0/
+- 构建方式：node scripts/build-study-dictionaries.cjs <中文词典JSONL.gz> <输出目录>
+
+

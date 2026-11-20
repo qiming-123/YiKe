@@ -1,1 +1,3 @@
-SKIP explicit unchanged generic Qwen live suite; see build manifest.
+Context: bank => 銀行
+Context: 苹果 => apple
+PASS real local CPU translations, app-local CRT, cancellation/retry and normal/crash engine cleanup

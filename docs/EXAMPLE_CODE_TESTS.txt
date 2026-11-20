@@ -1,9 +1,9 @@
-✔ Bundled const example changes object properties while its binding stays fixed (4.6427ms)
-✔ Bundled let example can update the declared number (1.7048ms)
-✔ Bundled var example is not confined to its if block (0.9407ms)
-✔ Bundled closure example retains its counter between calls (1.3406ms)
-✔ Bundled async example returns a promise resolving to its value (0.9032ms)
-✔ Bundled array example grows the existing array (0.6533ms)
+✔ Bundled const example changes object properties while its binding stays fixed (2.2869ms)
+✔ Bundled let example can update the declared number (1.217ms)
+✔ Bundled var example is not confined to its if block (0.7256ms)
+✔ Bundled closure example retains its counter between calls (1.0513ms)
+✔ Bundled async example returns a promise resolving to its value (0.642ms)
+✔ Bundled array example grows the existing array (0.5788ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -11,4 +11,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 77.9165
+ℹ duration_ms 88.1153

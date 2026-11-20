@@ -172,7 +172,7 @@ PASS Ordinary export includes all profiles but no keys and imports fresh binding
 PASS Encrypted migration roundtrips all profile keys without plaintext and rebinds locally
 PASS Profile deletion retains the other account and rejects deleting the final profile
 PASS Malformed duplicate over-limit profiles and foreign migration keys are rejected
-PASS PDF copy fallback recognizes only WPS PDF document contexts, not Word browsers or file dialogs
+PASS PDF copy fallback recognizes WPS and Edge PDF titles and excludes ordinary document windows
 PASS PDF copy fallback never accepts unchanged clipboard data including startup and zero sequences
 PASS PDF copy fallback rejects foreign clipboard owners focus changes files and nontext copies
 PASS PDF renderer clipboard ownership requires a child WPS PDF process from the same installation

@@ -32,6 +32,18 @@ public static class Program
             try { return BundledEnglishDictionary.Count >= 700000 && CommonWordTranslations.Find("unmark", "简体中文") == "取消标记" && CommonWordTranslations.Find("demonstrates", "简体中文") is not null ? 0 : 1; }
             catch { return 1; }
         }
+        if (args.Length == 2 && args[0] == "--install-study")
+        {
+            var language = Array.Find(StudyDictionaryPack.Languages, l => l.Code == args[1]);
+            if (language.Code == null) return 2;
+            try
+            {
+                var pack = new StudyDictionaryPack(new SettingsStore().DefaultDirectory, language.Code, language.Name);
+                if (pack.Count == 0) pack.DownloadOfficial().GetAwaiter().GetResult();
+                return 0;
+            }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or System.Net.Http.HttpRequestException or OperationCanceledException) { return 1; }
+        }
         if (args.Length == 2 && args[0] == "--installer-info") { try { LocalInstallation.WriteInstallerInfo(args[1], LocalHardware.Detect()); return 0; } catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException) { return 1; } }
         if (args.Length == 2 && args[0] == "--export-vscode") { VsCodeIntegration.ExportPackage(args[1]); return 0; }
         if (args.Length == 1 && args[0] == "--install-vscode") { try { VsCodeIntegration.InstallAsync().GetAwaiter().GetResult(); return 0; } catch { return 1; } }
@@ -93,7 +105,11 @@ public sealed class YiKeApplication : Application
         Theme.Apply(config.Theme); Theme.InstallStyles();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
         selectionIcon = new(); selectionIcon.Requested += snapshot => { if (AcceptSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
-        popup = new() { Packs = packs, IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) }; popup.FavoriteRequested += (code,word) => StudyBook.Add(code == "en" ? StudyFile : StudyBook.LanguageFile(StudyFile,code), word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup = new() { Packs = packs, IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) }; popup.FavoriteRequested += (code,word) => StudyBook.Add(code == "en" ? StudyFile : StudyBook.LanguageFile(StudyFile,code), word); popup.OptionsChanged += (options,refreshTranslation) =>
+        {
+            selectionOptions = options;
+            if (refreshTranslation && session.Current is { } current) Translate(current);
+        }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
         popup.FeatureEnabled += (target,flag,message) =>
         {
             if ((config.StudyTipsSeen & flag) == 0) { Ui.Tip(target,message); RememberTip(flag); }
@@ -232,7 +248,7 @@ public sealed class YiKeApplication : Application
     {
         if (!AcceptSelection || !config.TranslateCopiedPdf || IsExcluded(gesture.ProcessId)) return;
         selecting?.Cancel(); session.BeginSelection();
-        diagnostic = "来源：WPS PDF · 已读取本次新复制的文字 · " + DateTime.Now.ToString("HH:mm:ss");
+        diagnostic = "来源：PDF · 已读取本次新复制的文字 · " + DateTime.Now.ToString("HH:mm:ss");
         if (result.Status == ReadStatus.Success && TextLimit.Allowed(result.Text ?? "")) PresentSelection(new(gesture.Sequence, gesture.Window, gesture.ProcessId, (config.CleanPdfText ? PdfText.Clean(result.Text!) : result.Text!), gesture.X, gesture.Y, DateTimeOffset.UtcNow, result.Text));
         else if (result.Status == ReadStatus.TooLong)
         {

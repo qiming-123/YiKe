@@ -15,7 +15,7 @@ public sealed class PopupWindow : Window
     readonly TextBlock error = Ui.Text("", 12, "Error");
     readonly AlternateMeanings alternatives = new();
     string submittedTerm = "";
-    readonly DictionaryCard card = new();
+    readonly DictionaryCard card = new(separateTools:true);
     YiKe.Data.StudyDictionaryPack[] activePacks = Array.Empty<YiKe.Data.StudyDictionaryPack>();
     internal YiKe.Data.StudyDictionaryPack[] Packs { get; set; } = Array.Empty<YiKe.Data.StudyDictionaryPack>();
     readonly CheckBox japaneseSwitch = new() { Content = "多语研习" };
@@ -25,7 +25,7 @@ public sealed class PopupWindow : Window
     internal event Action<Button>? EnglishShown;
     internal event Action<FrameworkElement,int,string>? FeatureEnabled;
     AppSettings? options; bool loadingOptions;
-    public event Action<AppSettings>? OptionsChanged;
+    public event Action<AppSettings,bool>? OptionsChanged;
     readonly TextBlock programmingNotes = Ui.Text("", 12);
     readonly Expander programming;
     readonly Button pin, copy, retry, cancel;
@@ -57,8 +57,8 @@ public sealed class PopupWindow : Window
         programming = new Expander { Header = "计算机说明 · 用法与示例", Content = programmingNotes, IsExpanded = true, Visibility = Visibility.Collapsed, Margin = new Thickness(0, 14, 0, 0) };
         System.Windows.Automation.AutomationProperties.SetName(programming, "计算机用法解释");
         body.Children.Add(programming);
-        contentScroll = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, MaxHeight = 254, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetRow(contentScroll, 1); grid.Children.Add(contentScroll);
-        status.Margin = new Thickness(0, 12, 0, 4); Grid.SetRow(status, 2); grid.Children.Add(status);
+        contentScroll = new ScrollViewer { Content = body, ClipToBounds = true, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, MaxHeight = 254, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetRow(contentScroll, 1); grid.Children.Add(contentScroll);
+        status.Margin = new Thickness(0, 12, 0, 4); var studyFooter = new StackPanel(); studyFooter.Children.Add(card.Tools); studyFooter.Children.Add(status); Grid.SetRow(studyFooter, 2); grid.Children.Add(studyFooter);
         sourcePanel = new ScrollViewer { Content = source, MaxHeight = 70, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Visibility = Visibility.Collapsed };
         Grid.SetRow(sourcePanel,3); grid.Children.Add(sourcePanel);
         var footer = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0,2,0,0) };
@@ -92,7 +92,7 @@ public sealed class PopupWindow : Window
         loadingOptions = true; options = settings; technicalSwitch.IsChecked = settings.ExplainProgrammingTerms; englishSwitch.IsChecked = settings.LearnEnglish; japaneseSwitch.IsChecked = settings.LearnJapanese; japaneseSwitch.IsEnabled = Array.Exists(Packs, p => p.Installed && !Array.Exists(settings.DisabledStudyLanguages,code => code == p.Code)); loadingOptions = false;
         bool studyEnabled = settings.LearnEnglish || settings.LearnJapanese && japaneseSwitch.IsEnabled;
         alternatives.Clear(); submittedTerm = text;
-        card.Lookup(studyEnabled ? text : "", activePacks);
+        card.Lookup(studyEnabled ? text : "", activePacks,settings.LearnEnglish);
         anchorX = x; anchorY = y; source.Text = originalText ?? text; translation.Text = "正在翻译所选文字…"; translation.FontSize = settings.FontSize; translation.LineHeight = settings.FontSize * 1.5;
         programmingNotes.Text = ""; programming.Visibility = Visibility.Collapsed; programming.IsExpanded = true;
         contentScroll.ScrollToTop();
@@ -138,7 +138,15 @@ public sealed class PopupWindow : Window
         }
         error.Text = u.Error ?? ""; status.Text = u.StatusLabel; cancel.Visibility = u.Running ? Visibility.Visible : Visibility.Collapsed; copy.IsEnabled = u.Text.Length > 0;
     }
-    void ChangeOptions() { if (!loadingOptions && options is not null) { card.Stop(); OptionsChanged?.Invoke(options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnJapanese = japaneseSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true }); } }
+    void ChangeOptions()
+    {
+        if (loadingOptions || options is null) return;
+        bool refreshTranslation = options.ExplainProgrammingTerms != (technicalSwitch.IsChecked == true);
+        options = options with { ExplainProgrammingTerms = technicalSwitch.IsChecked == true, LearnJapanese = japaneseSwitch.IsChecked == true, LearnEnglish = englishSwitch.IsChecked == true };
+        activePacks = YiKe.Data.StudyDictionaryPack.Selected(Packs,options);
+        card.Lookup(submittedTerm,activePacks,options.LearnEnglish);
+        OptionsChanged?.Invoke(options,refreshTranslation);
+    }
     public void StopSpeech() => card.Stop();
     public void DisposeSpeech() => card.DisposeSpeech();
     public void HideForSelection() { card.Stop(); Hide(); } // Keep the in-flight translation available for an identical re-selection.

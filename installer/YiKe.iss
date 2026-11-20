@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.8.3"
+  #define AppVersion "2.0.0"
 #endif
 #ifndef PublishDir
   #define PublishDir "..\artifacts\publish-" + AppVersion
@@ -71,10 +71,17 @@ zhcn.ButtonInstall=开始安装(&I)
 zhcn.FinishedHeadingLabel=译刻已安装
 zhcn.FinishedLabel=现在可以开始使用译刻。%n%n内置节能引擎可直接离线英译中。%n%n其他语言可在设置切换通用模型或配置在线 API。
 [Tasks]
+Name: "dictja"; Description: "下载日语研习词典"; Flags: unchecked checkedonce
+Name: "dictko"; Description: "下载韩语研习词典"; Flags: unchecked checkedonce
+Name: "dictfr"; Description: "下载法语研习词典"; Flags: unchecked checkedonce
+Name: "dictde"; Description: "下载德语研习词典"; Flags: unchecked checkedonce
+Name: "dictes"; Description: "下载西班牙语研习词典"; Flags: unchecked checkedonce
 Name: "desktopicon"; Description: "创建桌面快捷方式"; Flags: unchecked
 Name: "startup"; Description: "登录 Windows 时启动译刻"; Flags: unchecked
 Name: "vscode"; Description: "安装 VS Code 编辑区与终端选区适配（无需读屏模式）"; Flags: unchecked
 [Files]
+Source: "..\assets\study-sources.json"; DestDir: "{app}"; Flags: ignoreversion
+
 Source: "{#PublishDir}\translation-runtime\*"; DestDir: "{app}\translation-runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#PublishDir}\YiKe.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\yike.ico"; DestDir: "{app}"; DestName: "YiKe-Prism.ico"; Flags: ignoreversion
@@ -286,6 +293,16 @@ begin
   if not StopInstalledApp then Result := '译刻仍在运行，请从托盘退出后重试安装。';
 #endif
 end;
+procedure InstallStudy(Code, Language: String);
+var ResultCode: Integer;
+begin
+  if not WizardIsTaskSelected('dict' + Code) then exit;
+  WizardForm.StatusLabel.Caption := '正在下载并校验' + Language + '词典…';
+  if not Exec(ExpandConstant('{app}\YiKe.exe'), '--install-study ' + Code, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) or (ResultCode <> 0) then begin
+    Log('Study dictionary download failed: ' + Code);
+    SuppressibleMsgBox(Language + '词典下载失败，可在译刻设置中重试。', mbInformation, MB_OK, IDOK);
+  end;
+end;
 procedure CurStepChanged(CurStep: TSetupStep);
 var AdapterCode: Integer;
 begin
@@ -295,6 +312,11 @@ begin
        ((not WizardSilent or StartupTaskSpecified) and WizardIsTaskSelected('startup')) then
       RegWriteStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'YiKe', '"' + ExpandConstant('{app}\YiKe.exe') + '"')
     else RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'YiKe');
+    InstallStudy('ja', '日语');
+    InstallStudy('ko', '韩语');
+    InstallStudy('fr', '法语');
+    InstallStudy('de', '德语');
+    InstallStudy('es', '西班牙语');
     if WizardIsTaskSelected('vscode') then
       if not Exec(ExpandConstant('{app}\YiKe.exe'), '--install-vscode', '', SW_HIDE, ewWaitUntilTerminated, AdapterCode) or (AdapterCode <> 0) then begin
         Log('VS Code adapter installation failed. The main application remains installed.');

@@ -702,6 +702,39 @@ public static class UiRegressionChecks
                         Assert(box.IsChecked == true && fixture.Credentials.Read(fixture.Config) == "fake-existing-secret");
                         smart.IsChecked = false; window.SaveSettings(); Assert(fixture.Config.ExplainProgrammingTerms && !fixture.Config.SupplementTechnicalTerms);
                     });
+                    await Check("JSON study import refreshes both install buttons and survives restart", async () =>
+                    {
+                        string dir = Path.Combine(root,"json-pack");
+                        var pack = new StudyDictionaryPack(dir,"fr","法语");
+                        var status = new TextBlock();
+                        var compact = StudyBook.InstallButton(pack,status,true);
+                        var full = StudyBook.InstallButton(pack,status);
+                        var row = new StackPanel(); row.Children.Add(compact); row.Children.Add(full);
+                        var host = new Window { Content = row }; host.Show(); await Idle();
+                        pack.Install(System.Text.Encoding.UTF8.GetBytes("""{"Language":"fr","Entries":[{"Headword":"pain","Reading":"pɛ̃","Meaning":"面包","Example":"","Forms":[]}]}"""));
+                        Assert((string)compact.Content == "已安装" && ((string)full.Content).Contains("已安装"));
+                        var reopened = new StudyDictionaryPack(dir,"fr","法语");
+                        Assert(reopened.Installed && reopened.Find("pain")?.Meaning == "面包" && reopened.InstallLabel.Contains("已安装"));
+                        host.Close();
+                    });
+                    await Check("Study switches keep streaming text without requesting another translation", async () =>
+                    {
+                        var popup = new PopupWindow();
+                        popup.Begin("bank",new AppSettings(),300,250,0);
+                        int requests = 1;
+                        popup.OptionsChanged += (_,refreshTranslation) => { if (refreshTranslation) requests++; };
+                        popup.Update(new(1,"银行",true));
+                        FindButton(popup,"翻译扩展").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Idle();
+                        foreach (var label in new[] { "英语研习","多语研习","英语研习" })
+                        {
+                            var box = Walk(popup).OfType<CheckBox>().Single(b => Equals(b.Content,label));
+                            box.IsChecked = box.IsChecked != true;
+                            box.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                            Assert(requests == 1 && Walk(popup).OfType<TextBlock>().Any(t => t.Text == "银行"));
+                        }
+                        popup.Close();
+                    });
                     await Check("Programming panel scrolls separately from source and resets between selections", async () =>
                     {
                         var popup = new PopupWindow(); popup.Begin("static", new AppSettings(), 300, 250, 0); await Idle();

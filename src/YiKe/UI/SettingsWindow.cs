@@ -37,7 +37,7 @@ public sealed class SettingsWindow : Window
     readonly TextBox exclusions = new() { MaxLength = 16384 }, first = new() { MaxLength = 3 }, total = new() { MaxLength = 3 };
     readonly PasswordBox key = new() { MaxLength = 8192 };
     readonly CheckBox stream = new() { Content = "逐步显示译文" }, startup = new() { Content = "登录 Windows 时启动译刻" };
-    readonly CheckBox copiedPdf = new() { Content = "WPS PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
+    readonly CheckBox copiedPdf = new() { Content = "WPS / Edge PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
     readonly CheckBox programming = new() { Content = "技术释义：计算机术语、命令与示例" };
     readonly CheckBox supplement = new() { Content = "用模型补充计算机用法与示例" };
     readonly CheckBox learnJapanese = new() { Content = "多语研习（使用已安装的词典）" };
@@ -69,7 +69,7 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
-    readonly UniformGrid otherOptions = new() { Columns = 2 };
+    readonly StackPanel otherOptions = new();
     readonly Dictionary<string,CheckBox> languageChoices = new();
     internal void ShowPackInstaller(StudyDictionaryPack pack)
     {
@@ -80,7 +80,8 @@ public sealed class SettingsWindow : Window
         choice.SetBinding(IsEnabledProperty,new System.Windows.Data.Binding("IsChecked") { Source = learnJapanese });
         var row = new DockPanel { Margin = new Thickness(2,1,12,1) };
         var install = StudyBook.InstallButton(pack,message,compact:true); DockPanel.SetDock(install,Dock.Right); row.Children.Add(install); row.Children.Add(choice);
-        var cell = new StackPanel(); cell.Children.Add(row); cell.Children.Add(message); otherOptions.Children.Add(cell);
+        var cell = new StackPanel(); cell.Children.Add(row); cell.Children.Add(message); if (languageChoices.Count % 2 == 1) otherOptions.Children.Add(new UniformGrid { Columns = 2 });
+        ((UniformGrid)otherOptions.Children[otherOptions.Children.Count-1]).Children.Add(cell);
         var messageStyle = new Style(typeof(TextBlock));
         var empty = new Trigger { Property = TextBlock.TextProperty, Value = "" }; empty.Setters.Add(new Setter(VisibilityProperty,Visibility.Collapsed));
         messageStyle.Triggers.Add(empty); message.Style = messageStyle;
@@ -365,7 +366,7 @@ public sealed class SettingsWindow : Window
         localCard = CyberPrism.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
         Field("目标语言", target, "默认简体中文，自动识别原文语言；可选择其他语言，或直接输入语言名称。"); pages.Children.Add(stream);
         pages.Children.Add(learnEnglish);
-        var list = new ScrollViewer { Content = otherOptions, MaxHeight = 64, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        var list = new ScrollViewer { Content = otherOptions, MaxHeight = 54, CanContentScroll = true, ClipToBounds = true, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, PanningMode = PanningMode.VerticalOnly };
         System.Windows.Automation.AutomationProperties.SetName(list,"其他语言列表");
         var multiStudy = new StackPanel(); multiStudy.Children.Add(learnJapanese); multiStudy.Children.Add(list);
@@ -438,7 +439,7 @@ public sealed class SettingsWindow : Window
         Field("在这些应用中暂停划词", exclusions, "例如填入 Code 后，在 VS Code 里选中文字不会弹出图标或自动翻译。每行一个进程名，留空表示所有支持的应用均可划词。"); pages.Children.Add(startup);
         copiedPdf.Margin = new Thickness(0, 14, 0, 6); pages.Children.Add(copiedPdf);
         System.Windows.Automation.AutomationProperties.SetName(copiedPdf, "WPS PDF 复制后翻译");
-        pages.Children.Add(new Expander { Header = "PDF 取词说明", Content = Ui.Text("WPS PDF 划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted") });
+        pages.Children.Add(new Expander { Header = "PDF 取词说明", Content = Ui.Text("WPS 或 Edge 的 .pdf 文档划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted") });
         var adapter = Ui.Button("安装 / 更新 VS Code 适配", async () =>
         {
             if (adapting) return;

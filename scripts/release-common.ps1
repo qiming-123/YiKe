@@ -1,7 +1,8 @@
-﻿# Shared, deterministic identity checks. Documentation is deliberately independent of executable inputs.
+# Shared, deterministic identity checks. Documentation is deliberately independent of executable inputs.
 function Get-ReleaseSourceFiles([string]$Root) {
  $files=@(Get-ChildItem (Join-Path $Root 'src'),(Join-Path $Root 'tests'),(Join-Path $Root 'scripts'),(Join-Path $Root 'installer'),(Join-Path $Root 'assets'),(Join-Path $Root 'docs'),(Join-Path $Root 'tools') -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](bin|obj)[\\/]' })
  $files+=Get-Item (Join-Path $Root 'README.md'),(Join-Path $Root 'RELEASE_NOTES.md'),(Join-Path $Root 'THIRD_PARTY_NOTICES.md'),(Join-Path $Root 'LICENSE'),(Join-Path $Root 'global.json'),(Join-Path $Root 'build-tools.json'),(Join-Path $Root 'local-model.lock.json'),(Join-Path $Root '.gitignore')
+ $files+=Get-ChildItem (Join-Path $Root "study-packs") -File | Where-Object Extension -in ".json",".md"
  return $files
 }
 function Test-ExecutableInput([string]$Relative) { return $Relative -match '^(src|tests|scripts|installer|assets|tools)/|^(global\.json|build-tools\.json|local-model\.lock\.json|LICENSE)$' }

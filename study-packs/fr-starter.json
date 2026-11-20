@@ -54,6 +54,42 @@
       "Meaning": "谢谢",
       "Example": "Merci pour votre aide.\n谢谢您的帮助。",
       "Forms": []
+    },
+    {
+      "Headword": "pain",
+      "Reading": "pɛ̃",
+      "Meaning": "面包（阳性名词）",
+      "Example": "Je mange du pain.\n我吃面包。",
+      "Forms": [
+        "pains"
+      ]
+    },
+    {
+      "Headword": "porte",
+      "Reading": "pɔʁt",
+      "Meaning": "门（阴性名词）",
+      "Example": "Ferme la porte.\n把门关上。",
+      "Forms": [
+        "portes"
+      ]
+    },
+    {
+      "Headword": "main",
+      "Reading": "mɛ̃",
+      "Meaning": "手",
+      "Forms": [
+        "mains"
+      ],
+      "Example": "Elle lève la main.\n她举起手。"
+    },
+    {
+      "Headword": "aile",
+      "Reading": "ɛl",
+      "Meaning": "翅膀，翼",
+      "Forms": [
+        "ailes"
+      ],
+      "Example": "L’oiseau déploie ses ailes.\n鸟儿展开翅膀。"
     }
   ]
 }

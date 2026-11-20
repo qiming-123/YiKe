@@ -19,7 +19,8 @@ internal sealed class DictionaryCard : StackPanel
     internal event Func<string,string,string>? SaveWord;
     internal event Action<Button>? EnglishShown;
 
-    internal DictionaryCard()
+    internal StackPanel Tools { get; } = new();
+    internal DictionaryCard(bool separateTools = false)
     {
         favorite = Ui.Icon("收藏单词", "M12,2 L15,9 L23,10 L17,15 L18,23 L12,19 L5,23 L7,15 L1,10 L9,9 Z",
             () =>
@@ -47,7 +48,7 @@ internal sealed class DictionaryCard : StackPanel
         }
         actions.Children.Add(favorite); actions.Children.Add(voices);
         details.TextWrapping = TextWrapping.Wrap;
-        Children.Add(choices); Children.Add(actions); Children.Add(feedback); Children.Add(voiceSettings); Children.Add(details);
+        Tools.Children.Add(choices); Tools.Children.Add(actions); if (!separateTools) Children.Add(Tools); Children.Add(feedback); Children.Add(voiceSettings); Children.Add(details);
         actions.Visibility = Visibility.Collapsed;
     }
 

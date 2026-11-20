@@ -76,7 +76,7 @@ internal sealed class StudyBook : Window
         lookup.Children.Add(installers);        lookup.Children.Add(Ui.Button("从文件安装", () => Run(() =>
         {
             var dialog = new OpenFileDialog { Filter = "离线词典 (*.ykdict;*.json)|*.ykdict;*.json" };
-            if (dialog.ShowDialog(this) == true) { if (Path.GetExtension(dialog.FileName).Equals(".ykdict",StringComparison.OrdinalIgnoreCase)) pack.InstallDictionary(dialog.FileName); else pack.Install(File.ReadAllBytes(dialog.FileName)); status.Text = "词包已安装，可以离线查词。"; }
+            if (dialog.ShowDialog(this) == true) { if (Path.GetExtension(dialog.FileName).Equals(".ykdict",StringComparison.OrdinalIgnoreCase)) pack.InstallDictionary(dialog.FileName); else pack.Install(File.ReadAllBytes(dialog.FileName)); status.Text = "词包词典已安装。研习开关请点击「保存设置」生效。"; }
         })));
         var address = new TextBox { ToolTip = "HTTPS 词包直链" };
         japaneseTools.Children.Add(Ui.Text("从网址安装（HTTPS 词包直链）")); japaneseTools.Children.Add(address);
@@ -84,7 +84,7 @@ internal sealed class StudyBook : Window
         download.Click += async (_,_) =>
         {
             download.IsEnabled = false; status.Text = "正在下载词包…";
-            try { await pack.Download(address.Text); status.Text = "词包已安装，可以离线查词。"; }
+            try { await pack.Download(address.Text); status.Text = "词包词典已安装。研习开关请点击「保存设置」生效。"; }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException or OperationCanceledException)
             { status.Text = "安装失败：" + ex.Message; }
             finally { download.IsEnabled = true; }
@@ -122,7 +122,7 @@ internal sealed class StudyBook : Window
     }
     internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status,bool compact = false)
     {
-        string Label() => compact ? (pack.Count > 0 ? "已安装" : "安装") : pack.InstallLabel;
+        string Label() => compact ? (pack.Installed ? "已安装" : "下载") : pack.InstallLabel;
         var starter = new Button { Content = Label() };
         if (compact)
         {
@@ -135,18 +135,18 @@ internal sealed class StudyBook : Window
             starter.IsEnabled = false;
             try
             {
-                string catalog = Path.Combine(AppContext.BaseDirectory, pack.Code+"-starter-source.txt");
-                if (!File.Exists(catalog)) { status.Text = "此构建尚未配置该词包来源。"; return; }
-                string location = (await File.ReadAllTextAsync(catalog)).Trim();
-                if (Path.IsPathFullyQualified(location)) await System.Threading.Tasks.Task.Run(() => pack.InstallDictionary(location));
-                else await pack.Download(location);
-                starter.Content = Label(); status.Text = "已安装，可以离线查词。";
+                status.Text = "正在下载并校验"+pack.Name+"词典…";
+                await pack.DownloadOfficial();
+                starter.Content = Label(); status.Text = "词典已安装。研习开关请点击「保存设置」生效。";
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException or OperationCanceledException)
             { status.Text = "安装失败：" + ex.Message; }
             finally { starter.IsEnabled = pack.Count == 0; }
         };
-        starter.IsVisibleChanged += (_,_) => { if (pack.Count > 0) { starter.Content = Label(); starter.IsEnabled = false; } };
+        void Refresh() { starter.Content = Label(); starter.IsEnabled = pack.Count == 0;
+            if (pack.Installed && pack.Count == 0) starter.ToolTip = "已安装自选词包，点击下载完整"+pack.Name+"词典。"; }
+        starter.Loaded += (_,_) => { Refresh(); pack.InstallationChanged += Refresh; };
+        starter.Unloaded += (_,_) => pack.InstallationChanged -= Refresh;
         return starter;
     }
     void Reload()

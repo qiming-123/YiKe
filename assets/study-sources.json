@@ -1,0 +1,32 @@
+[
+  {
+    "Code": "de",
+    "Version": "917fa3ff53982c688165cbadd771e9e46ad9845c",
+    "Url": "https://raw.githubusercontent.com/qiming-123/YiKe/917fa3ff53982c688165cbadd771e9e46ad9845c/study-packs/de.ykdict",
+    "Sha256": "5688549D8C02693D37779022CC4824E5AA442401DE605E723DDB938D4953388B"
+  },
+  {
+    "Code": "es",
+    "Version": "917fa3ff53982c688165cbadd771e9e46ad9845c",
+    "Url": "https://raw.githubusercontent.com/qiming-123/YiKe/917fa3ff53982c688165cbadd771e9e46ad9845c/study-packs/es.ykdict",
+    "Sha256": "EA5DFE22C9BB07279B70820F2B89EA4CDD55BEA3140177EB45283636913606C8"
+  },
+  {
+    "Code": "fr",
+    "Version": "917fa3ff53982c688165cbadd771e9e46ad9845c",
+    "Url": "https://raw.githubusercontent.com/qiming-123/YiKe/917fa3ff53982c688165cbadd771e9e46ad9845c/study-packs/fr.ykdict",
+    "Sha256": "FDEA116A6796B1EE9E45521005A1C17DCB5B8F2289CDC766557C7C216B4AE629"
+  },
+  {
+    "Code": "ja",
+    "Version": "917fa3ff53982c688165cbadd771e9e46ad9845c",
+    "Url": "https://raw.githubusercontent.com/qiming-123/YiKe/917fa3ff53982c688165cbadd771e9e46ad9845c/study-packs/ja.ykdict",
+    "Sha256": "0F39B24F8F9DE88559A3800EEF959A22539A01DF4B28AC6DE2610CE2EFFA7DE8"
+  },
+  {
+    "Code": "ko",
+    "Version": "917fa3ff53982c688165cbadd771e9e46ad9845c",
+    "Url": "https://raw.githubusercontent.com/qiming-123/YiKe/917fa3ff53982c688165cbadd771e9e46ad9845c/study-packs/ko.ykdict",
+    "Sha256": "BB9D6CEDBB29FE4DA7514FD4B2E4585DBFDA678C2A57F5D9EB62437B0138C7ED"
+  }
+]

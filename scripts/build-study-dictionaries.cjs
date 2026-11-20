@@ -16,13 +16,17 @@ async function build() {
     if (!glosses.length) continue;
     let item = dict.get(x.word);
     if (!item) dict.set(x.word,item = {Headword:x.word, Reading:[], Meaning:[], Example:[], Forms:[]});
-    item.Meaning.push(...glosses.map(g => (x.pos_title || x.pos || '')+' · '+g));
+    const pos = [x.pos_title,x.pos].find(p => p && p !== 'unknown');
+    item.Meaning.push(...glosses.map(g => pos ? pos+' · '+g : g));
     item.Reading.push(...(x.sounds || []).map(s => s.ipa || s.roman), ...(x.forms || []).filter(f => (f.tags || []).includes('romanization')).map(f=>f.form));
     item.Forms.push(...(x.forms || []).map(f=>f.form));
     item.Example.push(...(x.senses || []).flatMap(s => (s.examples || []).map(ex => [ex.text,ex.translation].filter(Boolean).join('\n'))));
   }
   fs.mkdirSync(out,{recursive:true});
   for (const [code,dict] of dictionaries) {
+    if (process.argv[4] && code !== process.argv[4]) continue;
+    const curated = JSON.parse(fs.readFileSync(path.join(__dirname,"../study-packs",code+"-starter.json"))).Entries;
+    const readings = new Map(curated.map(x => [x.Headword,x.Reading]));
     const records = [], index = new Map();
     const key = s => s.trim().normalize('NFC').toLowerCase();
     const add = item => {
@@ -33,19 +37,19 @@ async function build() {
     const aliases = [];
     for (const item of dict.values()) {
       const forms = unique(item.Forms);
-      const pos = add({...item, Reading:unique(item.Reading).join(' / '),Meaning:unique(item.Meaning).join('\n'),Example:unique(item.Example).join('\n'),Forms:[]});
+      const pos = add({...item, Reading:unique(item.Reading).join(' / ') || readings.get(item.Headword) || '',Meaning:unique(item.Meaning).join('\n'),Example:unique(item.Example).join('\n'),Forms:[]});
       const word = key(item.Headword); if (!index.has(word)) index.set(word,pos);
       for (const form of forms) aliases.push([key(form),pos]);
     }
     // Keep the curated beginner inflections available when absent from the upstream data.
-    for (const x of JSON.parse(fs.readFileSync(path.join(__dirname,'../study-packs',code+'-starter.json'))).Entries) {
+    for (const x of curated) {
       const word = key(x.Headword);
       if (!index.has(word)) index.set(word,add(x));
       for (const form of x.Forms) aliases.push([key(form),index.get(word)]);
     }
     for (const [alias,pos] of aliases) if (alias && !index.has(alias)) index.set(alias,pos);
     const keys = [...index].map(([word,id])=>[Buffer.from(word),id]).sort((a,b)=>Buffer.compare(a[0],b[0]));
-    const header = Buffer.alloc(18); header.write('YIKELEX1'+code); header.writeUInt32LE(keys.length,10); header.writeUInt32LE(dict.size,14);
+    const header = Buffer.alloc(18); header.write('YIKELEX1'+code); header.writeUInt32LE(keys.length,10); header.writeUInt32LE(records.length,14);
     const offsets = Buffer.alloc(4*keys.length), keyRows=[];
     let cursor=header.length+offsets.length;
     const dataStart=cursor+keys.reduce((a,[b])=>a+12+b.length,0);

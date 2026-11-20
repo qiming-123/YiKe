@@ -22,12 +22,18 @@ internal static class PdfCopyPolicy
             if (title.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) { title = title[..^suffix.Length]; break; }
         return title.TrimEnd(' ', '*').EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
     }
+    internal static bool IsSupportedPdf(string process, string title)
+    {
+        if (!process.Equals("msedge",StringComparison.OrdinalIgnoreCase)) return IsWpsPdf(process,title);
+        // Edge may append the profile name between the tab title and browser name.
+        return System.Text.RegularExpressions.Regex.IsMatch(title, @"\.pdf\s+[-–—]\s+(?:[^|]*?\s+[-–—]\s+)?Microsoft[\s\u200B]*Edge\s*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    }
     internal static bool CanWait(ReadStatus status) => status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout or ReadStatus.NotTextSelection;
     internal static bool CanAutoCopy(ReadStatus status) => status is ReadStatus.Unsupported or ReadStatus.NoSelection or ReadStatus.Timeout;
     internal static bool Fresh(uint baseline, uint sequence, bool sourceCurrent, bool ownerMatches, bool fileDrop, bool unicodeText) =>
         baseline != sequence && sequence != 0 && sourceCurrent && ownerMatches && !fileDrop && unicodeText;
     internal static bool RendererOwner(string process, string? rootImage, string? ownerImage, bool descendant, bool startedAfterRoot) =>
-        descendant && startedAfterRoot && process.Equals("wpspdf", StringComparison.OrdinalIgnoreCase) &&
+        descendant && startedAfterRoot && (process.Equals("wpspdf", StringComparison.OrdinalIgnoreCase) || (process.Equals("msedge", StringComparison.OrdinalIgnoreCase) && string.Equals(rootImage,ownerImage,StringComparison.OrdinalIgnoreCase))) &&
         !string.IsNullOrEmpty(rootImage) && !string.IsNullOrEmpty(ownerImage) &&
         !string.IsNullOrEmpty(Path.GetDirectoryName(rootImage)) &&
         string.Equals(Path.GetDirectoryName(rootImage), Path.GetDirectoryName(ownerImage), StringComparison.OrdinalIgnoreCase);
@@ -203,7 +209,7 @@ internal sealed class PdfCopyFallback : IDisposable
     {
         var hwnd = new IntPtr(gesture.Window);
         if (!Native.IsWindow(hwnd) || Native.GetForegroundWindow() != hwnd || Native.ProcessId(hwnd) != gesture.ProcessId || Caption(hwnd) != title) return false;
-        try { using var process = Process.GetProcessById(gesture.ProcessId); return PdfCopyPolicy.IsWpsPdf(process.ProcessName, title); }
+        try { using var process = Process.GetProcessById(gesture.ProcessId); return PdfCopyPolicy.IsSupportedPdf(process.ProcessName, title); }
         catch (Exception error) when (error is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return false; }
     }
     internal static bool IsPdfWindow(Gesture gesture) => Current(gesture, Caption(new IntPtr(gesture.Window)));

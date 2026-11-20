@@ -1,4 +1,4 @@
-param([string]$Version='1.8.3', [string]$Dotnet='', [string]$Iscc='', [string]$SignScript='', [string]$SignerCertificate='', [switch]$AllowSelfSigned, [switch]$PackageOnly, [switch]$SkipGenericModelLive)
+param([string]$Version='2.0.0', [string]$Dotnet='', [string]$Iscc='', [string]$SignScript='', [string]$SignerCertificate='', [switch]$AllowSelfSigned, [switch]$PackageOnly, [switch]$SkipGenericModelLive)
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path $PSScriptRoot
 . "$PSScriptRoot/release-common.ps1"
@@ -137,13 +137,14 @@ try {
  Copy-Item -LiteralPath (Join-Path $publishPath "translation-runtime") -Destination $portable -Recurse
  [IO.File]::WriteAllText((Join-Path $portable 'portable.flag'),'YiKe portable mode v1')
  Copy-Item -LiteralPath README.md,LICENSE,THIRD_PARTY_NOTICES.md,RELEASE_NOTES.md -Destination $portable
- Copy-Item -LiteralPath docs -Destination $portable -Recurse
+ $portableDocs=New-Item -ItemType Directory -Path (Join-Path $portable "docs")
+ Copy-Item -LiteralPath docs/LOCAL_MODEL.md,docs/COMPATIBILITY.md -Destination $portableDocs.FullName
  Copy-LocalRuntime $projectRoot $portable $localPackage
  Copy-Item -LiteralPath (Join-Path (Split-Path $Dotnet) 'LICENSE.txt') -Destination (Join-Path $portable 'DOTNET-LICENSE.txt')
  foreach($notice in @('DOTNET-RUNTIME-NOTICES.txt','DOTNET-WPF-LICENSE.txt','DOTNET-WPF-NOTICES.txt')){Copy-Item -LiteralPath "assets/$notice" -Destination $portable}
  New-ReleaseZip $portable (Join-Path $projectRoot "dist/YiKe-Portable-$Version-win-x64.zip")
  Copy-Item -LiteralPath RELEASE_NOTES.md,README.md -Destination dist -Force
- Copy-Item -LiteralPath docs -Destination dist -Recurse -Force
+
  $sourceStage=Join-Path $projectRoot ('artifacts/source-'+$Version+'-'+[guid]::NewGuid().ToString('N').Substring(0,8))
  New-Item -ItemType Directory -Path $sourceStage | Out-Null
  foreach($entry in $entries){

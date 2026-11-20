@@ -1,4 +1,1 @@
-{
-  "skipped": true,
-  "reason": "Explicit UI/PDF-only patch validation: generic Qwen code and binaries unchanged; heavy model live suite not rerun in this build. NMT published self-test remains required."
-}
+{"skipped":true,"reason":"Current hardware/memory policy does not select the standard model; not tested by forcing a fictitious memory allowance.","actualSelectedModel":"Qwen3-0.6B-Q4_0","availableBytes":3097841664}

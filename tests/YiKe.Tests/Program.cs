@@ -10,6 +10,14 @@ using YiKe.Translation;
 if(args.Length>0&&args[0]=="--uia-worker")return YiKe.Program.Main(args);
 if(args.Length>0&&args[0]=="--installer-info")return YiKe.Program.Main(args);
 if(args.Length>0&&(args[0]=="--export-vscode"||args[0]=="--install-vscode"))return YiKe.Program.Main(args);
+if(args.Length==2 && args[0]=="--verify-french-only")
+{
+    var packs = StudyDictionaryPack.Languages.Select(l => new StudyDictionaryPack(args[1],l.Code,l.Name)).ToArray();
+    var installed = packs.Single(p => p.Installed);
+    var word = installed.Find("pain");
+    Console.WriteLine($"{installed.Code}: pain = {word?.Meaning}");
+    return installed.Code == "fr" && installed.Count > 10000 && word?.Meaning.Contains("面包") == true ? 0 : 1;
+}
 if(args.Length==2 && args[0]=="--verify-study-packs")
 {
     string scratchPath = Path.Combine(Path.GetTempPath(),"YiKe-lex-"+Guid.NewGuid().ToString("N"));
@@ -22,6 +30,12 @@ if(args.Length==2 && args[0]=="--verify-study-packs")
             var word = code switch { "ja"=>"学校","ko"=>"학교","fr"=>"maison","de"=>"Haus",_=>"casa" };
             var entry = new StudyDictionaryPack(scratchPath,code,name).Find(word);
             if(pack.Count<10000 || string.IsNullOrWhiteSpace(entry?.Meaning)) throw new InvalidDataException(code+" lookup failed");
+            if (code == "fr")
+                foreach (var (form, meaning) in new[] { ("pain","面包"), ("porte","门"), ("main","手"), ("aile","翼") })
+                {
+                    var found = pack.Find(form);
+                    if (found == null || !found.Meaning.Contains(meaning) || found.Meaning.Contains("unknown ·") || string.IsNullOrWhiteSpace(found.Reading)) throw new InvalidDataException("法语词条验收失败："+form);
+                }
             Console.WriteLine($"{code} {pack.Count} {word} {entry.Meaning.Split('\n')[0]}");
         }
     }

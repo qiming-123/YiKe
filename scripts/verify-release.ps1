@@ -1,4 +1,4 @@
-param([string]$Version='1.8.3',[string]$Directory='')
+param([string]$Version='2.0.0',[string]$Directory='')
 $ErrorActionPreference='Stop'
 . "$PSScriptRoot/release-common.ps1"
 . "$PSScriptRoot/signature-common.ps1"

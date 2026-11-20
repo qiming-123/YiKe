@@ -1,3 +1,13 @@
+PASS Settings shows manual entry, skippable guide and live light theme
+PASS Manual English study looks up and collects a selected word
+PASS Alternative dictionary meanings keep the contextual result and reset on next request
+PASS Scrollable language choices persist independently
+PASS Ambiguous entries require a language before saving
+PASS Japanese pack is optional and retains collected inflections offline
+PASS Study words persist across data relocation and manual direction reaches the form
+PASS Manual window keeps source editable after failures and cancellation
+PASS Popup service, progress, extensions and cancellation
+PASS NMT low memory test bypasses generic-model gate and translates locally
 PASS Prism titlebar maximizes restores minimizes and closes the settings window
 PASS PDF automatically copies once after direct reading fails and does not copy for known controls
 PASS PDF automatic copy never publishes after cancellation focus change pause or a new selection
@@ -44,8 +54,10 @@ PASS An automatic popup preserves the foreground focus
 PASS Presenting and updating a popup preserves the clipboard sequence
 PASS Selection failure names the source, explains translation has not started and disables empty-source actions
 PASS Programming preference saves, reloads and imports independently from credentials
+PASS JSON study import refreshes both install buttons and survives restart
+PASS Study switches keep streaming text without requesting another translation
 PASS Programming panel scrolls separately from source and resets between selections
 PASS Unselected pointer activity stays hidden and hiding for re-selection does not signal an explicit close
 PASS Completed translation remains copyable while any-word notes are pending
 PASS Popup pin and close events invalidate selection leases without reviving late text
-UI RESULT 50 passed, 0 failed, 0 skipped
+UI RESULT 62 passed, 0 failed, 0 skipped

@@ -8,7 +8,7 @@ static class PdfCopyChecks
     public static async Task Run(Func<string, Func<Task>, Task> check, string scratch)
     {
         void Assert(bool value) { if (!value) throw new Exception("PDF copy safety assertion failed"); }
-        await check("PDF copy fallback recognizes only WPS PDF document contexts, not Word browsers or file dialogs", () =>
+        await check("PDF copy fallback recognizes WPS and Edge PDF titles and excludes ordinary document windows", () =>
         {
             foreach (string name in new[] { "wps", "WPSPDF", "wpsoffice" })
             {
@@ -19,6 +19,9 @@ static class PdfCopyChecks
                 Assert(!PdfCopyPolicy.IsWpsPdf(name, "打开文件") && !PdfCopyPolicy.IsWpsPdf(name, "sample.pdf - notes.docx - WPS Office"));
             }
             Assert(!PdfCopyPolicy.IsWpsPdf("chrome", "sample.pdf - WPS Office"));
+            Assert(PdfCopyPolicy.IsSupportedPdf("msedge", "remark.pdf - Microsoft Edge"));
+            Assert(PdfCopyPolicy.IsSupportedPdf("msedge", "remark.pdf - 个人 - Microsoft\u200b Edge"));
+            Assert(!PdfCopyPolicy.IsSupportedPdf("msedge", "首页 - Microsoft Edge"));
             Assert(!PdfCopyPolicy.IsWpsPdf("explorer", "sample.pdf")); return Task.CompletedTask;
         });
         await check("PDF copy fallback never accepts unchanged clipboard data including startup and zero sequences", () =>

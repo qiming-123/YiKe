@@ -1,4 +1,72 @@
 {
-  "skipped": true,
-  "reason": "Explicit UI/PDF-only patch validation: generic Qwen code and binaries unchanged; heavy model live suite not rerun in this build. NMT published self-test remains required."
+  "model": "Qwen3-0.6B-Q4_0",
+  "profile": "\u8F7B\u91CF",
+  "threads": 2,
+  "context": 3072,
+  "batch": 16,
+  "microBatch": 8,
+  "processPriority": "BelowNormal",
+  "pollingDisabled": true,
+  "simulatedHardware": false,
+  "memoryPressureSimulated": true,
+  "engineReleasedOnMemoryPressure": true,
+  "reloadWithoutFullRehash": true,
+  "startupMs": 1180,
+  "noExternalEndpoint": true,
+  "appLocalCrt": true,
+  "cancellationAndRetry": true,
+  "engineStoppedOnDispose": true,
+  "engineStoppedOnParentCrash": true,
+  "cases": [
+    {
+      "source": "The meeting starts at nine tomorrow morning.",
+      "target": "\u7B80\u4F53\u4E2D\u6587",
+      "stream": true,
+      "translation": "\u660E\u5929\u65E9\u4E0A\u4E5D\u70B9\u4F1A\u8BAE\u5F00\u59CB\u3002",
+      "firstTokenMs": 989,
+      "totalMs": 1223
+    },
+    {
+      "source": "\u660E\u5929\u4E0A\u5348\u4E5D\u70B9\u5F00\u4F1A\u3002",
+      "target": "\u82F1\u8BED\uFF08English\uFF09",
+      "stream": true,
+      "translation": "Meeting will be held at 9 a.m. tomorrow.",
+      "firstTokenMs": 928,
+      "totalMs": 1331
+    },
+    {
+      "source": "Please save your changes before closing the window.",
+      "target": "\u65E5\u8BED\uFF08\u65E5\u672C\u8A9E\uFF09",
+      "stream": true,
+      "translation": "\u304A\u624B\u5143\u306B\u8A18\u9332\u3092\u4FDD\u5B58\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+      "firstTokenMs": 1097,
+      "totalMs": 1471
+    },
+    {
+      "source": "Thank you for your help.",
+      "target": "\u6CD5\u8BED\uFF08Fran\u00E7ais\uFF09",
+      "stream": true,
+      "translation": "Merci pour votre aide.",
+      "firstTokenMs": 960,
+      "totalMs": 1152
+    },
+    {
+      "source": "Connection timeout.\nRetry after 10 seconds.\nDo not close the window.",
+      "target": "\u7B80\u4F53\u4E2D\u6587",
+      "stream": false,
+      "translation": "\u8FDE\u63A5\u8D85\u65F6\u3002\u91CD\u8BD5\u540E10\u79D2\u3002\u4E0D\u5173\u95ED\u7A97\u53E3\u3002",
+      "firstTokenMs": 1404,
+      "totalMs": 1404
+    },
+    {
+      "term": "bank",
+      "sentence": "They sat on the bank of the river.",
+      "translation": "\u9280\u884C"
+    },
+    {
+      "term": "\u82F9\u679C",
+      "sentence": "\u5979\u524A\u4E86\u4E00\u4E2A\u82F9\u679C\u3002",
+      "translation": "apple"
+    }
+  ]
 }
