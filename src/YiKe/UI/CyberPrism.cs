@@ -48,7 +48,7 @@ internal sealed class PrismPanel : Border
         dc.DrawGeometry(MaterialMark.Metal("#8EACBA", "#323B51", "#AC85BC"),
             new Pen(Brush("#C1C7D3"), .55), Outline(ActualWidth,ActualHeight,2,Kind));
         var glass = Outline(ActualWidth,ActualHeight,bevel,Kind);
-        dc.DrawGeometry(fill, new Pen(Brush("#080E1C"),1.2),glass);
+        dc.DrawGeometry(fill, new Pen(Brush(Theme.Dark ? "#080E1C" : "#A6AEC8"),1.2),glass);
         dc.DrawGeometry(null, new Pen(MaterialMark.Metal("#92F0F1", "#45536E", "#BE91D9"),.65),
             Outline(ActualWidth,ActualHeight,bevel+2,Kind));
         dc.PushClip(glass);
@@ -74,7 +74,7 @@ internal static class CyberPrism
     { Width=size, Height=size, HorizontalAlignment=HorizontalAlignment.Left };
     internal static FrameworkElement Monogram(int size=76) => new MaterialMark
     { Width=size, Height=size, Monogram=true, HorizontalAlignment=HorizontalAlignment.Left };
-    internal static Border Card(UIElement child,int padding=16) => new PrismPanel {Kind=PrismKind.Card,Child=child,Padding=new Thickness(padding+3),Background=new LinearGradientBrush(PrismPanel.Brush("#17273B").Color,PrismPanel.Brush("#30213F").Color,15)};
+    internal static Border Card(UIElement child,int padding=16) { var panel = new PrismPanel { Kind=PrismKind.Card, Child=child, Padding=new Thickness(padding+3) }; panel.SetResourceReference(Border.BackgroundProperty,"CardFinish"); return panel; }
     internal static Style ButtonStyle()
     {
         var style=new Style(typeof(Button),(Style)Application.Current.FindResource(typeof(Button)));
@@ -94,14 +94,24 @@ internal static class CyberPrism
         window.WindowStyle=WindowStyle.None;window.AllowsTransparency=true;window.Background=Brushes.Transparent;
         WindowChrome.SetWindowChrome(window,new WindowChrome {CaptionHeight=34,ResizeBorderThickness=new Thickness(6),GlassFrameThickness=new Thickness(0),CornerRadius=new CornerRadius(0),UseAeroCaptionButtons=false});
         var grid=new Grid();grid.RowDefinitions.Add(new(){Height=new GridLength(34)});grid.RowDefinitions.Add(new());
-        var caption=new DockPanel {Margin=new Thickness(24,0,22,0)};
+        var caption=new DockPanel {LastChildFill=false,Margin=new Thickness(24,0,22,0)};
         var controls=new StackPanel {Orientation=Orientation.Horizontal};DockPanel.SetDock(controls,Dock.Right);
-        foreach(var item in new[]{("最小化","−",(Action)(()=>SystemCommands.MinimizeWindow(window))),("最大化 / 还原","□",()=>{if(window.WindowState==WindowState.Maximized)SystemCommands.RestoreWindow(window);else SystemCommands.MaximizeWindow(window);}),("关闭","×",window.Close)})
+        foreach (var (label, geometry, action) in new[] {
+            ("最小化", "M2,8 H16 V10 H2 Z", (Action)(() => SystemCommands.MinimizeWindow(window))),
+            ("最大化 / 还原", "F0 M2,2 H16 V16 H2 Z M4,4 V14 H14 V4 Z", () => { if (window.WindowState == WindowState.Maximized) SystemCommands.RestoreWindow(window); else SystemCommands.MaximizeWindow(window); }),
+            ("关闭", "M2,3.5 L3.5,2 L9,7.5 L14.5,2 L16,3.5 L10.5,9 L16,14.5 L14.5,16 L9,10.5 L3.5,16 L2,14.5 L7.5,9 Z", window.Close)
+        })
         {
-            var button=Ui.Button(item.Item1,item.Item3);button.Content=item.Item2;button.ToolTip=item.Item1;button.Padding=new Thickness(8,0,8,0);button.MinHeight=24;button.MinWidth=30;button.Background=Brushes.Transparent;button.BorderBrush=Brushes.Transparent;WindowChrome.SetIsHitTestVisibleInChrome(button,true);controls.Children.Add(button);
+            var button = Ui.Icon(label,geometry,action);
+            var glyph = (System.Windows.Shapes.Path)button.Content;
+            glyph.Stroke = null; glyph.SetResourceReference(System.Windows.Shapes.Shape.FillProperty,"Text");
+            glyph.Stretch = Stretch.None; glyph.Width = glyph.Height = 18;
+            button.Width = 34; button.Height = 26; button.Margin = new Thickness(2,0,2,0);
+            button.SetResourceReference(Control.BackgroundProperty,"Soft");
+            WindowChrome.SetIsHitTestVisibleInChrome(button,true); controls.Children.Add(button);
         }
-        caption.Children.Add(controls);var title=Ui.Text("译刻 · 偏好设置",10,"Accent");title.VerticalAlignment=VerticalAlignment.Center;caption.Children.Add(title);grid.Children.Add(caption);
+        caption.Children.Add(controls);grid.Children.Add(caption);
         var divider=new Border{BorderBrush=PrismPanel.Brush("#324063"),BorderThickness=new Thickness(0,1,0,0),Child=body};Grid.SetRow(divider,1);grid.Children.Add(divider);
-        return new PrismPanel {Kind=PrismKind.Window,Padding=new Thickness(10,7,10,10),Background=new LinearGradientBrush(PrismPanel.Brush("#101827").Color,PrismPanel.Brush("#241B37").Color,15),Child=grid};
+        var frame = new PrismPanel {Kind=PrismKind.Window,Padding=new Thickness(10,7,10,10),Child=grid}; frame.SetResourceReference(Border.BackgroundProperty,"FrameFinish"); return frame;
     }
 }

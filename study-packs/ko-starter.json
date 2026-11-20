@@ -1,0 +1,59 @@
+{
+  "Language": "ko",
+  "Entries": [
+    {
+      "Headword": "먹다",
+      "Reading": "meokda",
+      "Meaning": "吃",
+      "Example": "아침을 먹었어요.\n吃过早饭了。",
+      "Forms": [
+        "먹어요",
+        "먹었어요"
+      ]
+    },
+    {
+      "Headword": "읽다",
+      "Reading": "ikda",
+      "Meaning": "读",
+      "Example": "책을 읽어요.\n我读书。",
+      "Forms": [
+        "읽어요",
+        "읽었어요"
+      ]
+    },
+    {
+      "Headword": "쓰다",
+      "Reading": "sseuda",
+      "Meaning": "写",
+      "Example": "편지를 써요.\n我写信。",
+      "Forms": [
+        "써요",
+        "썼어요"
+      ]
+    },
+    {
+      "Headword": "가다",
+      "Reading": "gada",
+      "Meaning": "去",
+      "Example": "학교에 가요.\n我去学校。",
+      "Forms": [
+        "가요",
+        "갔어요"
+      ]
+    },
+    {
+      "Headword": "물",
+      "Reading": "mul",
+      "Meaning": "水",
+      "Example": "물을 마셔요.\n我喝水。",
+      "Forms": []
+    },
+    {
+      "Headword": "책",
+      "Reading": "chaek",
+      "Meaning": "书",
+      "Example": "책이 있어요.\n有一本书。",
+      "Forms": []
+    }
+  ]
+}

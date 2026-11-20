@@ -37,11 +37,38 @@ internal static class BundledEnglishDictionary
         using var json = System.Text.Json.JsonDocument.Parse(value);
         var entry = json.RootElement;
         string phonetic = entry.GetProperty("phonetic").GetString() ?? "";
-        return (phonetic.Length > 0 ? "/" + phonetic + "/\n" : "") + entry.GetProperty("translation").GetString() + "\n" + entry.GetProperty("definition").GetString();
+        var card = new StringBuilder(source.Trim());
+        if (phonetic.Length > 0) card.Append("  /").Append(phonetic).Append('/');
+        card.Append("\n\n中文释义\n").Append(entry.GetProperty("translation").GetString());
+        var definition = entry.GetProperty("definition").GetString();
+        if (!string.IsNullOrWhiteSpace(definition)) card.Append("\n\n英文释义\n").Append(definition);
+        if (entry.TryGetProperty("exchange", out var exchange))
+        {
+            foreach (var form in (exchange.GetString() ?? "").Split('/'))
+            {
+                var pair = form.Split(':', 2);
+                if (pair.Length != 2) continue;
+                var label = pair[0] switch { "p" => "过去式", "d" => "过去分词", "i" => "现在分词", "3" => "第三人称单数", "s" => "复数", "r" => "比较级", "t" => "最高级", "0" => "原形", _ => "" };
+                if (label.Length > 0) card.Append("\n").Append(label).Append("  ").Append(pair[1]);
+            }
+        }
+        var example = source.Trim().ToLowerInvariant() switch
+        {
+            "light" => "light luggage · 轻便的行李\nTravel light on the return trip. 回程时轻装出行。",
+            "run" => "run a test · 运行测试\nWe run the test twice. 我们把测试运行两次。",
+            "set" => "set a limit · 设定上限\nSet a limit before downloading. 下载前先设定上限。",
+            "save" => "save a copy · 保存副本\nSave a copy before editing. 编辑前保存一份副本。",
+            "read" => "read aloud · 朗读\nRead the last line aloud. 把最后一行读出来。",
+            "book" => "book a seat · 预订座位\nYou can book a seat online. 你可以在线预订座位。",
+            _ => null
+        };
+        if (example is not null) card.Append("\n\n搭配与例句\n").Append(example);
+        return card.ToString();
     }
     static string? Lookup(string source)
     {
-        string key = source.Trim().ToLowerInvariant();
+        if (source.Length > 256) return null;
+        string key = Regex.Replace(source.Trim().ToLowerInvariant(), @"\s+", " ");
         if (!Key.IsMatch(key)) return null;
         try
         {

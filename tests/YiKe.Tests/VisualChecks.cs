@@ -23,7 +23,7 @@ public static class VisualChecks
                 var app=new Application {ShutdownMode=ShutdownMode.OnExplicitShutdown};
                 Theme.Apply("dark"); Theme.InstallStyles();
                 var directory=Path.Combine(Environment.CurrentDirectory,"artifacts","visual-qa");Directory.CreateDirectory(directory);
-                foreach(string theme in new[]{"dark"})
+                foreach(string theme in new[]{"dark","light"})
                 {
                     Theme.Apply(theme);var settings=new AppSettings{Theme=theme,LocalEngine="nmt",Model="QA fixture — no request"};
                     var selectionIcon=new SelectionIcon();selectionIcon.Present(new(1,0,Environment.ProcessId,"layout fixture",500,300,DateTimeOffset.UtcNow));

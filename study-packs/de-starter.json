@@ -1,0 +1,59 @@
+{
+  "Language": "de",
+  "Entries": [
+    {
+      "Headword": "lesen",
+      "Reading": "ˈleːzn̩",
+      "Meaning": "读",
+      "Example": "Ich lese ein Buch.\n我在读一本书。",
+      "Forms": [
+        "lese",
+        "liest",
+        "gelesen"
+      ]
+    },
+    {
+      "Headword": "schreiben",
+      "Reading": "ˈʃʁaɪ̯bn̩",
+      "Meaning": "写",
+      "Example": "Sie schreibt einen Brief.\n她写一封信。",
+      "Forms": [
+        "schreibt",
+        "geschrieben"
+      ]
+    },
+    {
+      "Headword": "gehen",
+      "Reading": "ˈɡeːən",
+      "Meaning": "去",
+      "Example": "Wir gehen nach Hause.\n我们回家。",
+      "Forms": [
+        "geht",
+        "ging"
+      ]
+    },
+    {
+      "Headword": "Wasser",
+      "Reading": "ˈvasɐ",
+      "Meaning": "水（中性名词）",
+      "Example": "Das Wasser ist kalt.\n水是冷的。",
+      "Forms": []
+    },
+    {
+      "Headword": "Buch",
+      "Reading": "buːx",
+      "Meaning": "书（中性名词）",
+      "Example": "Das Buch ist neu.\n这本书是新的。",
+      "Forms": [
+        "Bücher"
+      ]
+    },
+    {
+      "Headword": "danke",
+      "Reading": "ˈdaŋkə",
+      "Meaning": "谢谢",
+      "Example": "Danke für die Hilfe.\n谢谢帮忙。",
+      "Forms": []
+    }
+  ]
+}

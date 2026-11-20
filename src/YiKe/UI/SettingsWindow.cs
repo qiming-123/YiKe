@@ -39,7 +39,8 @@ public sealed class SettingsWindow : Window
     readonly CheckBox stream = new() { Content = "逐步显示译文" }, startup = new() { Content = "登录 Windows 时启动译刻" };
     readonly CheckBox copiedPdf = new() { Content = "WPS PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
     readonly CheckBox programming = new() { Content = "技术释义：计算机术语、命令与示例" };
-    readonly CheckBox supplement = new() { Content = "让当前模型补充所有选区的计算机用法" };
+    readonly CheckBox supplement = new() { Content = "用模型补充计算机用法与示例" };
+    readonly CheckBox learnJapanese = new() { Content = "多语研习（使用已安装的词典）" };
     readonly CheckBox learnEnglish = new() { Content = "英语研习：单词多释义和点击朗读" }, iconMode = new() { Content = "划词后显示图标，点击才翻译（关闭则自动翻译）" }, cleanPdf = new() { Content = "智能整理 PDF 正文断行" };
     readonly ComboBox localEngine = new();
     readonly ComboBox preset = new(), theme = new(), font = new(), role = new(), mode = new();
@@ -68,6 +69,23 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
+    readonly UniformGrid otherOptions = new() { Columns = 2 };
+    readonly Dictionary<string,CheckBox> languageChoices = new();
+    internal void ShowPackInstaller(StudyDictionaryPack pack)
+    {
+        var message = Ui.Text("", 12, "Muted"); message.TextWrapping = TextWrapping.Wrap;
+        var choice = new CheckBox { Content = pack.Name, Margin = new Thickness(0), MinHeight = 24, FontSize = 12, IsChecked = !get().DisabledStudyLanguages.Contains(pack.Code), VerticalAlignment = VerticalAlignment.Center };
+        System.Windows.Automation.AutomationProperties.SetName(choice,"开启"+pack.Name+"研习");
+        languageChoices.Add(pack.Code,choice);
+        choice.SetBinding(IsEnabledProperty,new System.Windows.Data.Binding("IsChecked") { Source = learnJapanese });
+        var row = new DockPanel { Margin = new Thickness(2,1,12,1) };
+        var install = StudyBook.InstallButton(pack,message,compact:true); DockPanel.SetDock(install,Dock.Right); row.Children.Add(install); row.Children.Add(choice);
+        var cell = new StackPanel(); cell.Children.Add(row); cell.Children.Add(message); otherOptions.Children.Add(cell);
+        var messageStyle = new Style(typeof(TextBlock));
+        var empty = new Trigger { Property = TextBlock.TextProperty, Value = "" }; empty.Setters.Add(new Setter(VisibilityProperty,Visibility.Collapsed));
+        messageStyle.Triggers.Add(empty); message.Style = messageStyle;
+    }
+    public event Action? ManualRequested, StudyRequested, GuideDismissed;
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
         CredentialStore credentials, Func<string> diagnostics, Action? credentialDeleted = null, ITranslationProvider? testProvider = null, IModelCatalog? modelCatalog = null, Func<LocalHardwareSnapshot>? localHardware = null)
     {
@@ -90,7 +108,7 @@ public sealed class SettingsWindow : Window
         foreach (var value in new[] { "本地离线（选择引擎）", "在线 API" }) mode.Items.Add(value);
         foreach (var value in new[] { "英译中节能引擎", "通用多语模型" }) localEngine.Items.Add(value);
         localEngine.SelectionChanged += (_, _) => { if (!loading) { DraftChanged(); RefreshHardware(); } };
-        foreach (var value in new[] { "赛博朋克" }) theme.Items.Add(value);
+        foreach (var value in new[] { "深色 · 赛博朋克", "浅色 · Y2K 银晶" }) theme.Items.Add(value);
         foreach (double size in new double[] { 12, 13, 14, 15, 16, 18, 20, 22, 24 }) font.Items.Add(size);
         foreach (var value in new[] { "system", "developer" }) role.Items.Add(value);
         foreach (var value in TranslationLanguages.Presets) target.Items.Add(value);
@@ -118,11 +136,47 @@ public sealed class SettingsWindow : Window
             button.Margin = new Thickness(0, 0, 0, 8); button.HorizontalContentAlignment = HorizontalAlignment.Left;
             button.BorderThickness = new Thickness(0); navigation.Add(button); nav.Children.Add(button);
         }
+        var manual = Ui.Button("手动翻译", () => ManualRequested?.Invoke(), true);
+        manual.Margin = new Thickness(0, 12, 0, 8); nav.Children.Add(manual);
+        var book = Ui.Button("单词收藏本", () => StudyRequested?.Invoke()); nav.Children.Add(book);
+        var guide = new StackPanel { MaxWidth = 340 };
+        var heading = Ui.Text("", 20, bold:true); var tips = Ui.Text("",14); tips.TextWrapping = TextWrapping.Wrap;
+        guide.Children.Add(heading); guide.Children.Add(tips);
+        var guideCard = Ui.Card(guide,18,"Surface"); guideCard.VerticalAlignment = VerticalAlignment.Center;
+        var backdrop = new Grid { Visibility = Visibility.Collapsed };
+        backdrop.SetResourceReference(Panel.BackgroundProperty,"Canvas");
+        Grid.SetColumn(backdrop,1); backdrop.Children.Add(guideCard);
+        Panel.SetZIndex(backdrop,10); root.Children.Add(backdrop);
+        var steps = new (string Title,string Body,FrameworkElement Target)[] {
+            ("欢迎使用译刻","先用半分钟熟悉划词翻译。你可以随时跳过，以后在「使用指南」里重新打开。", brand),
+            ("划词翻译","在浏览器或文档中拖选一句话，松开鼠标。开启图标模式时点击「译」查看译文。选完整句子，才能让引擎根据语境判断词义。",navigation[0]),
+            ("手动翻译","点击左侧入口，粘贴原文并指定语言方向。翻译完成后可点击英文单词，或拖选整个词组查释义。",manual),
+            ("研习与收藏","在翻译服务中开启英语研习或计算机释义。词条旁的星标可收藏，之后从这里复习、删除和导出。",book),
+            ("选择适用的应用","在「外观与行为」里可关闭某些应用的划词响应。设置改完后，点击「保存设置」。",navigation[1])
+        };
+        int step = 0;
+        var marker = Ui.Text("◀",20,"Accent"); marker.HorizontalAlignment = HorizontalAlignment.Right; marker.VerticalAlignment = VerticalAlignment.Top;
+        marker.Visibility = Visibility.Collapsed; Panel.SetZIndex(marker,11); root.Children.Add(marker);
+        var next = Ui.Button("下一步", () => { },true); next.Click += (_,_) => Advance();
+        void ShowStep(int index)
+        {
+            step = index; heading.Text = steps[index].Title; tips.Text = steps[index].Body;
+            tips.Margin = new Thickness(0,12,0,16); next.Content = index == steps.Length-1 ? "开始使用" : "下一步";
+            backdrop.Visibility = Visibility.Visible; root.UpdateLayout();
+            marker.Visibility = index == 0 ? Visibility.Collapsed : Visibility.Visible;
+            var target = steps[index].Target;
+            marker.Margin = new Thickness(0,Math.Max(0,target.TranslatePoint(new Point(0,target.ActualHeight/2),root).Y-14),2,0);
+        }
+        void CloseGuide() { backdrop.Visibility = marker.Visibility = Visibility.Collapsed; GuideDismissed?.Invoke(); }
+        void Advance() { if (step+1 < steps.Length) ShowStep(step+1); else CloseGuide(); }
+        var guideActions = new WrapPanel(); guideActions.Children.Add(next); guideActions.Children.Add(Ui.Button("跳过 / 完成教程", CloseGuide)); guide.Children.Add(guideActions);
+        nav.Children.Add(Ui.Button("使用指南", () => ShowStep(0)));
+        Loaded += (_,_) => { if (!get().GuideSeen) ShowStep(0); };
         Grid.SetRow(nav, 1); sidebar.Children.Add(nav);
-        var bottom = Ui.Text("YiKe " + typeof(SettingsWindow).Assembly.GetName().Version?.ToString(3) + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
+        var bottom = Ui.Text("YiKe " + System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(typeof(SettingsWindow).Assembly)?.InformationalVersion.Split('+')[0] + "\n本地离线 · 可选在线\nWindows x64", 11, "Muted");
         bottom.LineHeight = 20; Grid.SetRow(bottom, 2); sidebar.Children.Add(bottom);
         var sideBorder = new Border { Child = new ScrollViewer { Content = sidebar, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }, BorderThickness = new Thickness(0, 0, 1, 0) };
-        sideBorder.Background = SystemParameters.HighContrast ? SystemColors.WindowBrush : new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#151E2B").Color, PrismPanel.Brush("#0A101C").Color, 90); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
+        sideBorder.SetResourceReference(Border.BackgroundProperty, "RailFinish"); sideBorder.SetResourceReference(Border.BorderBrushProperty, "Line");
         root.Children.Add(sideBorder);
         var right = new Grid { Margin = new Thickness(30, 26, 30, 20) };
         Grid.SetColumn(right, 1); right.RowDefinitions.Add(new()); right.RowDefinitions.Add(new() { Height = GridLength.Auto });
@@ -131,7 +185,6 @@ public sealed class SettingsWindow : Window
         var footer = new StackPanel { Margin = new Thickness(0, 18, 0, 0) };
         feedback.Margin = new Thickness(0, 0, 0, 10); footer.Children.Add(feedback);
         var actions = new DockPanel(); var save = Ui.Button("保存设置", SaveSettings, true); save.MinWidth = 112;
-        if (!SystemParameters.HighContrast) save.Background = new System.Windows.Media.LinearGradientBrush(PrismPanel.Brush("#80FCF1").Color, PrismPanel.Brush("#DCB0FF").Color, 0);
         DockPanel.SetDock(save, Dock.Right); actions.Children.Add(save); actions.Children.Add(Ui.Text("保存后，下次启动自动使用", 12, "Muted"));
         footer.Children.Add(actions); Grid.SetRow(footer, 1); right.Children.Add(footer); root.Children.Add(right); Content = CyberPrism.Frame(this, root);
         ShowPage(0);
@@ -159,9 +212,18 @@ public sealed class SettingsWindow : Window
             Guard(() => { CaptureOnlineDraft(); onlineDraft = OnlineProfiles.Select(onlineDraft, id); LoadOnlineProfile(); feedback.Text = "已切换编辑配置；点击“保存设置”后使用此 API，其他配置一并保留。"; });
             loading = true; try { profileChoice.SelectedValue = onlineDraft.ActiveOnlineProfileId; } finally { loading = false; }
         };
+        learnEnglish.Click += (_,_) => { if (learnEnglish.IsChecked == true) FeatureHelp(learnEnglish,1,"选中英语单词或词组查看本地释义，点星标加入单词收藏本。"); };
+        programming.Click += (_,_) => { if (programming.IsChecked == true) FeatureHelp(programming,2,"计算机释义会在译文下方补充术语作用、用法和示例。"); };
         Loaded += (_, _) => ScheduleModels();
         Closed += (_, _) => { closed = true; CancelModels(); connectionTests.Dispose(); if (ownsTestProvider) (this.testProvider as IDisposable)?.Dispose(); (this.modelCatalog as IDisposable)?.Dispose(); key.Clear(); pendingKeys.Clear(); Theme.Apply(get().Theme); };
         feedback.Text = (IsLocal ? null : credentialNotice) ?? store.Notice ?? "";
+    }
+
+    internal event Action<int>? TipShown;
+    void FeatureHelp(FrameworkElement target,int flag,string message)
+    {
+        if ((get().StudyTipsSeen & flag) != 0) return;
+        Ui.Tip(target,message); TipShown?.Invoke(flag);
     }
 
     internal void ReloadFromSaved()
@@ -181,8 +243,9 @@ public sealed class SettingsWindow : Window
             exclusions.Text = string.Join(Environment.NewLine, settings.ExcludedProcesses);
             first.Text = settings.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture);
             total.Text = settings.TotalSeconds.ToString(CultureInfo.InvariantCulture);
-            theme.SelectedIndex = 0;
-            learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
+            theme.SelectedIndex = settings.Theme == "light" ? 1 : 0;
+            foreach (var (code,choice) in languageChoices) choice.IsChecked = !settings.DisabledStudyLanguages.Contains(code);
+            learnJapanese.IsChecked = settings.LearnJapanese; learnEnglish.IsChecked = settings.LearnEnglish; iconMode.IsChecked = settings.SelectionIconMode; cleanPdf.IsChecked = settings.CleanPdfText;
             if (!font.Items.Contains(settings.FontSize)) font.Items.Add(settings.FontSize);
             font.SelectedItem = settings.FontSize; role.SelectedItem = settings.InstructionRole;
             stream.IsChecked = settings.Stream; startup.IsChecked = StartupRegistration.Enabled;
@@ -280,26 +343,38 @@ public sealed class SettingsWindow : Window
     void Field(string label, FrameworkElement control, string? hint = null, StackPanel? container = null)
     {
         var host = container ?? pages;
-        var text = Ui.Text(label, 12, bold: true); text.Margin = new Thickness(0, 0, 0, 7); host.Children.Add(text);
+        var text = Ui.Text(label, 12, bold: true); text.Margin = new Thickness(0, 0, 0, 7); var caption = new WrapPanel(); caption.Children.Add(text); host.Children.Add(caption);
         control.Margin = new Thickness(0, 0, 0, hint is null ? 18 : 5);
         System.Windows.Automation.AutomationProperties.SetName(control, label); host.Children.Add(control);
-        if (hint is not null) { var detail = Ui.Text(hint, 11, "Muted"); detail.Margin = new Thickness(0, 0, 0, 16); host.Children.Add(detail); }
+        if (hint is not null)
+        {
+            var detail = Ui.Text(hint,12,"Muted"); detail.Visibility = Visibility.Collapsed; detail.TextWrapping = TextWrapping.Wrap;
+            var help = Ui.Icon(label+"说明", "M12,2 A10,10 0 1 1 11.99,2 Z M12,11 L12,17 M12,7 L12,8", () => detail.Visibility = detail.IsVisible ? Visibility.Collapsed : Visibility.Visible);
+            help.ToolTip = label + "说明"; System.Windows.Automation.AutomationProperties.SetName(help,label+"说明");
+            help.Width = help.Height = 20; ((FrameworkElement)help.Content).Width = ((FrameworkElement)help.Content).Height = 12; help.Margin = new Thickness(6,0,0,4);
+            caption.Children.Add(help); host.Children.Add(detail);
+        }
     }
     void ServicePage()
     {
         Field("翻译方式", mode);
         var localInfo = new StackPanel(); localInfo.Children.Add(localTitle);
         Field("离线引擎", localEngine, container: localInfo);
-        var localHint = Ui.Text("安装时可选择轻量、标准或两种模型；不下载也能安装程序。\n已下载模型无需地址、API Key、Ollama 或显卡驱动。需要更换或补充模型时重新运行安装包；已有模型会校验后复用。", 12, "Muted"); localHint.Margin = new Thickness(0, 8, 0, 0); localInfo.Children.Add(localHint);
+        var localHint = Ui.Text("安装时可选择轻量、标准或两种模型；不下载也能安装程序。\n已下载模型无需地址、API Key、Ollama 或显卡驱动。需要更换或补充模型时重新运行安装包；已有模型会校验后复用。", 12, "Muted"); localHint.Margin = new Thickness(0, 8, 0, 0); localInfo.Children.Add(new Expander { Header = "离线模型说明", Content = localHint });
         hardwareInfo.Margin = new Thickness(0, 10, 0, 0); localInfo.Children.Add(hardwareInfo);
         localCard = CyberPrism.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
         Field("目标语言", target, "默认简体中文，自动识别原文语言；可选择其他语言，或直接输入语言名称。"); pages.Children.Add(stream);
         pages.Children.Add(learnEnglish);
+        var list = new ScrollViewer { Content = otherOptions, MaxHeight = 64, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, PanningMode = PanningMode.VerticalOnly };
+        System.Windows.Automation.AutomationProperties.SetName(list,"其他语言列表");
+        var multiStudy = new StackPanel(); multiStudy.Children.Add(learnJapanese); multiStudy.Children.Add(list);
+        pages.Children.Add(new Expander { Header = "其他选项", Content = multiStudy, Margin = new Thickness(0,8,0,8) });
         programming.Margin = new Thickness(0, 12, 0, 5); pages.Children.Add(programming);
         System.Windows.Automation.AutomationProperties.SetName(programming, "计算机用法解释");
         supplement.Margin = new Thickness(0, 8, 0, 5); pages.Children.Add(supplement);
         System.Windows.Automation.AutomationProperties.SetName(supplement, "模型补充解释");
-        pages.Children.Add(Ui.Text("普通词也显示说明、示例和效果；没有明确专业含义时如实注明。智能补充在译文完成后使用标准本地模型或在线服务单独解释，每次最多增加一次说明请求；在线服务可能计费。轻量或无模型时使用离线说明。", 11, "Muted"));
+        pages.Children.Add(new Expander { Header = "补充说明与在线用量", Content = Ui.Text("开启后，标准本地模型或兼容的在线 AI 可为选中文字补充计算机场景和示例，例如 port 在网络中的“端口”。普通词也可能触发说明。在线服务每次翻译最多增加一次说明请求，可能计费。关闭后仍可查看本地术语说明。", 11, "Muted") });
         onlineFields.Margin = new Thickness(0, 16, 0, 0); pages.Children.Add(onlineFields);
         Field("在线 API 配置", profileChoice, "可同时保存多组 API；切换保留本窗口内的编辑，点击“保存设置”后统一生效。", onlineFields);
         var profileActions = new WrapPanel { Margin = new Thickness(0, 0, 0, 14) };
@@ -360,10 +435,10 @@ public sealed class SettingsWindow : Window
         Field("视觉风格", theme); Field("译文字号", font);
         pages.Children.Add(iconMode); pages.Children.Add(cleanPdf);
         exclusions.AcceptsReturn = true; exclusions.Height = 114; exclusions.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-        Field("排除应用", exclusions, "每行一个进程名，例如 msedge 或 Code，不区分大小写。"); pages.Children.Add(startup);
+        Field("在这些应用中暂停划词", exclusions, "例如填入 Code 后，在 VS Code 里选中文字不会弹出图标或自动翻译。每行一个进程名，留空表示所有支持的应用均可划词。"); pages.Children.Add(startup);
         copiedPdf.Margin = new Thickness(0, 14, 0, 6); pages.Children.Add(copiedPdf);
         System.Windows.Automation.AutomationProperties.SetName(copiedPdf, "WPS PDF 复制后翻译");
-        pages.Children.Add(Ui.Text("WPS PDF 划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted"));
+        pages.Children.Add(new Expander { Header = "PDF 取词说明", Content = Ui.Text("WPS PDF 划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted") });
         var adapter = Ui.Button("安装 / 更新 VS Code 适配", async () =>
         {
             if (adapting) return;
@@ -380,6 +455,14 @@ public sealed class SettingsWindow : Window
     }
     void DataPage()
     {
+        var location = Ui.Text("数据目录：" + store.UserDirectory, 12, "Muted"); location.TextWrapping = TextWrapping.Wrap; pages.Children.Add(location);
+        AddAction("更改数据目录", () =>
+        {
+            var dialog = new OpenFolderDialog { Title = "选择新的数据目录（设置和默认收藏本）" };
+            if (dialog.ShowDialog(this) != true) return;
+            store.ChangeDirectory(dialog.FolderName, get());
+            location.Text = "数据目录：" + store.UserDirectory + "。旧文件已保留。";
+        });
         pages.Children.Add(CyberPrism.Card(Ui.Text("凭据采用 Windows DPAPI CurrentUser 加密。普通导出不包含密钥；加密迁移包可在新电脑导入后重新绑定本机账户。", 12, "Muted")));
         AddAction("导出普通配置", () => { var dialog = new SaveFileDialog { Filter = "译刻配置 (*.json)|*.json", FileName = "YiKe-settings.json" }; if (dialog.ShowDialog(this) == true) { SettingsStore.Export(dialog.FileName, get()); feedback.Text = "普通配置已导出，不含 API Key。"; } });
         AddAction("导入普通配置", () => { var dialog = new OpenFileDialog { Filter = "译刻配置 (*.json)|*.json" }; if (dialog.ShowDialog(this) == true) ApplyImported(SettingsStore.Import(dialog.FileName), null); });
@@ -415,7 +498,7 @@ public sealed class SettingsWindow : Window
             settings = ConfigurationService.StageProfileKeys(settings, profileKeys.Where(p => p.Key != settings.ActiveOnlineProfileId).ToDictionary(p => p.Key, p => p.Value), credentials);
             if (profileKeys.TryGetValue(settings.ActiveOnlineProfileId, out var activeKey)) secret = activeKey;
         }
-        commit(settings, secret);
+        commit(settings with { StudyDirectory = get().StudyDirectory }, secret);
         ReloadFromSaved();
         feedback.Text = credentialNotice ?? store.Notice ?? (secret is null ? "配置已导入，页面已更新；请填写此服务的 API Key。" : "迁移成功，密钥已加密保存，页面已更新。下次启动自动使用。");
     }
@@ -513,16 +596,17 @@ public sealed class SettingsWindow : Window
         }
     }
     internal string ModelStatusText => modelState.Text;
-    string ThemeChoice() => "dark";
+    string ThemeChoice() => theme.SelectedIndex == 1 ? "light" : "dark";
     AppSettings Draft() => (onlineDraft with
     {
-        Enabled = get().Enabled,
+        StudyDirectory = get().StudyDirectory, Enabled = get().Enabled, GuideSeen = get().GuideSeen, StudyTipsSeen = get().StudyTipsSeen,
         TranslationMode = IsLocal ? "local" : "online",
         LocalEngine = localEngine.SelectedIndex == 0 ? "nmt" : "generic",
         Preset = IsLocal ? onlineDraft.Preset : (string)preset.SelectedItem, BaseUrl = IsLocal ? onlineDraft.BaseUrl : url.Text, Model = IsLocal ? onlineDraft.Model : model.Text, TargetLanguage = target.Text,
         Stream = stream.IsChecked == true, Theme = ThemeChoice(), FontSize = (double)(font.SelectedItem ?? 15d),
         TranslateCopiedPdf = copiedPdf.IsChecked == true,
-        LearnEnglish = learnEnglish.IsChecked == true, SelectionIconMode = iconMode.IsChecked == true, CleanPdfText = cleanPdf.IsChecked == true,
+        DisabledStudyLanguages = languageChoices.Count == 0 ? get().DisabledStudyLanguages : languageChoices.Where(p => p.Value.IsChecked != true).Select(p => p.Key).ToArray(),
+        LearnJapanese = learnJapanese.IsChecked == true, LearnEnglish = learnEnglish.IsChecked == true, SelectionIconMode = iconMode.IsChecked == true, CleanPdfText = cleanPdf.IsChecked == true,
         ExplainProgrammingTerms = programming.IsChecked == true,
         SupplementTechnicalTerms = supplement.IsChecked == true,
         ExcludedProcesses = exclusions.Text.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries),

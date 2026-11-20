@@ -6,6 +6,9 @@ namespace YiKe.UI;
 // Small, resolution-independent facets keep the selection affordance crisp at any DPI.
 internal sealed class MaterialMark : FrameworkElement
 {
+    static readonly DependencyProperty FinishProperty = DependencyProperty.Register("Finish", typeof(Brush), typeof(MaterialMark), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+    public MaterialMark() => SetResourceReference(FinishProperty, "RailFinish");
+    internal bool SelectionLens { get; init; }
     internal bool Monogram { get; init; }
     static readonly Geometry TranslationGlyph = CreateTranslationGlyph();
     static Geometry CreateTranslationGlyph()
@@ -51,6 +54,19 @@ internal sealed class MaterialMark : FrameworkElement
                 dc.DrawGeometry(SystemColors.WindowTextBrush, null, TranslationGlyph);
             }
         }
+        else if (SelectionLens)
+        {
+            // A polished edge encloses a single speech bubble. Keep the lettering clear at tray scale.
+            Facet("M24,7 H76 Q94,7 94,25 V60 Q94,76 78,76 H45 L26,93 L27,77 Q7,76 7,60 V25 Q7,7 24,7 Z",
+                Metal("#C8FFFF","#808CD5","#EBD1FF"), dark);
+            Facet("M25,12 H76 Q89,12 89,26 V59 Q89,70 76,71 H43 L32,81 L33,71 H25 Q12,71 12,59 V26 Q12,12 25,12 Z",
+                Theme.Dark ? Metal("#277C94","#263255","#533469") : Metal("#D0FFFA","#B3CAED","#B9A0DC"));
+            Facet("M14,28 Q14,14 27,14 H75 Q82,14 85,19 L64,25 L18,40 Z",
+                Metal("#BCFFFFFF","#538AEEEF","#00EAF3FB"));
+            dc.PushTransform(new TranslateTransform(-9,-15));
+            dc.DrawGeometry(Theme.Dark ? Brushes.White : PrismPanel.Brush("#172C4B"),null,TranslationGlyph);
+            dc.Pop();
+        }
         else if (Monogram)
         {
             Facet("M6,17 L24,17 40,40 57,17 75,17 48,53 48,85 32,85 32,53 Z", dark, PrismPanel.Neon());
@@ -64,12 +80,12 @@ internal sealed class MaterialMark : FrameworkElement
         {
             // Rear cyan glass: a broad, quiet face and narrow polished bevel.
             Facet("M7,19 L19,6 77,6 82,12 82,72 72,80 7,80 Z", cyan, PrismPanel.Brush("#94EAF2"));
-            Facet("M10,21 L21,10 75,10 78,14 78,70 70,76 10,76 Z", Metal("#22687A", "#103648", "#10202F"));
+            Facet("M10,21 L21,10 75,10 78,14 78,70 70,76 10,76 Z", Theme.Dark ? Metal("#22687A", "#103648", "#10202F") : Metal("#EDFDFE", "#8EDBE8", "#627DB4"));
             Facet("M7,19 L19,6 77,6 75,10 21,10 10,21 Z", silver);
             Facet("M10,21 L21,10 75,10 10,65 Z", Metal("#405BB9BD", "#30376F84", "#00132937"));
             // Front violet glass remains dark behind the white translation glyph.
             Facet("M22,36 L36,22 89,22 96,29 96,85 87,94 22,94 Z", violet, PrismPanel.Brush("#D3B2ED"));
-            Facet("M25,37 L37,26 88,26 92,30 92,83 85,90 25,90 Z", Metal("#24344F", "#151C32", "#392045"));
+            Facet("M25,37 L37,26 88,26 92,30 92,83 85,90 25,90 Z", Theme.Dark ? Metal("#24344F", "#151C32", "#392045") : Metal("#FCFAFF", "#D4CFF1", "#92A6CD"));
             Facet("M22,36 L36,22 89,22 88,26 37,26 25,37 25,90 22,94 Z", silver);
             Facet("M25,37 L37,26 88,26 25,87 Z", Metal("#324DABC2", "#184A6C91", "#00322848"));
             Facet("M92,30 L96,29 96,85 87,94 22,94 25,90 85,90 92,83 Z", Metal("#9A8EC0", "#634D8F", "#C58DE4"));
@@ -77,7 +93,7 @@ internal sealed class MaterialMark : FrameworkElement
             dc.PushTransform(new TranslateTransform(.8, 1.25));
             dc.DrawGeometry(PrismPanel.Brush("#090F21"), new Pen(PrismPanel.Brush("#090F21"), .9), TranslationGlyph);
             dc.Pop();
-            dc.DrawGeometry(Metal("#FFFFFF", "#EDF4FB", "#ABBBD5"),
+            dc.DrawGeometry(Theme.Dark ? Metal("#FFFFFF", "#EDF4FB", "#ABBBD5") : Metal("#34344E", "#373A72", "#18243F"),
                 new Pen(Metal("#D5FFFF", "#FFFFFF", "#C9A6E9"), .45), TranslationGlyph);
         }
         dc.Pop();

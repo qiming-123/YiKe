@@ -33,6 +33,149 @@ public static class UiRegressionChecks
                 }
                 try
                 {
+                    await Check("Settings shows manual entry, skippable guide and live light theme", async () =>
+                    {
+                        using var fixture = new EditorFixture(root, "theme-guide");
+                        var window = fixture.Window; window.Show(); await Idle();
+                        bool manual = false, dismissed = false;
+                        window.ManualRequested += () => manual = true; window.GuideDismissed += () => dismissed = true;
+                        FindButton(window, "手动翻译").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        var done = FindButton(window, "跳过 / 完成教程");
+                        done.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(manual && dismissed && !done.IsVisible);
+                        FindButton(window, "使用指南").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(done.IsVisible);
+                        FindButton(window, "外观与行为").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        var picker = Find<ComboBox>(window, "视觉风格"); picker.SelectedIndex = 1;
+                        Assert(!Theme.Dark); window.SaveSettings(); Assert(fixture.Config.Theme == "light");
+                    });
+                    await Check("Manual English study looks up and collects a selected word", async () =>
+                    {
+                        var window = new ManualWindow(new AppSettings { LearnEnglish = true }); window.Show(); await Idle();
+                        var input = Find<TextBox>(window,"原文"); input.Text = "read the book"; input.Select(0,4);
+                        Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("英文释义")));
+                        string saved = ""; window.FavoriteRequested += w => saved = w;
+                        FindButton(window,"收藏单词").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "read");
+                        input.Text = "take off"; await Idle();
+                        Assert(BundledEnglishDictionary.Details("take off") is { Length: > 15 });
+                        var savePhrase = FindButton(window,"收藏单词"); Assert(savePhrase.IsEnabled);
+                        savePhrase.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "take off");
+                        var output = Find<TextBox>(window,"译文"); output.Text = "They take off today."; output.Select(5,8);
+                        savePhrase.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "take off");
+                        window.Close();
+                        using var fixture = new EditorFixture(root,"caption-position"); fixture.Window.Show(); await Idle();
+                        var close = FindButton(fixture.Window,"关闭");
+                        Assert(close.TranslatePoint(new Point(),fixture.Window).X > fixture.Window.ActualWidth * .8);
+                    });
+                    await Check("Alternative dictionary meanings keep the contextual result and reset on next request", async () =>
+                    {
+                        var settings = new AppSettings { LearnEnglish = false };
+                        var window = new ManualWindow(settings); window.Show(); await Idle();
+                        var source = Find<TextBox>(window,"原文"); source.Text = "They sat on the bank of the river.";
+                        window.Begin(settings,"bank"); window.Update(new(1,"河岸",true)); await Idle();
+                        var other = Find<Expander>(window,"其他词义"); Assert(other.IsVisible && !other.IsExpanded);
+                        other.IsExpanded = true; await Idle();
+                        Assert(Walk(other).OfType<TextBlock>().Any(t => t.Text.Contains("银行") && t.Text.Contains("岸")));
+                        Assert(Find<TextBox>(window,"译文").Text == "河岸");
+                        window.Begin(settings,"zzzzxunknown"); window.Update(new(2,"测试",true));
+                        Assert(!other.IsVisible && !other.IsExpanded); window.Close();
+                        var popup = new PopupWindow(); popup.Begin("take off",settings,300,250,0); popup.Update(new(1,"起飞",true)); await Idle();
+                        Assert(Find<Expander>(popup,"其他词义").IsVisible); popup.Dismiss();
+                    });
+                    await Check("Scrollable language choices persist independently", async () =>
+                    {
+                        using var fixture = new EditorFixture(root,"scrollable-study");
+                        var window = fixture.Window;
+                        foreach (var (code,name) in StudyDictionaryPack.Languages) window.ShowPackInstaller(new StudyDictionaryPack(root,code,name));
+                        window.Show(); await Idle();
+                        FindButton(window,"跳过 / 完成教程").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Walk(window).OfType<Expander>().Single(e => Equals(e.Header,"其他选项")).IsExpanded = true; await Idle();
+                        var list = Find<ScrollViewer>(window,"其他语言列表"); Assert(list.ScrollableHeight > 0);
+                        list.ScrollToBottom(); await Idle(); Assert(list.VerticalOffset > 0);
+                        foreach (var (code,name) in StudyDictionaryPack.Languages)
+                            Find<CheckBox>(window,"开启"+name+"研习").IsChecked = code is "ja" or "fr";
+                        window.SaveSettings();
+                        var all = StudyDictionaryPack.Languages.Select(p => new StudyDictionaryPack(root,p.Code,p.Name)).ToArray();
+                        Assert(StudyDictionaryPack.Selected(all,fixture.Config).Select(p => p.Code).SequenceEqual(new[] { "ja","fr" }));
+                        Assert(StudyDictionaryPack.Selected(all,fixture.Config with { LearnJapanese=false }).Length == 0);
+                    });
+                    await Check("Ambiguous entries require a language before saving", async () =>
+                    {
+                        var pack = new StudyDictionaryPack(Path.Combine(root,"ambiguity"),"fr","法语");
+                        pack.Install(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new StudyDictionaryData("fr",new[] { new StudyDictionaryEntry("pain","pɛ̃","面包","",Array.Empty<string>()) })));
+                        var popup = new PopupWindow { Packs = new[] { pack } }; string saved = "";
+                        popup.FavoriteRequested += (code,word) => saved = code+"/"+word;
+                        popup.Begin("pain",new AppSettings { LearnEnglish = true },300,250,0); await Idle();
+                        var star = FindButton(popup,"收藏单词"); Assert(!star.IsVisible);
+                        FindButton(popup,"法语").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); star.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "fr/pain");
+                        FindButton(popup,"英语").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); star.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "en/pain");
+                        popup.Close();
+                    });
+                    await Check("Japanese pack is optional and retains collected inflections offline", async () =>
+                    {
+                        var folder = Path.Combine(root,"optional-ja"); Directory.CreateDirectory(folder);
+                        File.WriteAllText(Path.Combine(folder,"yike-data-root.txt"), Path.Combine(folder,"workspace-data"));
+                        Assert(new SettingsStore(folder).DefaultDirectory == Path.Combine(folder,"workspace-data"));
+                        var pack = new StudyDictionaryPack(folder);
+                        Assert(!pack.Installed && pack.Find("食べた") is null);
+                        foreach (var (code,name) in StudyDictionaryPack.Languages.Skip(1))
+                        {
+                            var optional = new StudyDictionaryPack(folder,code,name);
+                            Assert(!optional.Installed);
+                            optional.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory,"study-packs",code+"-starter.json")));
+                            var form = code switch { "fr" => "lis", "ko" => "읽어요", "de" => "liest", _ => "leo" };
+                            Assert(new StudyDictionaryPack(folder,code,name).Find(form)?.Meaning.Contains("读") == true);
+                        }
+                        pack.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory,"study-packs","ja-starter.json")));
+                        Assert(new StudyDictionaryPack(folder).Find("食べた")?.Headword == "食べる");
+                        var manual = new ManualWindow(new AppSettings(), pack); manual.Show(); await Idle();
+                        Walk(manual).OfType<Expander>().Single(e => Equals(e.Header,"单词研习")).IsExpanded = true;
+                        Find<TextBox>(manual,"原文").Text = "食べた"; await Idle();
+                        Assert(Walk(manual).OfType<TextBlock>().Any(t => t.Text.Contains("食べる")));
+                        Assert(FindButton(manual,"收藏单词").IsEnabled); manual.Close();
+                        var book = StudyBook.JapaneseFile(Path.Combine(folder,"YiKe-vocabulary.json"));
+                        StudyBook.Add(book,"食べた"); Assert(StudyBook.Read(book).Single() == "食べた");
+                        var popup = new PopupWindow { Packs = new[] { pack } }; popup.Begin("食べた",new AppSettings(),300,250,0); await Idle();
+                        Assert(FindButton(popup,"收藏单词").IsVisible); popup.Dismiss(); popup.Close();
+                    });
+                    await Check("Study words persist across data relocation and manual direction reaches the form", async () =>
+                    {
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "study-default"));
+                        var path = Path.Combine(store.UserDirectory, "YiKe-vocabulary.json");
+                        Assert(StudyBook.Add(path, "Light") == "已收藏。" && StudyBook.Add(path, "light") == "已在收藏本中。");
+                        var config = new AppSettings();
+                        store.ChangeDirectory(Path.Combine(root,"study-moved"), config);
+                        Assert(StudyBook.Read(Path.Combine(store.UserDirectory, "YiKe-vocabulary.json")).Single() == "light");
+                        Assert(new SettingsStore(userDirectory: store.DefaultDirectory).UserDirectory == store.UserDirectory);
+                        Assert(BundledEnglishDictionary.Details("light")!.Contains("搭配与例句"));
+                        var window = new ManualWindow(config with { TranslationMode = "online" }); window.Show(); await Idle();
+                        Find<ComboBox>(window, "源语言").SelectedIndex = 3; Find<ComboBox>(window,"目标语言").SelectedIndex = 4;
+                        Assert(window.From == TranslationLanguages.Presets[2] && window.To == TranslationLanguages.Presets[4]); window.Close();
+                    });
+                    await Check("Manual window keeps source editable after failures and cancellation", async () =>
+                    {
+                        var config = new AppSettings { LocalEngine = "nmt" };
+                        var window = new ManualWindow(config); window.Show(); await Idle();
+                        var input = Find<TextBox>(window, "原文"); input.Text = "hello";
+                        window.Begin(config); Assert(input.IsReadOnly);
+                        window.Update(new(1, "你好", true));
+                        Assert(!input.IsReadOnly && Find<TextBox>(window, "译文").Text == "你好");
+                        window.Begin(config); window.Error("请缩短原文。");
+                        Assert(input.Text == "hello" && !input.IsReadOnly);
+                        bool cancelled = false; window.CancelRequested += () => cancelled = true;
+                        window.Begin(config); FindButton(window, "取消").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(cancelled && !input.IsReadOnly); window.Close();
+                    });
+                    await Check("Popup service, progress, extensions and cancellation", async () =>
+                    {
+                        var popup = new PopupWindow(); popup.Begin("hello", new AppSettings { LocalEngine = "nmt" }, 300, 250, 0); await Idle();
+                        bool Has(string label) => Walk(popup).OfType<TextBlock>().Any(t => t.Text.Contains(label));
+                        Assert(Has("本地英译中") && Has("准备引擎"));
+                        Assert(FindButton(popup,"翻译扩展").IsVisible);
+                        popup.Update(new(1, "")); Assert(Has("翻译中"));
+                        bool cancelled = false; popup.CancelRequested += () => cancelled = true;
+                        FindButton(popup, "取消").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(cancelled && Has("已取消")); popup.Dismiss(); popup.Close();
+                    });
                     await Check("NMT low memory test bypasses generic-model gate and translates locally", async () => {
                         var config = new AppSettings { TranslationMode = "local", LocalEngine = "nmt" };
                         var store = new SettingsStore(userDirectory: Path.Combine(root, "nmt-low-memory"));
@@ -49,7 +192,7 @@ public static class UiRegressionChecks
                         Assert(window.StatusText.Contains("本地翻译成功"), window.StatusText);
                         var engine = Walk(window).OfType<ComboBox>().Single(combo => combo.Items.Count == 2 && Equals(combo.Items[0], "英译中节能引擎"));
                         engine.SelectedIndex = 1; await Idle(); window.TestConnection();
-                        Assert(window.StatusText.Contains("1.75 GB"), "Generic model must retain its memory gate");
+                        Assert(window.StatusText.Contains("1.25 GiB"), "Generic model must retain its memory gate");
                         window.Close();
                     });
                     await Check("Prism titlebar maximizes restores minimizes and closes the settings window", async () => {
@@ -86,7 +229,11 @@ public static class UiRegressionChecks
                             Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();Assert(snapshot.Restore(owned,owner.Handle));owned=Native.GetClipboardSequenceNumber();
                             Assert(Clipboard.GetText()=="original fixture" && Clipboard.GetData(DataFormats.Html) as string =="<b>original fixture</b>" && Clipboard.ContainsData(DataFormats.Rtf));
                             Clipboard.SetText("automatic PDF copy");owned=Native.GetClipboardSequenceNumber();uint copied=owned;
-                            Clipboard.SetText("newer copy");owned=Native.GetClipboardSequenceNumber();Assert(!snapshot.Restore(copied,owner.Handle) && Clipboard.GetText()=="newer copy");
+                            Clipboard.SetText("newer copy");owned=Native.GetClipboardSequenceNumber();
+                            await Until(() => Clipboard.GetText()=="newer copy");
+                            bool restored = snapshot.Restore(copied,owner.Handle);
+                            Assert(!restored, $"Restored stale snapshot: copy sequence {copied}, newer {owned}.");
+                            Assert(Clipboard.GetText()=="newer copy", $"Stale restore declined; expected fixture missing. Newer sequence {owned}, current {Native.GetClipboardSequenceNumber()}.");
                         } finally {original.Restore(owned,owner.Handle);}
                         await Idle();
                     });
@@ -121,12 +268,12 @@ public static class UiRegressionChecks
                     });
                     await Check("English learning exposes word speech but never sentence speech", async () => {
                         var popup = new PopupWindow(); popup.Begin("hello", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
-                        Assert(FindButton(popup, "朗读单词").IsVisible);
+                        Assert(FindButton(popup, "美音朗读").IsVisible && FindButton(popup,"英音朗读").IsVisible);
                         Assert(Walk(popup).OfType<TextBlock>().Any(t => t.Text.Contains("你好") || t.Text.Contains("喂")));
                         popup.Begin("The meeting starts tomorrow.", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
-                        Assert(!FindButton(popup, "朗读单词").IsVisible);
+                        Assert(!FindButton(popup, "美音朗读").IsVisible);
                         popup.Begin("I love you", new AppSettings { LearnEnglish = true }, 300, 250, 0); await Idle();
-                        Assert(!FindButton(popup, "朗读单词").IsVisible); popup.DisposeSpeech(); popup.Close();
+                        Assert(!FindButton(popup, "美音朗读").IsVisible); popup.DisposeSpeech(); popup.Close();
                     });
                     await Check("Mouse listener owns a separate message loop from a busy UI dispatcher", async () =>
                     {
@@ -375,7 +522,7 @@ public static class UiRegressionChecks
                         var store = new SettingsStore(Path.Combine(root, "fresh-local", "app"), Path.Combine(root, "fresh-local", "data"));
                         var credentials = new CredentialStore(store.UserDirectory); AppSettings config = new();
                         var provider = new RecordingConnectionProvider(); var catalog = new RecordingModelCatalog();
-                        var window = new SettingsWindow(() => config, (draft, secret) => config = ConfigurationService.Commit(config, draft, secret, store, credentials), store, credentials, () => "fixture", testProvider: provider, modelCatalog: catalog);
+                        var window = new SettingsWindow(() => config, (draft, secret) => config = ConfigurationService.Commit(config, draft, secret, store, credentials), store, credentials, () => "fixture", testProvider: provider, modelCatalog: catalog, localHardware: () => new(16 * LocalHardware.GiB, 8 * LocalHardware.GiB, 8, true));
                         window.Show(); await Idle();
                         Assert(Find<ComboBox>(window, "翻译方式").SelectedIndex == 0 && !Find<TextBox>(window, "Base URL").IsVisible && !Find<PasswordBox>(window, "API Key").IsVisible);
                         Assert(Find<ComboBox>(window, "目标语言").Text == "简体中文" && !File.Exists(store.UserFile));
@@ -541,7 +688,7 @@ public static class UiRegressionChecks
                         var labels = Walk(popup).OfType<TextBlock>().Select(t => t.Text).ToArray();
                         Assert(labels.Contains("未能读取选区") && labels.Contains("原文未发送 · 翻译尚未开始"));
                         Assert(labels.Any(t => t.Contains("SampleBrowser")) && !labels.Any(t => t.Contains("VS Code")));
-                        Assert(!Walk(popup).OfType<Expander>().Single(e => Equals(e.Header, "查看原文")).IsEnabled && !FindButton(popup, "复制译文").IsEnabled);
+                        Assert(!FindButton(popup,"查看原文").IsEnabled && !FindButton(popup, "复制译文").IsEnabled);
                         Assert(!FindButton(popup, "重试（会再次调用服务）").IsEnabled); popup.Dismiss();
                     });
                     await Check("Programming preference saves, reloads and imports independently from credentials", async () =>
@@ -589,7 +736,7 @@ public static class UiRegressionChecks
                     {
                         var popup = new PopupWindow(); popup.Begin("how", new AppSettings(), 300, 250, 0); await Idle();
                         popup.Update(new(1, "如何", true, ProgrammingNotes: ComputingWordNotes.Explain("how"), ExplanationPending: true)); await Idle();
-                        var copy = Walk(popup).OfType<Button>().Single(button => Equals(button.Content, "复制译文"));
+                        var copy = FindButton(popup,"复制译文");
                         Assert(copy.IsEnabled && Walk(popup).OfType<TextBlock>().Any(block => block.Text == "如何"));
                         Assert(Walk(popup).OfType<TextBlock>().Any(block => block.Text.Contains("译文已完成") && block.Text.Contains("正在补充")));
                         Assert(Find<Expander>(popup, "计算机用法解释").IsVisible);
@@ -602,6 +749,9 @@ public static class UiRegressionChecks
                         popup.PinChanged += state.SetPinned; popup.Dismissed += state.Close;
                         long lease = state.BeginSelection(); popup.Begin("fixture", new AppSettings(), 300, 250, 0); await Idle();
                         popup.Update(new(1, "partial")); popup.SetPinned(true); Assert(state.Pinned && !state.Accepts(lease));
+                        popup.Left += 45; popup.Top += 25; var moved = new Point(popup.Left,popup.Top);
+                        popup.Update(new(1,"更长的译文",true)); await Idle();
+                        Assert(Math.Abs(popup.Left-moved.X)<1 && Math.Abs(popup.Top-moved.Y)<1);
                         popup.SetPinned(false); Assert(!state.Accepts(lease)); popup.Dismiss(); popup.Update(new(1, "late completion", true));
                         Assert(!popup.IsVisible && !state.Pinned && state.Current is null);
                     });
@@ -642,7 +792,7 @@ public static class UiRegressionChecks
         {
             Store = new SettingsStore(Path.Combine(root, name, "app"), Path.Combine(root, name, "data")); Credentials = new(Store.UserDirectory);
             Config = ConfigurationService.Commit(new AppSettings(), new AppSettings { TranslationMode = "online", Model = "original-model" }, "fake-existing-secret", Store, Credentials);
-            Window = new(() => Config, (draft, key) => { Config = ConfigurationService.Commit(Config, draft, key, Store, Credentials); LastCommittedSecret = key; Commits++; }, Store, Credentials, () => "synthetic QA", testProvider: provider ?? new RecordingConnectionProvider(), modelCatalog: catalog ?? new RecordingModelCatalog());
+            Window = new(() => Config, (draft, key) => { Config = ConfigurationService.Commit(Config, draft, key, Store, Credentials); LastCommittedSecret = key; Commits++; }, Store, Credentials, () => "synthetic QA", testProvider: provider ?? new RecordingConnectionProvider(), modelCatalog: catalog ?? new RecordingModelCatalog(), localHardware: () => new(16 * LocalHardware.GiB, 8 * LocalHardware.GiB, 8, true));
         }
         public void Dispose() { if (Window.IsLoaded) Window.Close(); }
     }

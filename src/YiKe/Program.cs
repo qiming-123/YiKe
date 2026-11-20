@@ -60,7 +60,11 @@ public sealed class YiKeApplication : Application
     readonly SelectionReader reader = new();
     readonly TranslationProvider provider = new();
     readonly CredentialStore credentials;
+    readonly StudyDictionaryPack[] packs;
+    StudyDictionaryPack japanese => packs[0];
     AppSettings config;
+    ManualWindow? manual;
+    bool AcceptSelection => manual is null && session.CanReceiveSelection;
     PopupWindow? popup;
     SelectionIcon? selectionIcon;
     AppSettings? selectionOptions;
@@ -78,8 +82,9 @@ public sealed class YiKeApplication : Application
     public YiKeApplication()
     {
         config = store.Load();
+        packs = StudyDictionaryPack.Languages.Select(l => new StudyDictionaryPack(store.DefaultDirectory,l.Code,l.Name)).ToArray();
         if (config.EnhancementDefaultsVersion == 0) config = config with { EnhancementDefaultsVersion = 1, LocalEngine = NmtTranslationProvider.Available && config.TargetLanguage == TranslationLanguages.Default ? "nmt" : config.LocalEngine, ExplainProgrammingTerms = false, SupplementTechnicalTerms = false, LearnEnglish = false };
-        session = new(config.Enabled); credentials = new(store.UserDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        session = new(config.Enabled); credentials = new(store.DefaultDirectory); ShutdownMode = ShutdownMode.OnExplicitShutdown;
         Startup += Start; Exit += Cleanup;
         DispatcherUnhandledException += (_, e) => { diagnostic = "界面操作失败：" + e.Exception.GetType().Name; e.Handled = true; if (settings is not null) MessageBox.Show(settings, "操作失败，现有配置已保留。请检查文件权限或重新启动译刻。", "译刻"); };
     }
@@ -87,20 +92,29 @@ public sealed class YiKeApplication : Application
     {
         Theme.Apply(config.Theme); Theme.InstallStyles();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += SystemPreferenceChanged;
-        selectionIcon = new(); selectionIcon.Requested += snapshot => { if (session.CanReceiveSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
-        popup = new(); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        selectionIcon = new(); selectionIcon.Requested += snapshot => { if (AcceptSelection && !IsExcluded(snapshot.ProcessId) && Native.GetForegroundWindow().ToInt64() == snapshot.Window) Translate(snapshot); };
+        popup = new() { Packs = packs, IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) }; popup.FavoriteRequested += (code,word) => StudyBook.Add(code == "en" ? StudyFile : StudyBook.LanguageFile(StudyFile,code), word); popup.OptionsChanged += options => { selectionOptions = options; if (session.Current is { } current) Translate(current); }; popup.CancelRequested += () => coordinator!.Invalidate(); popup.Dismissed += Cancel; popup.Retry += () => { if (session.Current is not null) Translate(session.Current, true); }; popup.Settings += OpenSettings;
+        popup.FeatureEnabled += (target,flag,message) =>
+        {
+            if ((config.StudyTipsSeen & flag) == 0) { Ui.Tip(target,message); RememberTip(flag); }
+        };
+        popup.EnglishShown += button => Dispatcher.BeginInvoke(() =>
+        {
+            if (button.IsVisible && (config.StudyTipsSeen & 4) == 0)
+            { Ui.Tip(button,"点 ☆ 收藏当前英语词条，在「单词收藏本」里复习。"); RememberTip(4); }
+        });
         popup.PinChanged += pinned => { pdfCopy?.Clear(); session.SetPinned(pinned); selecting?.Cancel(); };
-        coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
+        coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (manual is not null && u.Sequence == coordinator!.Sequence) manual.Update(u); else if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
         var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(config.Enabled ? "暂停自动翻译" : "恢复自动翻译"); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
-        menu.Items.Add("设置", null, (_, _) => OpenSettings()); menu.Items.Add("粘贴文本翻译", null, (_, _) => Paste()); menu.Items.Add(new Forms.ToolStripSeparator()); menu.Items.Add("退出译刻", null, (_, _) => Shutdown());
+        menu.Items.Add("设置", null, (_, _) => OpenSettings()); menu.Items.Add("手动翻译", null, (_, _) => Paste()); menu.Items.Add(new Forms.ToolStripSeparator()); menu.Items.Add("退出译刻", null, (_, _) => Shutdown());
         using var iconStream = typeof(Program).Assembly.GetManifestResourceStream("YiKe.icon")!;
         tray = new Forms.NotifyIcon { Icon = new System.Drawing.Icon(iconStream), Text = "译刻 · 划词即译", Visible = true, ContextMenuStrip = menu }; tray.DoubleClick += (_, _) => OpenSettings();
         try { monitor = new(Dispatcher); monitor.MouseDown += OnMouseDown; monitor.Selected += OnGesture; monitor.Unselected += OnUnselected; }
         catch (Exception ex) { diagnostic = "鼠标监听未启动：" + ex.GetType().Name; tray.ShowBalloonTip(6000, "译刻", "无法启动自动划词，可从托盘粘贴文本翻译。", Forms.ToolTipIcon.Warning); }
         terminalHotkey = new(); terminalHotkey.Requested += OnTerminal;
-        pdfCopy = new(() => config.TranslateCopiedPdf && session.CanReceiveSelection, IsExcluded); pdfCopy.Copied += OnPdfCopied;
+        pdfCopy = new(() => config.TranslateCopiedPdf && AcceptSelection, IsExcluded); pdfCopy.Copied += OnPdfCopied;
         foregroundTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
-        foregroundTimer.Tick += (_, _) => { terminalHotkey.Update(session.CanReceiveSelection); pdfCopy.Update(); if (selectionIcon.Selection is { } iconSelection && (DateTimeOffset.UtcNow - iconSelection.Time > TimeSpan.FromSeconds(15) || Native.GetForegroundWindow().ToInt64() != iconSelection.Window && Native.ProcessId(Native.GetForegroundWindow()) != Environment.ProcessId)) selectionIcon.Clear(); var foreground = Native.GetForegroundWindow(); if (session.ShouldDismissForForeground(foreground.ToInt64(), Native.ProcessId(foreground) == Environment.ProcessId)) popup.Dismiss(); }; foregroundTimer.Start();
+        foregroundTimer.Tick += (_, _) => { terminalHotkey.Update(AcceptSelection); pdfCopy.Update(); if (selectionIcon.Selection is { } iconSelection && (DateTimeOffset.UtcNow - iconSelection.Time > TimeSpan.FromSeconds(15) || Native.GetForegroundWindow().ToInt64() != iconSelection.Window && Native.ProcessId(Native.GetForegroundWindow()) != Environment.ProcessId)) selectionIcon.Clear(); var foreground = Native.GetForegroundWindow(); if (session.ShouldDismissForForeground(foreground.ToInt64(), Native.ProcessId(foreground) == Environment.ProcessId)) popup.Dismiss(); }; foregroundTimer.Start();
         var localSupport = LocalInstallation.Evaluate(LocalHardware.Detect());
         if (config.TranslationMode == "local" && !LocalInstallation.HasAnyModel() && !NmtTranslationProvider.Available)
         {
@@ -111,6 +125,7 @@ public sealed class YiKeApplication : Application
         else if (!store.Found) tray.ShowBalloonTip(6000, "译刻已准备好", "已按电脑配置选择本地模型。选中文字即可使用，无需配置；首次加载模型需要稍候。", Forms.ToolTipIcon.Info);
         else if (store.Notice is not null) tray.ShowBalloonTip(6000, "译刻", store.Notice, Forms.ToolTipIcon.Warning);
         // Models load on the first actual sentence request, never on startup.
+        OpenSettings();
         _ = PrepareReader();
     }
     async Task PrepareReader()
@@ -128,14 +143,14 @@ public sealed class YiKeApplication : Application
     }
     void OnMouseDown(int processId)
     {
-        if (processId == Environment.ProcessId || session.Pinned) return;
+        if (manual is not null || processId == Environment.ProcessId || session.Pinned) return;
         selectionIcon?.Clear(); selectionOptions = null;
         pdfCopy?.Clear();
         selecting?.Cancel(); session.Close(); popup!.HideForSelection();
     }
     async void OnUnselected(int processId, bool doubleClickGrace)
     {
-        if (processId == Environment.ProcessId || session.Pinned) return;
+        if (manual is not null || processId == Environment.ProcessId || session.Pinned) return;
         long epoch = session.SelectionEpoch;
         if (doubleClickGrace) await Task.Delay((int)Math.Min(1000, Native.GetDoubleClickTime()));
         if (session.SelectionEpoch == epoch && session.DisplayedTranslation == 0 && !session.Pinned) coordinator!.Invalidate();
@@ -147,7 +162,7 @@ public sealed class YiKeApplication : Application
     }
     async void OnGesture(Gesture g)
     {
-        if (!session.CanReceiveSelection || g.ProcessId == Environment.ProcessId) return;
+        if (!AcceptSelection || g.ProcessId == Environment.ProcessId) return;
         string sourceName;
         try
         {
@@ -190,14 +205,23 @@ public sealed class YiKeApplication : Application
         session.ShowTranslation(0);
         var activeOptions = selectionOptions ?? config;
         session.SetCurrent(snapshot); popup!.Begin(snapshot.Text, activeOptions, snapshot.X, snapshot.Y, snapshot.Window, snapshot.OriginalText);
+        Submit(snapshot.Text, activeOptions, force, session.ShowTranslation, popup.Error);
+    }
+    void Submit(string text, AppSettings options, bool force, Action<long> started, Action<string> failed, string sourceLanguage = "auto", string context = "")
+    {
         try
         {
-            if (!TextLimit.Allowed(snapshot.Text)) throw new ArgumentException("请粘贴 1–2,000 个 Unicode 码点；不会截断原文。");
-            config.Validate(true); string? key = config.TranslationMode == "local" ? "" : credentials.Read(config);
-            if (config.TranslationMode == "online" && string.IsNullOrWhiteSpace(key)) { coordinator!.Invalidate(); popup.Error("尚未配置此服务的密钥，请打开设置；原文未发送。"); return; }
-            session.ShowTranslation(coordinator!.Submit(snapshot.Text, activeOptions, key ?? "", force));
+            options.Validate(true);
+            var key = options.TranslationMode == "local" ? "" : credentials.Read(options);
+            if (options.TranslationMode == "online" && string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException("请在设置中填写当前服务的密钥。");
+            started(coordinator!.Submit(text, options, key ?? "", force, sourceLanguage, context));
         }
-        catch (Exception ex) when (ex is ArgumentException or CryptographicException or IOException or UnauthorizedAccessException) { coordinator!.Invalidate(); popup.Error(ex is CryptographicException ? "本机密钥无法解密，请更换密钥或导入迁移包。" : ex.Message); }
+        catch (Exception ex) when (ex is ArgumentException or CryptographicException or IOException or UnauthorizedAccessException)
+        {
+            coordinator!.Invalidate();
+            failed(ex is CryptographicException ? "本机密钥无法解密，请在设置中重新填写密钥。" : ex is ArgumentException ? ex.Message : "无法读取服务配置，请检查配置目录的访问权限。");
+        }
     }
     bool IsExcluded(int processId)
     {
@@ -206,7 +230,7 @@ public sealed class YiKeApplication : Application
     }
     void OnPdfCopied(Gesture gesture, SelectionReadResult result)
     {
-        if (!session.CanReceiveSelection || !config.TranslateCopiedPdf || IsExcluded(gesture.ProcessId)) return;
+        if (!AcceptSelection || !config.TranslateCopiedPdf || IsExcluded(gesture.ProcessId)) return;
         selecting?.Cancel(); session.BeginSelection();
         diagnostic = "来源：WPS PDF · 已读取本次新复制的文字 · " + DateTime.Now.ToString("HH:mm:ss");
         if (result.Status == ReadStatus.Success && TextLimit.Allowed(result.Text ?? "")) PresentSelection(new(gesture.Sequence, gesture.Window, gesture.ProcessId, (config.CleanPdfText ? PdfText.Clean(result.Text!) : result.Text!), gesture.X, gesture.Y, DateTimeOffset.UtcNow, result.Text));
@@ -218,7 +242,7 @@ public sealed class YiKeApplication : Application
     }
     async void OnTerminal(Gesture gesture)
     {
-        if (!session.CanReceiveSelection) return;
+        if (!AcceptSelection) return;
         try { using var source = Process.GetProcessById(gesture.ProcessId); if (config.ExcludedProcesses.Contains(source.ProcessName, StringComparer.OrdinalIgnoreCase)) return; }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return; }
         selecting?.Cancel(); selecting?.Dispose(); selecting = new(); var ct = selecting.Token;
@@ -239,7 +263,7 @@ public sealed class YiKeApplication : Application
         catch (OperationCanceledException) { }
         catch (Exception ex) { diagnostic = "终端取词失败：" + ex.GetType().Name; }
     }
-    void Cancel() { selectionIcon?.Clear(); selectionOptions = null; popup?.StopSpeech(); pdfCopy?.Clear(); session.Close(); selecting?.Cancel(); coordinator?.Invalidate(); }
+    void Cancel() { selectionIcon?.Clear(); selectionOptions = null; popup?.StopSpeech(); pdfCopy?.Clear(); session.Close(); selecting?.Cancel(); if (manual is null) coordinator?.Invalidate(); }
     void Toggle()
     {
         bool enabled = !session.Enabled;
@@ -255,22 +279,45 @@ public sealed class YiKeApplication : Application
     {
         // Write a new immutable credential binding before committing the pointer in settings.
         // If the config write fails, the previous credential and configuration remain valid.
-        config = ConfigurationService.Commit(config, value, key, store, credentials); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+        config = ConfigurationService.Commit(config, value, key, store, credentials); manual?.Close(); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+    }
+    string StudyFile => Path.Combine(string.IsNullOrEmpty(config.StudyDirectory) ? store.UserDirectory : config.StudyDirectory, "YiKe-vocabulary.json");
+    void RememberTip(int flag)
+    {
+        try { config = store.Save(config with { StudyTipsSeen = config.StudyTipsSeen | flag }); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { diagnostic = "无法保存教程进度：" + ex.Message; }
     }
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
-        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); settings.Closed += (_, _) => settings = null; settings.Show();
+        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); foreach (var pack in packs) settings.ShowPackInstaller(pack); settings.ManualRequested += Paste;
+        settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder }), packs,config) { Owner = settings }.ShowDialog();
+        settings.TipShown += RememberTip;
+        settings.GuideDismissed += () =>
+        {
+            try { config = store.Save(config with { GuideSeen = true }); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { MessageBox.Show(settings, "本次已关闭教程。设置无法保存，下次启动时将再次显示。", "译刻"); }
+        };
+        settings.Closed += (_, _) => settings = null; settings.Show();
     }
     void Paste()
     {
+        if (manual is not null) { manual.Activate(); return; }
         popup!.Dismiss();
-        var w = new Window { Title = "译刻 · 粘贴文本翻译", Width = 550, Height = 380, WindowStartupLocation = WindowStartupLocation.CenterScreen };
-        Ui.WindowTheme(w);
-        Ui.ConstrainToWorkArea(w);
-        var panel = new DockPanel { Margin = new Thickness(24) }; var title = Ui.Text("粘贴你想翻译的文字", 20, bold: true); title.Margin = new Thickness(0, 0, 0, 16); DockPanel.SetDock(title, Dock.Top); panel.Children.Add(title);
-        var text = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        var button = Ui.Button("翻译", () => { string value = text.Text; if (!TextLimit.Allowed(value)) { MessageBox.Show(w, "请输入 1–2,000 个 Unicode 码点。"); return; } var p = w.PointToScreen(new Point(30, 30)); w.Close(); Translate(new(0, 0, Environment.ProcessId, value, (int)p.X, (int)p.Y, DateTimeOffset.UtcNow)); }, true); button.Margin = new Thickness(0, 16, 0, 0); DockPanel.SetDock(button, Dock.Bottom); panel.Children.Add(button); panel.Children.Add(text); w.Content = panel; w.Show();
+        var window = new ManualWindow(config,japanese,packs) { IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) };
+        window.LanguageFavoriteRequested += (code,word) => StudyBook.Add(StudyBook.LanguageFile(StudyFile,code),word);
+        window.FavoriteRequested += word => StudyBook.Add(StudyFile, word);
+        manual = window;
+        window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options); Submit(text, options, false, _ => { }, window.Error, window.From); };
+        window.ContextRequested += (term,context) =>
+        {
+            var options = config with { TargetLanguage = window.To, ExplainProgrammingTerms = false };
+            window.Begin(options,term); Submit(term,options,false,_ => { },window.Error,window.From,context);
+        };
+        window.CancelRequested += () => coordinator!.Invalidate();
+        window.Closed += (_, _) => { coordinator!.Invalidate(); manual = null; };
+        window.Show();
     }
     void Cleanup(object sender, ExitEventArgs e) { Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SystemPreferenceChanged; Cancel(); pdfCopy?.Dispose(); foregroundTimer?.Stop(); terminalHotkey?.Dispose(); monitor?.Dispose(); coordinator?.Dispose(); reader.Dispose(); provider.Dispose(); selectionIcon?.Close(); popup?.DisposeSpeech(); selecting?.Dispose(); if (tray is not null) { tray.Visible = false; tray.Dispose(); } }
 }

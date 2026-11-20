@@ -252,4 +252,18 @@
 </Setter.Value>
 </Setter>
  </Style>
+ <Style x:Key="GlyphAction" TargetType="Button">
+  <Setter Property="Width" Value="28"/><Setter Property="Height" Value="28"/>
+  <Setter Property="Cursor" Value="Hand"/><Setter Property="Background" Value="Transparent"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+   <Border x:Name="plate" CornerRadius="5" Background="{TemplateBinding Background}">
+    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+   </Border>
+   <ControlTemplate.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="plate" Property="Background" Value="{DynamicResource AccentSoft}"/></Trigger>
+    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="plate" Property="BorderBrush" Value="{DynamicResource Accent}"/><Setter TargetName="plate" Property="BorderThickness" Value="1"/></Trigger>
+    <Trigger Property="IsEnabled" Value="False"><Setter TargetName="plate" Property="Opacity" Value=".4"/></Trigger>
+   </ControlTemplate.Triggers>
+  </ControlTemplate></Setter.Value></Setter>
+ </Style>
 </ResourceDictionary>

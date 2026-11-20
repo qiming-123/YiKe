@@ -1,0 +1,59 @@
+{
+  "Language": "fr",
+  "Entries": [
+    {
+      "Headword": "lire",
+      "Reading": "liʁ",
+      "Meaning": "读",
+      "Example": "Je lis un livre.\n我在读一本书。",
+      "Forms": [
+        "lis",
+        "lue",
+        "lu"
+      ]
+    },
+    {
+      "Headword": "écrire",
+      "Reading": "ekʁiʁ",
+      "Meaning": "写",
+      "Example": "Elle écrit une lettre.\n她在写一封信。",
+      "Forms": [
+        "écrit",
+        "écris"
+      ]
+    },
+    {
+      "Headword": "aller",
+      "Reading": "ale",
+      "Meaning": "去",
+      "Example": "Nous allons à Paris.\n我们去巴黎。",
+      "Forms": [
+        "vais",
+        "allons"
+      ]
+    },
+    {
+      "Headword": "eau",
+      "Reading": "o",
+      "Meaning": "水（阴性名词）",
+      "Example": "Je bois de l’eau.\n我喝水。",
+      "Forms": []
+    },
+    {
+      "Headword": "livre",
+      "Reading": "livʁ",
+      "Meaning": "书（阳性名词）",
+      "Example": "Ce livre est court.\n这本书很短。",
+      "Forms": [
+        "livres"
+      ]
+    },
+    {
+      "Headword": "merci",
+      "Reading": "mɛʁsi",
+      "Meaning": "谢谢",
+      "Example": "Merci pour votre aide.\n谢谢您的帮助。",
+      "Forms": []
+    }
+  ]
+}
