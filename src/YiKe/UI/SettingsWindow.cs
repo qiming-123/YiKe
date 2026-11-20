@@ -39,7 +39,7 @@ public sealed class SettingsWindow : Window
     readonly CheckBox stream = new() { Content = "逐步显示译文" }, startup = new() { Content = "登录 Windows 时启动译刻" };
     readonly CheckBox copiedPdf = new() { Content = "WPS PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
     readonly CheckBox programming = new() { Content = "技术释义：计算机术语、命令与示例" };
-    readonly CheckBox supplement = new() { Content = "让当前模型补充所有选区的计算机用法" };
+    readonly CheckBox supplement = new() { Content = "用模型补充计算机用法与示例" };
     readonly CheckBox learnJapanese = new() { Content = "多语研习（使用已安装的词典）" };
     readonly CheckBox learnEnglish = new() { Content = "英语研习：单词多释义和点击朗读" }, iconMode = new() { Content = "划词后显示图标，点击才翻译（关闭则自动翻译）" }, cleanPdf = new() { Content = "智能整理 PDF 正文断行" };
     readonly ComboBox localEngine = new();
@@ -69,18 +69,21 @@ public sealed class SettingsWindow : Window
     bool replaceKey, hasKey, loading, closed, testing, adapting;
     string? credentialNotice;
 
-    readonly StackPanel otherOptions = new();
+    readonly UniformGrid otherOptions = new() { Columns = 2 };
     readonly Dictionary<string,CheckBox> languageChoices = new();
     internal void ShowPackInstaller(StudyDictionaryPack pack)
     {
         var message = Ui.Text("", 12, "Muted"); message.TextWrapping = TextWrapping.Wrap;
-        var choice = new CheckBox { Content = pack.Name, IsChecked = !get().DisabledStudyLanguages.Contains(pack.Code), VerticalAlignment = VerticalAlignment.Center };
+        var choice = new CheckBox { Content = pack.Name, Margin = new Thickness(0), MinHeight = 24, FontSize = 12, IsChecked = !get().DisabledStudyLanguages.Contains(pack.Code), VerticalAlignment = VerticalAlignment.Center };
         System.Windows.Automation.AutomationProperties.SetName(choice,"开启"+pack.Name+"研习");
         languageChoices.Add(pack.Code,choice);
         choice.SetBinding(IsEnabledProperty,new System.Windows.Data.Binding("IsChecked") { Source = learnJapanese });
-        var row = new DockPanel { MinHeight = 40, Margin = new Thickness(2,2,8,2) };
-        var install = StudyBook.InstallButton(pack,message); DockPanel.SetDock(install,Dock.Right); row.Children.Add(install); row.Children.Add(choice);
-        otherOptions.Children.Add(row); otherOptions.Children.Add(message);
+        var row = new DockPanel { Margin = new Thickness(2,1,12,1) };
+        var install = StudyBook.InstallButton(pack,message,compact:true); DockPanel.SetDock(install,Dock.Right); row.Children.Add(install); row.Children.Add(choice);
+        var cell = new StackPanel(); cell.Children.Add(row); cell.Children.Add(message); otherOptions.Children.Add(cell);
+        var messageStyle = new Style(typeof(TextBlock));
+        var empty = new Trigger { Property = TextBlock.TextProperty, Value = "" }; empty.Setters.Add(new Setter(VisibilityProperty,Visibility.Collapsed));
+        messageStyle.Triggers.Add(empty); message.Style = messageStyle;
     }
     public event Action? ManualRequested, StudyRequested, GuideDismissed;
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
@@ -362,7 +365,7 @@ public sealed class SettingsWindow : Window
         localCard = CyberPrism.Card(localInfo); localCard.Margin = new Thickness(0, 0, 0, 20); pages.Children.Add(localCard);
         Field("目标语言", target, "默认简体中文，自动识别原文语言；可选择其他语言，或直接输入语言名称。"); pages.Children.Add(stream);
         pages.Children.Add(learnEnglish);
-        var list = new ScrollViewer { Content = otherOptions, MaxHeight = 148, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        var list = new ScrollViewer { Content = otherOptions, MaxHeight = 64, VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, PanningMode = PanningMode.VerticalOnly };
         System.Windows.Automation.AutomationProperties.SetName(list,"其他语言列表");
         var multiStudy = new StackPanel(); multiStudy.Children.Add(learnJapanese); multiStudy.Children.Add(list);
@@ -371,7 +374,7 @@ public sealed class SettingsWindow : Window
         System.Windows.Automation.AutomationProperties.SetName(programming, "计算机用法解释");
         supplement.Margin = new Thickness(0, 8, 0, 5); pages.Children.Add(supplement);
         System.Windows.Automation.AutomationProperties.SetName(supplement, "模型补充解释");
-        pages.Children.Add(new Expander { Header = "补充说明与在线用量", Content = Ui.Text("普通词也显示说明、示例和效果；没有明确专业含义时如实注明。智能补充在译文完成后使用标准本地模型或在线服务单独解释，每次最多增加一次说明请求；在线服务可能计费。轻量或无模型时使用离线说明。", 11, "Muted") });
+        pages.Children.Add(new Expander { Header = "补充说明与在线用量", Content = Ui.Text("开启后，标准本地模型或兼容的在线 AI 可为选中文字补充计算机场景和示例，例如 port 在网络中的“端口”。普通词也可能触发说明。在线服务每次翻译最多增加一次说明请求，可能计费。关闭后仍可查看本地术语说明。", 11, "Muted") });
         onlineFields.Margin = new Thickness(0, 16, 0, 0); pages.Children.Add(onlineFields);
         Field("在线 API 配置", profileChoice, "可同时保存多组 API；切换保留本窗口内的编辑，点击“保存设置”后统一生效。", onlineFields);
         var profileActions = new WrapPanel { Margin = new Thickness(0, 0, 0, 14) };

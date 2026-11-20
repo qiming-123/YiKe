@@ -120,9 +120,15 @@ internal sealed class StudyBook : Window
         words.SelectionChanged += (_,_) => definition.Text = words.SelectedItem is string word ? word + "\n\n先回想词义，再点「显示释义」。" : "";
         Content = root; Run(Reload);
     }
-    internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status)
+    internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status,bool compact = false)
     {
-        var starter = new Button { Content = pack.InstallLabel };
+        string Label() => compact ? (pack.Count > 0 ? "已安装" : "安装") : pack.InstallLabel;
+        var starter = new Button { Content = Label() };
+        if (compact)
+        {
+            starter.SetResourceReference(StyleProperty,"GlyphAction"); starter.Width = 46; starter.Height = 24; starter.FontSize = 12; starter.SetResourceReference(Control.ForegroundProperty,"Accent");
+            starter.ToolTip = pack.Name+"词典"; System.Windows.Automation.AutomationProperties.SetName(starter,"安装"+pack.Name+"词典");
+        }
         starter.IsEnabled = pack.Count == 0;
         starter.Click += async (_,_) =>
         {
@@ -134,13 +140,13 @@ internal sealed class StudyBook : Window
                 string location = (await File.ReadAllTextAsync(catalog)).Trim();
                 if (Path.IsPathFullyQualified(location)) await System.Threading.Tasks.Task.Run(() => pack.InstallDictionary(location));
                 else await pack.Download(location);
-                starter.Content = pack.InstallLabel; status.Text = "已安装，可以离线查词。";
+                starter.Content = Label(); status.Text = "已安装，可以离线查词。";
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException or OperationCanceledException)
             { status.Text = "安装失败：" + ex.Message; }
             finally { starter.IsEnabled = pack.Count == 0; }
         };
-        starter.IsVisibleChanged += (_,_) => { if (pack.Count > 0) { starter.Content = pack.InstallLabel; starter.IsEnabled = false; } };
+        starter.IsVisibleChanged += (_,_) => { if (pack.Count > 0) { starter.Content = Label(); starter.IsEnabled = false; } };
         return starter;
     }
     void Reload()
