@@ -33,7 +33,6 @@ try {
   & node --test tests/glossary-examples.test.cjs | Tee-Object artifacts/example-code-tests.txt
   if($LASTEXITCODE){throw 'Bundled example semantics tests failed'}
   Copy-Item artifacts/example-code-tests.txt docs/EXAMPLE_CODE_TESTS.txt -Force
-  & "$PSScriptRoot/generate-brand.ps1"
   & "$PSScriptRoot/generate-installer-models.ps1"
   & $Dotnet restore tests/YiKe.Tests/YiKe.Tests.csproj --locked-mode -v minimal
   if($LASTEXITCODE){throw 'Restore failed'}
