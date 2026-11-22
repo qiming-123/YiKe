@@ -24,7 +24,7 @@ function Run-Setup($ver,$name,[string[]]$Options=@()) {
 }
 function Assert($condition,$message){if(!$condition){throw $message}}
 function Verify-Data{& $fixture --install-data verify; if($LASTEXITCODE){throw 'Fixture verification failed'}}
-function Uninstall($name){$p=Start-Process -FilePath (Join-Path $stage 'unins000.exe') -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+(Join-Path $logs ($name+'.log'))+'"') -WindowStyle Hidden -PassThru -Wait;if($p.ExitCode){throw "Uninstall failed: $($p.ExitCode)"}}
+function Uninstall($name,[string[]]$Options=@()){$arguments=@('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',('/LOG="'+(Join-Path $logs ($name+'.log'))+'"'))+$Options;$p=Start-Process -FilePath (Join-Path $stage 'unins000.exe') -ArgumentList $arguments -WindowStyle Hidden -PassThru -Wait;if($p.ExitCode){throw "Uninstall failed: $($p.ExitCode)"}}
 Run-Setup $PreviousVersion 'install-old'
 Assert ((Get-ItemPropertyValue $uninstallKey -Name DisplayVersion) -eq $PreviousVersion) 'Wrong old version registration'
 Assert (Test-Path -LiteralPath $startMenuLink) 'Start Menu entry missing'
@@ -88,8 +88,24 @@ Assert (!(Test-Path -LiteralPath $desktopLink)) 'Desktop shortcut remains after 
 Verify-Data
 Run-Setup $Version 'reinstall'
 Verify-Data
-Uninstall 'final-uninstall'
-& $fixture --install-data cleanup; if($LASTEXITCODE){throw 'Synthetic fixture cleanup failed'}
-$result=[ordered]@{version=$Version;previousVersion=$PreviousVersion;previousSetupSha256=(Get-FileHash $PreviousSetup).Hash;appSha256=(Get-FileHash (Join-Path $root "artifacts/publish-$Version/YiKe.exe")).Hash;coldStartInputIdleMs=$finalWatch.ElapsedMilliseconds;inputIdle=$finalIdle;workingSetBytes=$finalMemory;fixtureStartMs=$watch.ElapsedMilliseconds;install=$true;runningUpgrade=$true;sameVersion=$true;downgradeRejected=$true;defaultUninstallKeepsData=$true;reinstallRestoresData=$true;startupPreferencePreserved=$true;explicitTasks=$true;desktopShortcut=$true;lockedFileFailure=$true;recoveredAfterFailure=$true;runningUninstall=$true;installedExeSameAsPublish=$true;finalAppStartsWithNonexistentDotnetRoot=$true;interactiveDataDeletion='not-tested';testPath='Chinese and space path';testedUtc=[DateTime]::UtcNow.ToString('o')}
+$customData=Join-Path $logs 'custom data';$customFavorite=Join-Path $customData 'YiKe-vocabulary.json';$customOther=Join-Path $customData 'keep.txt'
+& $fixture --install-data move-custom $customData;if($LASTEXITCODE){throw 'Could not move synthetic data to a custom directory'}
+Verify-Data
+Uninstall 'custom-default-uninstall'
+Verify-Data
+Assert ((Test-Path -LiteralPath $customFavorite) -and (Test-Path -LiteralPath $customOther)) 'Default uninstall removed custom favorite or other file'
+Run-Setup $Version 'reinstall-custom'
+Verify-Data
+Uninstall 'final-uninstall' @('/DELETEDATA=1')
+Assert (!(Test-Path -LiteralPath (Join-Path $customData 'settings.json'))) 'Custom settings survived explicit data deletion'
+Assert (@(Get-ChildItem -LiteralPath (Join-Path $customData 'credentials') -Filter '*.bin' -ErrorAction SilentlyContinue).Count -eq 0) 'Custom credentials survived explicit data deletion'
+Assert (!(Test-Path -LiteralPath (Join-Path $userDir 'settings.json'))) 'Previous settings survived explicit data deletion'
+Assert (@(Get-ChildItem -LiteralPath (Join-Path $userDir 'credentials') -Filter '*.bin' -ErrorAction SilentlyContinue).Count -eq 0) 'Previous credentials survived explicit data deletion'
+Assert ((Get-Content -LiteralPath $customFavorite -Raw) -match 'bank') 'Favorite was not preserved'
+Assert ((Get-Content -LiteralPath $customOther -Raw).Trim() -eq 'YiKe installer QA fixture') 'Unrelated file changed during uninstall'
+Remove-Item -LiteralPath $customFavorite,$customOther
+Remove-Item -LiteralPath (Join-Path $userDir 'data-location.txt')
+foreach($directory in @((Join-Path $customData 'credentials'),$customData,(Join-Path $userDir 'credentials'),$userDir)){if((Test-Path -LiteralPath $directory) -and @(Get-ChildItem -LiteralPath $directory -Force).Count -eq 0){Remove-Item -LiteralPath $directory}}
+$result=[ordered]@{version=$Version;previousVersion=$PreviousVersion;previousSetupSha256=(Get-FileHash $PreviousSetup).Hash;appSha256=(Get-FileHash (Join-Path $root "artifacts/publish-$Version/YiKe.exe")).Hash;coldStartInputIdleMs=$finalWatch.ElapsedMilliseconds;inputIdle=$finalIdle;workingSetBytes=$finalMemory;fixtureStartMs=$watch.ElapsedMilliseconds;install=$true;runningUpgrade=$true;sameVersion=$true;downgradeRejected=$true;defaultUninstallKeepsData=$true;reinstallRestoresData=$true;customDataDirectoryPreserved=$true;customDataReinstallRestored=$true;explicitDataDeletionCoversCustomAndPrevious=$true;customFavoriteAndOtherFilesPreserved=$true;startupPreferencePreserved=$true;explicitTasks=$true;desktopShortcut=$true;lockedFileFailure=$true;recoveredAfterFailure=$true;runningUninstall=$true;installedExeSameAsPublish=$true;finalAppStartsWithNonexistentDotnetRoot=$true;interactiveDataDeletion='not-tested';silentDataDeletionSwitch='/DELETEDATA=1';testPath='Chinese and space path';testedUtc=[DateTime]::UtcNow.ToString('o')}
 $result | ConvertTo-Json | Set-Content (Join-Path $logs 'RESULTS.json') -Encoding utf8
-Write-Host 'PASS installation, running upgrade, repeat install, downgrade rejection, uninstall, reinstall, startup and data preservation.'
+Write-Host 'PASS installation, upgrade, custom-directory uninstall/reinstall, explicit scoped deletion and data preservation.'

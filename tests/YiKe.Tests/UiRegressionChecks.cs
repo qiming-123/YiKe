@@ -66,6 +66,22 @@ public static class UiRegressionChecks
                         var close = FindButton(fixture.Window,"关闭");
                         Assert(close.TranslatePoint(new Point(),fixture.Window).X > fixture.Window.ActualWidth * .8);
                     });
+                    await Check("Manual selected-word requests show online scope and isolate each bank sentence", async () =>
+                    {
+                        var window = new ManualWindow(new AppSettings { TranslationMode = "online", LearnEnglish = false }); window.Show(); await Idle();
+                        var input = Find<TextBox>(window,"原文"); input.Text = "I called my bank. They sat on the bank of the river.";
+                        string term = "", context = ""; window.ContextRequested += (selected,sentence) => { term = selected; context = sentence; };
+                        input.Select(12,4); await Idle();
+                        var scope = Find<TextBlock>(window,"在线发送范围");
+                        Assert(scope.IsVisible && scope.Text == "在线发送：选词 + 所在句");
+                        var action = FindButton(window,"按原句译选词"); Assert(action.ToolTip.ToString()!.Contains("I called my bank.") && !action.ToolTip.ToString()!.Contains("river"));
+                        action.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(term == "bank" && context == "I called my bank.");
+                        int river = input.Text.LastIndexOf("bank",StringComparison.Ordinal); input.Select(river,4); await Idle();
+                        Assert(action.ToolTip.ToString()!.Contains("They sat on the bank of the river.") && !action.ToolTip.ToString()!.Contains("I called"));
+                        action.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(term == "bank" && context == "They sat on the bank of the river."); window.Close();
+                    });
                     await Check("Alternative dictionary meanings keep the contextual result and reset on next request", async () =>
                     {
                         var settings = new AppSettings { LearnEnglish = false };

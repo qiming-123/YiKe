@@ -106,7 +106,7 @@ Filename: "{app}\YiKe.exe"; Description: "启动译刻"; Flags: nowait postinsta
 var DeleteUserData, StartupWasEnabled, IsUpgrade, TasksInitialized: Boolean;
     ModelPage: TInputOptionWizardPage;
     DownloadPage: TDownloadWizardPage;
-    ModelArgument, ModelInfoPath, CheckedDir: String;
+    ModelArgument, ModelInfoPath, CheckedDir, DefaultDataDirectory, UserDataDirectory: String;
     LightChecked, StandardChecked, LightValid, StandardValid, DownloadsReady: Boolean;
 
 function ChosenModelPreference(Param: String): String;
@@ -325,22 +325,47 @@ begin
 #endif
   end;
 end;
-function InitializeUninstall(): Boolean;
-var Form: TSetupForm; Description: TNewStaticText; Check: TNewCheckBox; OkButton, CancelButton: TNewButton;
+function ReadDataPath(const FileName, Fallback: String): String;
+var Lines: TArrayOfString; Value: String;
 begin
-  DeleteUserData := False;
+  Result := Fallback;
+  if not FileExists(FileName) then exit;
+  if not LoadStringsFromFile(FileName, Lines) then exit;
+  if Length(Lines) = 0 then exit;
+  Value := Trim(Lines[0]);
+  if Value <> '' then Result := Value;
+end;
+procedure ResolveUninstallDataDirectories;
+begin
+  DefaultDataDirectory := ReadDataPath(ExpandConstant('{app}\yike-data-root.txt'), ExpandConstant('{localappdata}\YiKe'));
+  UserDataDirectory := ReadDataPath(AddBackslash(DefaultDataDirectory) + 'data-location.txt', DefaultDataDirectory);
+end;
+procedure DeleteDataFiles(const Directory: String);
+begin
+  DeleteFile(AddBackslash(Directory) + 'settings.json');
+  DelTree(AddBackslash(Directory) + 'credentials\*.bin', False, True, False);
+  RemoveDir(AddBackslash(Directory) + 'credentials');
+  RemoveDir(Directory);
+end;
+function InitializeUninstall(): Boolean;
+var Form: TSetupForm; Description: TNewStaticText; Check: TNewCheckBox; OkButton, CancelButton: TNewButton; Scope: String;
+begin
+  DeleteUserData := False; ResolveUninstallDataDirectories;
 #ifdef InstallerSmoke
   Result := True; exit;
 #endif
-  if UninstallSilent then begin Result := StopInstalledApp; exit; end;
-  Form := CreateCustomForm(ScaleX(430), ScaleY(180), False, True);
+  if UninstallSilent then begin DeleteUserData := ExpandConstant('{param:DELETEDATA|0}') = '1'; Result := StopInstalledApp; exit; end;
+  Form := CreateCustomForm(ScaleX(560), ScaleY(310), False, True);
   try
-    Form.Caption := '卸载译刻'; Form.ClientWidth := ScaleX(430); Form.ClientHeight := ScaleY(180);
-    Description := TNewStaticText.Create(Form); Description.Parent := Form; Description.Left := ScaleX(24); Description.Top := ScaleY(22); Description.Width := ScaleX(380); Description.Height := ScaleY(45); Description.AutoSize := False; Description.WordWrap := True;
-    Description.Caption := '将删除应用和快捷方式。默认保留设置与密钥，重新安装后可以继续使用。';
-    Check := TNewCheckBox.Create(Form); Check.Parent := Form; Check.Left := ScaleX(24); Check.Top := ScaleY(80); Check.Width := ScaleX(380); Check.Caption := '同时删除设置和已保存的 API 密钥'; Check.Checked := False;
-    OkButton := TNewButton.Create(Form); OkButton.Parent := Form; OkButton.Caption := '继续卸载'; OkButton.ModalResult := mrOk; OkButton.Default := True; OkButton.SetBounds(ScaleX(224),ScaleY(130),ScaleX(90),ScaleY(28));
-    CancelButton := TNewButton.Create(Form); CancelButton.Parent := Form; CancelButton.Caption := '取消'; CancelButton.ModalResult := mrCancel; CancelButton.Cancel := True; CancelButton.SetBounds(ScaleX(324),ScaleY(130),ScaleX(80),ScaleY(28));
+    Form.Caption := '卸载译刻'; Form.ClientWidth := ScaleX(560); Form.ClientHeight := ScaleY(310);
+    Description := TNewStaticText.Create(Form); Description.Parent := Form; Description.Left := ScaleX(24); Description.Top := ScaleY(18); Description.Width := ScaleX(510); Description.Height := ScaleY(200); Description.AutoSize := False; Description.WordWrap := True;
+    Scope := '设置：' + AddBackslash(UserDataDirectory) + 'settings.json' + #13#10 + '密钥：' + AddBackslash(UserDataDirectory) + 'credentials\*.bin';
+    if CompareText(DefaultDataDirectory, UserDataDirectory) <> 0 then
+      Scope := Scope + #13#10 + '旧位置设置：' + AddBackslash(DefaultDataDirectory) + 'settings.json' + #13#10 + '旧位置密钥：' + AddBackslash(DefaultDataDirectory) + 'credentials\*.bin';
+    Description.Caption := '将删除应用和快捷方式。默认保留设置与密钥，重新安装后可以继续使用。' + #13#10#13#10 + '勾选下方选项时仅删除：' + #13#10 + Scope + #13#10#13#10 + '收藏本、词包、数据位置记录和同目录其他文件保留。';
+    Check := TNewCheckBox.Create(Form); Check.Parent := Form; Check.Left := ScaleX(24); Check.Top := ScaleY(230); Check.Width := ScaleX(510); Check.Caption := '同时删除上述设置和已保存的 API 密钥'; Check.Checked := False;
+    OkButton := TNewButton.Create(Form); OkButton.Parent := Form; OkButton.Caption := '继续卸载'; OkButton.ModalResult := mrOk; OkButton.Default := True; OkButton.SetBounds(ScaleX(350),ScaleY(268),ScaleX(90),ScaleY(28));
+    CancelButton := TNewButton.Create(Form); CancelButton.Parent := Form; CancelButton.Caption := '取消'; CancelButton.ModalResult := mrCancel; CancelButton.Cancel := True; CancelButton.SetBounds(ScaleX(450),ScaleY(268),ScaleX(80),ScaleY(28));
     Result := Form.ShowModal = mrOk; DeleteUserData := Result and Check.Checked;
   finally Form.Free; end;
   if Result and not StopInstalledApp then begin
@@ -354,10 +379,8 @@ begin
 #ifndef InstallerSmoke
     RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'YiKe');
     if DeleteUserData then begin
-      DeleteFile(ExpandConstant('{localappdata}\YiKe\settings.json'));
-      DelTree(ExpandConstant('{localappdata}\YiKe\credentials\*.bin'), False, True, False);
-      RemoveDir(ExpandConstant('{localappdata}\YiKe\credentials'));
-      RemoveDir(ExpandConstant('{localappdata}\YiKe'));
+      DeleteDataFiles(UserDataDirectory);
+      if CompareText(DefaultDataDirectory, UserDataDirectory) <> 0 then DeleteDataFiles(DefaultDataDirectory);
     end;
 #endif
   end;
