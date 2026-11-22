@@ -56,7 +56,7 @@ git log origin/main..main --oneline   # 期望：无输出（本地没有未推�
 - **.NET SDK 10.0.402**（`global.json` / `build-tools.json` 固定；脚本装到 `.tools/`，不改系统 PATH）
 - **Node.js 20+**：仅 VS Code 适配与词库示例测试需要
 - **Inno Setup 7.1.0**：打包需要，脚本装到 `.tools/inno/`
-- 主线目标系统：Windows 10 22H2+ / Windows 11 x64（安装器 `MinVersion=10.0.22631` 尚限定 11 23H2，放宽见改进清单）；Windows 7/8.1 需 .NET Framework 4.8 独立分支、macOS 需跨平台 UI 移植（WPF 为 Windows 专属），均为规划中的重大工程，见 docs/IMPROVEMENT-BACKLOG.md；不提供 ARM64
+- 主线目标系统：Windows 10 22H2+ / Windows 11 x64（安装器 `MinVersion=10.0.19045`，即 Win10 22H2 起）；Windows 7/8.1 需 .NET Framework 4.8 独立分支、macOS 需跨平台 UI 移植（WPF 为 Windows 专属），均为规划中的重大工程，见 docs/IMPROVEMENT-BACKLOG.md；不提供 ARM64
 - 验证策略：构建时只验证当前开发系统；其他目标系统一律用 Hyper-V 虚拟机做安装与验收
 
 ## 命令速查：最小验证 → 完整发布

@@ -26,7 +26,7 @@ DefaultGroupName=译刻
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-MinVersion=10.0.22631
+MinVersion=10.0.19045
 #ifdef InstallerSmoke
 OutputDir=..\artifacts
 OutputBaseFilename=YiKe-Installer-Smoke

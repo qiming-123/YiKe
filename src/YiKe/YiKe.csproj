@@ -10,6 +10,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest><ApplicationIcon>../../assets/yike.ico</ApplicationIcon>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- CET 兼容标记会让带 CET CPU 的 Windows 10 进程启用影子栈，而 Win10 缺少 CLR 所需的特殊用户态 APC 支持，启动即崩溃（dotnet/runtime#128540）；Windows 10 22H2 是主线目标系统，因此不标记 -->
+    <CETCompat>false</CETCompat>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="../../assets/study-sources.json" LogicalName="YiKe.study-sources" />
