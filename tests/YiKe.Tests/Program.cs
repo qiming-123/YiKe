@@ -60,7 +60,7 @@ if(args.Length==3&&args[0]=="--local-parent-light")return await LocalModelLiveCh
 if(args.Contains("--visual"))return VisualChecks.Run();
 if(args.Contains("--ui-regression"))return UiRegressionChecks.Run(args.ElementAtOrDefault(1));
 if(args.Length==2&&args[0]=="--pdf-copy-live")return PdfCopyLiveCheck.Run(args[1]);
-if(args.Length==2&&args[0]=="--install-data")return InstallDataFixture.Run(args[1]);
+if(args.Length is 2 or 3&&args[0]=="--install-data")return InstallDataFixture.Run(args[1],args.ElementAtOrDefault(2));
 if(args.Length==2&&args[0]=="--desktop-data")return DesktopDataFixture.Run(args[1]);
 if(args.Length==3 && args[0]=="--memory-180") return await Upgrade180Checks.Memory(args[1],args[2]);
 if(args.Length==2 && args[0]=="--nmt-180") return await Upgrade180Checks.Nmt(args[1]);
