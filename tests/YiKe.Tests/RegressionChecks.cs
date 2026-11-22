@@ -14,6 +14,17 @@ public static class RegressionChecks
     {
         var settings = new AppSettings { TranslationMode = "online", Model = "regression-model" };
         var request = new TranslationRequest(1, "sample", "auto", "简体中文", settings.ConfigId, settings.ServiceId, settings.Model);
+        await check("Selected-word context contains only its sentence", () =>
+        {
+            const string text = "I called my bank. They sat on the bank of the river.";
+            int financial = text.IndexOf("bank", StringComparison.Ordinal), river = text.LastIndexOf("bank", StringComparison.Ordinal);
+            Assert(SelectionSentence.Extract(text, financial, 4) == "I called my bank.");
+            Assert(SelectionSentence.Extract(text, river, 4) == "They sat on the bank of the river.");
+            Assert(SelectionSentence.Extract("第一句。第二句！第三句？", 4, 2) == "第二句！");
+            Assert(SelectionSentence.Extract("first line\nsecond line\r\nthird line", 11, 6) == "second line");
+            Assert(SelectionSentence.Extract("no punctuation here", 4, 11) == "no punctuation here");
+            return Task.CompletedTask;
+        });
         await check("Window minimum sizes shrink to a high-DPI work area instead of hiding footer controls", () =>
         {
             var normal = WindowSizing.Calculate(800, 760, 680, 570, 1920, 1040, 1, 1);

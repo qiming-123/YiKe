@@ -34,10 +34,19 @@ public sealed class ManualWindow : Window
         cancel.IsEnabled = false; actions.Children.Add(translate); actions.Children.Add(cancel);
         var direction = new WrapPanel { Margin = new Thickness(0,0,0,8) };
         bool restricted = settings.TranslationMode == "local" && settings.LocalEngine == "nmt";
-        var contextAction = Ui.Button("按原句译选词", () => ContextRequested?.Invoke(source.SelectedText,source.Text));
-        contextAction.ToolTip = "把原文作为语境，只翻译选中的词语"; contextAction.Visibility = Visibility.Collapsed;
-        actions.Children.Add(contextAction);
-        source.SelectionChanged += (_,_) => contextAction.Visibility = !restricted && source.SelectionLength > 0 && source.SelectionLength < source.Text.Length ? Visibility.Visible : Visibility.Collapsed;
+        var contextAction = Ui.Button("按原句译选词", () => ContextRequested?.Invoke(source.SelectedText,SelectionSentence.Extract(source.Text,source.SelectionStart,source.SelectionLength)));
+        var contextScope = Ui.Text("在线发送：选词 + 所在句",12,"Muted"); contextScope.Margin = new Thickness(10,0,0,0); contextScope.VerticalAlignment = VerticalAlignment.Center;
+        System.Windows.Automation.AutomationProperties.SetName(contextScope,"在线发送范围");
+        contextAction.Visibility = contextScope.Visibility = Visibility.Collapsed;
+        actions.Children.Add(contextAction); actions.Children.Add(contextScope);
+        void UpdateContextAction()
+        {
+            bool available = !restricted && source.SelectionLength > 0 && source.SelectionLength < source.Text.Length;
+            contextAction.Visibility = available ? Visibility.Visible : Visibility.Collapsed;
+            contextScope.Visibility = available && settings.TranslationMode == "online" ? Visibility.Visible : Visibility.Collapsed;
+            if (available) contextAction.ToolTip = "只翻译选中的词语，语境仅取其所在句。\n在线发送的原文范围：\n" + SelectionSentence.Extract(source.Text,source.SelectionStart,source.SelectionLength);
+        }
+        source.SelectionChanged += (_,_) => UpdateContextAction(); source.TextChanged += (_,_) => UpdateContextAction();
         contextAction.SetBinding(IsEnabledProperty,new System.Windows.Data.Binding("IsEnabled") { Source = translate });
         from.Items.Add("自动识别");
         foreach (var lang in TranslationLanguages.Presets)
