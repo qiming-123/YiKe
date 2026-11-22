@@ -120,7 +120,7 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 
 - **每次动手前先完成「云端对齐检查」（见文件顶部第一节），未对齐时停止并等用户确认**
 - **每次提交必须经用户确认：先列出待提交文件清单与改动摘要，用户明确同意后才能 `git commit`；用户未确认前不得提交任何文件、不得用 `git add -A` 之类的宽匹配**
-- 分支：从 `main` 切 `feature/<主题>` 或 `fix/<主题>`，PR 合回 `main`（仓库用 merge commit）
+- **禁止直接向 `main` 推送任何提交**：所有改动从 `main` 切 `feature/<主题>` 或 `fix/<主题>` 分支开发，push 到远端同名分支后开 PR 合回 `main`（仓库用 merge commit）；唯一例外是仓库所有者明确指示直接推 `main`
 - 提交信息用中文一句话概括"做了什么、为什么"；一个提交只做一件事
 - 禁止提交：密钥/证书私钥、`settings.json`/`credentials/`、模型与运行时（`local-runtime/`、`translation-runtime/`）、构建产物（`dist/`、`artifacts/`、`bin/`、`obj/`）
 - 发布版本相关的文档（`RELEASE_NOTES.md`、`docs/*RESULTS*`、视觉截图）由 `build-release.ps1` 自动刷新，**不要手工伪造**
