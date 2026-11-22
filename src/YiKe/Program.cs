@@ -295,7 +295,11 @@ public sealed class YiKeApplication : Application
     {
         // Write a new immutable credential binding before committing the pointer in settings.
         // If the config write fails, the previous credential and configuration remain valid.
-        config = ConfigurationService.Commit(config, value, key, store, credentials); manual?.Close(); session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+        config = ConfigurationService.Commit(config, value, key, store, credentials);
+        var draft = manual?.CaptureDraft();
+        manual?.Close();
+        session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+        if (draft is not null) ShowManualWindow(draft);
     }
     string StudyFile => Path.Combine(string.IsNullOrEmpty(config.StudyDirectory) ? store.UserDirectory : config.StudyDirectory, "YiKe-vocabulary.json");
     void RememberTip(int flag)
@@ -321,6 +325,10 @@ public sealed class YiKeApplication : Application
     {
         if (manual is not null) { manual.Activate(); return; }
         popup!.Dismiss();
+        ShowManualWindow();
+    }
+    void ShowManualWindow(ManualWindow.Draft? draft = null)
+    {
         var window = new ManualWindow(config,japanese,packs) { IsSaved = (code,word) => StudyBook.Contains(StudyFile,code,word) };
         window.LanguageFavoriteRequested += (code,word) => StudyBook.Add(StudyBook.LanguageFile(StudyFile,code),word);
         window.FavoriteRequested += word => StudyBook.Add(StudyFile, word);
@@ -333,6 +341,7 @@ public sealed class YiKeApplication : Application
         };
         window.CancelRequested += () => coordinator!.Invalidate();
         window.Closed += (_, _) => { coordinator!.Invalidate(); manual = null; };
+        if (draft is not null) { window.ShowActivated = false; window.RestoreDraft(draft); }
         window.Show();
     }
     void Cleanup(object sender, ExitEventArgs e) { Microsoft.Win32.SystemEvents.UserPreferenceChanged -= SystemPreferenceChanged; Cancel(); pdfCopy?.Dispose(); foregroundTimer?.Stop(); terminalHotkey?.Dispose(); monitor?.Dispose(); coordinator?.Dispose(); reader.Dispose(); provider.Dispose(); selectionIcon?.Close(); popup?.DisposeSpeech(); selecting?.Dispose(); if (tray is not null) { tray.Visible = false; tray.Dispose(); } }
