@@ -151,6 +151,37 @@ public static class UiRegressionChecks
                         Find<ComboBox>(window, "源语言").SelectedIndex = 3; Find<ComboBox>(window,"目标语言").SelectedIndex = 4;
                         Assert(window.From == TranslationLanguages.Presets[2] && window.To == TranslationLanguages.Presets[4]); window.Close();
                     });
+                    await Check("Manual draft survives reopening with a different translation service", async () =>
+                    {
+                        var config = new AppSettings { TranslationMode = "local", LocalEngine = "nmt", LearnEnglish = false };
+                        var previous = new ManualWindow(config); previous.Show(); await Idle();
+                        var source = Find<TextBox>(previous, "原文");
+                        string original = string.Join(Environment.NewLine, Enumerable.Repeat("A long draft with a selected word.", 80));
+                        source.Text = original;
+                        await Idle();
+                        int start = original.LastIndexOf("selected", StringComparison.Ordinal);
+                        source.Select(start, "selected".Length);
+                        source.ScrollToVerticalOffset(source.ExtentHeight / 2); await Idle();
+                        double offset = source.VerticalOffset;
+                        Assert(offset > 0);
+                        var draft = previous.CaptureDraft(); previous.Close();
+
+                        var online = config with { TranslationMode = "online" };
+                        var current = new ManualWindow(online) { ShowActivated = false };
+                        int requests = 0;
+                        current.Requested += _ => requests++;
+                        current.ContextRequested += (_, _) => requests++;
+                        try
+                        {
+                            current.RestoreDraft(draft); current.Show(); await Idle();
+                            var restored = Find<TextBox>(current, "原文");
+                            Assert(restored.Text == original && restored.SelectionStart == start && restored.SelectedText == "selected");
+                            Assert(Math.Abs(restored.VerticalOffset - offset) < 1, $"Expected scroll offset {offset}, got {restored.VerticalOffset} (extent {restored.ExtentHeight}).");
+                            Assert(Walk(current).OfType<TextBlock>().Any(block => block.Text.StartsWith(online.ServiceLabel + " → ", StringComparison.Ordinal)));
+                            Assert(requests == 0);
+                        }
+                        finally { current.Close(); }
+                    });
                     await Check("Manual window keeps source editable after failures and cancellation", async () =>
                     {
                         var config = new AppSettings { LocalEngine = "nmt" };

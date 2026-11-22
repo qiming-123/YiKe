@@ -83,6 +83,20 @@ public sealed class ManualWindow : Window
     }
     readonly AlternateMeanings alternatives = new();
     readonly YiKe.Data.StudyDictionaryPack[] dictionaries;
+    internal sealed record Draft(string Text, int SelectionStart, int SelectionLength, double VerticalOffset);
+    internal Draft CaptureDraft() => new(source.Text, source.SelectionStart, source.SelectionLength, source.VerticalOffset);
+    internal void RestoreDraft(Draft draft)
+    {
+        source.Text = draft.Text;
+        Loaded += RestoreSelection;
+        void RestoreSelection(object sender, RoutedEventArgs args)
+        {
+            Loaded -= RestoreSelection;
+            source.Select(draft.SelectionStart, draft.SelectionLength);
+            // WPF brings the restored selection into view during layout.
+            Dispatcher.InvokeAsync(() => source.ScrollToVerticalOffset(draft.VerticalOffset), System.Windows.Threading.DispatcherPriority.Background);
+        }
+    }
     string submittedTerm = "", submittedFrom = "", submittedTo = "", service = "";
     public void Begin(AppSettings settings,string? term = null)
     {
