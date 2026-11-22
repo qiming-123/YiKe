@@ -53,4 +53,5 @@
 | 安装时解释内置英译中 | 清楚说明跳过通用模型下载仍可离线英译中，说明其他语言方向的模型要求。 |
 | 提供轻量便携包 | 只带英汉词典与节能引擎，保留现有完整包。断网解压后完成首次英译中。 |
 | 统一开发版标识 | 让 README 试用说明与实际构建版本一致，便于复测和反馈。 |
+| 支持 macOS | WPF 为 Windows 专属框架，需整体移植到 Avalonia UI（保留 C#/.NET 业务层）或另起 macOS 实现；逐项盘点平台差异：选区读取（UI Automation → Accessibility API）、全局快捷键、系统托盘、TTS、设置/凭据存储（DPAPI → Keychain）、安装打包；离线引擎 llama.cpp 原生支持 macOS/Metal，可行性高。构建与验证需 macOS 实体机或云端 Mac（Hyper-V 无法虚拟化 macOS）。先出移植评估与分期方案再立项。 |
 | 拓展目标系统到 Win10 与 Win7/8.1 | Win10：`installer/YiKe.iss` 的 `MinVersion=10.0.22631` 降至 10.0，并盘点代码中的 Win11 专属 API（grep `SupportedOSPlatform`、Windows 11 新增 Win32 调用），Hyper-V Win10 虚拟机验收安装与划词。Win7/8.1：.NET 10 客户端最低要求 Win10 1607，运行时层面不可行，需 .NET Framework 4.8 独立分支——预计失去单文件发布、节能引擎（现代 Python/ctranslate2 无 Win7 轮子）、llama.cpp 兼容性存疑，先按功能清单评估降级范围与成本再立项；两个系统均已停更，需向用户明示安全风险。 |

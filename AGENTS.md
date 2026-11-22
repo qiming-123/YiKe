@@ -56,7 +56,7 @@ git log origin/main..main --oneline   # 期望：无输出（本地没有未推�
 - **.NET SDK 10.0.402**（`global.json` / `build-tools.json` 固定；脚本装到 `.tools/`，不改系统 PATH）
 - **Node.js 20+**：仅 VS Code 适配与词库示例测试需要
 - **Inno Setup 7.1.0**：打包需要，脚本装到 `.tools/inno/`
-- 主线目标系统：Windows 10 22H2+ / Windows 11 x64（安装器 `MinVersion=10.0.22631` 尚限定 11 23H2，放宽见改进清单）；Windows 7/8.1 需 .NET Framework 4.8 独立分支（规划中，见 docs/IMPROVEMENT-BACKLOG.md）；不提供 ARM64
+- 主线目标系统：Windows 10 22H2+ / Windows 11 x64（安装器 `MinVersion=10.0.22631` 尚限定 11 23H2，放宽见改进清单）；Windows 7/8.1 需 .NET Framework 4.8 独立分支、macOS 需跨平台 UI 移植（WPF 为 Windows 专属），均为规划中的重大工程，见 docs/IMPROVEMENT-BACKLOG.md；不提供 ARM64
 - 验证策略：构建时只验证当前开发系统；其他目标系统一律用 Hyper-V 虚拟机做安装与验收
 
 ## 命令速查：最小验证 → 完整发布
@@ -119,6 +119,7 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 ## 提交与协作流程
 
 - **每次动手前先完成「云端对齐检查」（见文件顶部第一节），未对齐时停止并等用户确认**
+- **每次提交必须经用户确认：先列出待提交文件清单与改动摘要，用户明确同意后才能 `git commit`；用户未确认前不得提交任何文件、不得用 `git add -A` 之类的宽匹配**
 - 分支：从 `main` 切 `feature/<主题>` 或 `fix/<主题>`，PR 合回 `main`（仓库用 merge commit）
 - 提交信息用中文一句话概括"做了什么、为什么"；一个提交只做一件事
 - 禁止提交：密钥/证书私钥、`settings.json`/`credentials/`、模型与运行时（`local-runtime/`、`translation-runtime/`）、构建产物（`dist/`、`artifacts/`、`bin/`、`obj/`）
