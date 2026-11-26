@@ -340,6 +340,7 @@ public sealed class YiKeApplication : Application
             window.Begin(options,term); Submit(term,options,false,_ => { },window.Error,window.From,context);
         };
         window.CancelRequested += () => coordinator!.Invalidate();
+        window.ServiceChangeRequested += OpenSettings;
         window.Closed += (_, _) => { coordinator!.Invalidate(); manual = null; };
         if (draft is not null) { window.ShowActivated = false; window.RestoreDraft(draft); }
         window.Show();
