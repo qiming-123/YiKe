@@ -57,7 +57,9 @@ try {
 $source=[IO.Compression.ZipFile]::OpenRead((Join-Path $Directory "YiKe-Source-$Version.zip"))
 try {
  Assert-SafeZip $source
- foreach($name in @('src/YiKe/YiKe.csproj','src/YiKe/UI/Styles.xaml','tests/YiKe.Tests/Program.cs','installer/YiKe.iss','scripts/build-release.ps1','.gitignore','SOURCE-MANIFEST.json')){if(!$source.GetEntry($name)){throw "Incomplete source archive: $name"}}
+ $requiredSource=@('src/YiKe/YiKe.csproj','src/YiKe/UI/Styles.xaml','tests/YiKe.Tests/Program.cs','installer/YiKe.iss','scripts/build-release.ps1','.gitignore','SOURCE-MANIFEST.json','study-packs/README.md')
+ $requiredSource+=@('de','es','fr','ja','ko') | ForEach-Object { "study-packs/$_-starter.json" }
+ foreach($name in $requiredSource){if(!$source.GetEntry($name)){throw "Incomplete source archive: $name"}}
  $stream=$source.GetEntry('SOURCE-MANIFEST.json').Open()
  try{$reader=[IO.StreamReader]::new($stream);$index=$reader.ReadToEnd() | ConvertFrom-Json}finally{$stream.Dispose()}
  if($index.format -ne 1 -or $index.files.Count -lt 20){throw 'Invalid source manifest'}

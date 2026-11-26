@@ -7,3 +7,18 @@
 - 构建方式：node scripts/build-study-dictionaries.cjs <中文词典JSONL.gz> <输出目录>
 
 可在研习收藏本中从文件安装对应语言的 .ykdict，或使用该文件的 GitHub Raw HTTPS 直链。
+
+## 从源码包验证研习功能
+
+源码包内附 `de`、`es`、`fr`、`ja`、`ko` 五种语言的 `*-starter.json` 小型样例。完整 `.ykdict` 词典独立分发。
+
+用 PowerShell 7 在解压后的根目录设置 `DOTNET_CLI_HOME` 和 `NUGET_PACKAGES`，使用 `global.json` 固定的 .NET SDK 运行：
+
+```powershell
+dotnet restore ./tests/YiKe.Tests/YiKe.Tests.csproj --locked-mode
+dotnet build ./tests/YiKe.Tests/YiKe.Tests.csproj -c Release --no-restore
+$tests = './tests/YiKe.Tests/bin/Release/net10.0-windows/win-x64/YiKe.Tests.exe'
+& $tests --ui-regression 'Japanese pack is optional'
+```
+
+该用例从解压目录读取五种语言的样例，验证安装和查词。
