@@ -9,6 +9,13 @@ using System.Threading.Tasks;
 
 namespace YiKe.Selection;
 
+internal sealed record VsCodeInstallTarget(string Executable, string Cli)
+{
+    public string Product => Path.GetFileNameWithoutExtension(Executable).Equals("Code - Insiders", StringComparison.OrdinalIgnoreCase)
+        ? "VS Code Insiders" : "VS Code 稳定版";
+    public string Label => Product + " · " + Executable;
+}
+
 public static class VsCodeIntegration
 {
     public static void ExportPackage(string path)
@@ -24,18 +31,24 @@ public static class VsCodeIntegration
         Write("extension.vsixmanifest", "<?xml version=\"1.0\" encoding=\"utf-8\"?><PackageManifest Version=\"2.0.0\" xmlns=\"http://schemas.microsoft.com/developer/vsx-schema/2011\"><Metadata><Identity Language=\"en-US\" Id=\"yike-selection\" Version=\"1.1.0\" Publisher=\"yike-local\"/><DisplayName>译刻 · VS Code 划词适配</DisplayName><Description xml:space=\"preserve\">本机选区适配</Description><Tags/><Categories>Other</Categories><GalleryFlags/><Properties><Property Id=\"Microsoft.VisualStudio.Code.Engine\" Value=\"^1.85.0\"/><Property Id=\"Microsoft.VisualStudio.Code.ExtensionKind\" Value=\"ui\"/></Properties><License>extension/LICENSE</License></Metadata><Installation><InstallationTarget Id=\"Microsoft.VisualStudio.Code\"/></Installation><Dependencies/><Assets><Asset Type=\"Microsoft.VisualStudio.Code.Manifest\" Path=\"extension/package.json\" Addressable=\"true\"/><Asset Type=\"Microsoft.VisualStudio.Services.Content.Details\" Path=\"extension/README.md\" Addressable=\"true\"/></Assets></PackageManifest>");
         void Write(string name, string text) { using var writer = new StreamWriter(zip.CreateEntry(name).Open()); writer.Write(text); }
     }
-    public static async Task<string> InstallAsync()
+    internal static VsCodeInstallTarget[] FindInstallTargets() => FindCode()
+        .Select(path => (Path: path, Cli: FindCli(path)))
+        .Where(candidate => candidate.Cli is not null)
+        .Select(candidate => new VsCodeInstallTarget(candidate.Path, candidate.Cli!)).ToArray();
+
+    public static async Task<string> InstallAsync() => await InstallAsync(FindInstallTargets().FirstOrDefault()
+        ?? throw new IOException("未找到 VS Code 桌面版。启动 VS Code 后重试；网页版暂不支持。")).ConfigureAwait(false);
+
+    internal static async Task<string> InstallAsync(VsCodeInstallTarget target)
     {
-        string? executable = FindCode().FirstOrDefault(path => FindCli(path) is not null);
-        if (executable is null) throw new IOException("未找到 VS Code 桌面版。启动 VS Code 后重试；网页版暂不支持。");
         string folder = Path.Combine(Path.GetTempPath(), "YiKe.VSCode." + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder); string package = Path.Combine(folder, "yike-selection.vsix");
         try
         {
             ExportPackage(package);
-            var start = new ProcessStartInfo(executable) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo(target.Executable) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
             start.Environment["ELECTRON_RUN_AS_NODE"] = "1";
-            start.ArgumentList.Add(FindCli(executable)!); start.ArgumentList.Add("--install-extension"); start.ArgumentList.Add(package); start.ArgumentList.Add("--force");
+            start.ArgumentList.Add(target.Cli); start.ArgumentList.Add("--install-extension"); start.ArgumentList.Add(package); start.ArgumentList.Add("--force");
             using var process = Process.Start(start) ?? throw new IOException("无法启动 VS Code 扩展安装程序。");
             // Drain without keeping logs or unbounded CLI output in memory.
             Task stdout = Drain(process.StandardOutput), stderr = Drain(process.StandardError);
@@ -44,7 +57,7 @@ public static class VsCodeIntegration
             catch (OperationCanceledException) { try { process.Kill(); } catch { } throw new IOException("VS Code 适配安装超时，请稍后重试。"); }
             await Task.WhenAll(stdout, stderr).WaitAsync(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
             if (process.ExitCode != 0) throw new IOException("VS Code 适配安装失败，请检查扩展安装策略或关闭 VS Code 后重试。");
-            return "VS Code 适配已安装。重新打开 VS Code 后，编辑区直接划词；Terminal 选中文字按 Ctrl+Alt+Y 复制并翻译 / 解释。";
+            return $"适配已安装。请重启 {target.Product}。编辑区可直接划词；Terminal 按 Ctrl+Alt+Y 复制并翻译选区。";
         }
         finally { try { File.Delete(package); Directory.Delete(folder); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
     }
@@ -55,7 +68,7 @@ public static class VsCodeIntegration
         string direct = Path.Combine(root, "resources", "app", "out", "cli.js");
         if (File.Exists(direct)) return direct;
         try { return Directory.EnumerateDirectories(root).Take(32).Select(dir => Path.Combine(dir, "resources", "app", "out", "cli.js")).FirstOrDefault(File.Exists); }
-        catch (UnauthorizedAccessException) { return null; }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException) { return null; }
     }
     static IEnumerable<string> FindCode()
     {
@@ -67,7 +80,9 @@ public static class VsCodeIntegration
             foreach (var process in Process.GetProcessesByName(name))
                 using (process) { try { if (process.MainModule?.FileName is string path) paths.Add(path); } catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException) { } }
         foreach (string bin in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries))
-            paths.Add(Path.GetFullPath(Path.Combine(bin.Trim('"'), "..", "Code.exe")));
+            foreach (string name in new[] { "Code.exe", "Code - Insiders.exe" })
+                try { paths.Add(Path.GetFullPath(Path.Combine(bin.Trim().Trim('"'), "..", name))); }
+                catch (ArgumentException) { }
         return paths.Distinct(StringComparer.OrdinalIgnoreCase).Where(File.Exists);
     }
 }

@@ -40,6 +40,8 @@ The published 2.0.0 installer requires Windows 11 x64, build 22631 or later. The
 
 ## Documentation and source
 
+Regular `dotnet build` builds show `2.0.0-dev` in Settings. Include the short Git commit hash when reporting issues with a development build. The release script uses the supplied three-part version.
+
 - [Quick start in Simplified Chinese](QUICK_START.md)
 - [Full user guide in Simplified Chinese](USER_GUIDE.md)
 - [Local model details](LOCAL_MODEL.md)

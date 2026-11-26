@@ -29,6 +29,9 @@ public sealed record TranslationUpdate(long Sequence, string Text, bool Complete
     public string StatusLabel => Error is not null ? "失败" : ExplanationPending ? "译文已完成 · 正在补充计算机说明…" : Complete ? Cached ? "翻译完成 · 缓存" : "翻译完成" : "翻译中";
 }
 
+public enum AppSelectionMode { Translate, Icon, Pause }
+public sealed record AppSelectionRule(string Process, AppSelectionMode Mode);
+
 public sealed record AppSettings
 {
     [System.Text.Json.Serialization.JsonIgnore]
@@ -65,6 +68,14 @@ public sealed record AppSettings
     public int TotalSeconds { get; init; } = 90;
     public string InstructionRole { get; init; } = "system";
     public string[] ExcludedProcesses { get; init; } = Array.Empty<string>();
+    public AppSelectionRule[] SelectionRules { get; init; } = Array.Empty<AppSelectionRule>();
+
+    internal AppSelectionMode SelectionModeFor(string process)
+    {
+        if (ExcludedProcesses.Contains(process, StringComparer.OrdinalIgnoreCase)) return AppSelectionMode.Pause;
+        return Array.Find(SelectionRules, rule => rule.Process.Equals(process, StringComparison.OrdinalIgnoreCase))?.Mode
+            ?? (SelectionIconMode ? AppSelectionMode.Icon : AppSelectionMode.Translate);
+    }
 
     public AppSettings Validate(bool requireModel = false)
     {
@@ -84,14 +95,19 @@ public sealed record AppSettings
         if (FirstResponseSeconds is < 5 or > 120 || TotalSeconds < FirstResponseSeconds || TotalSeconds > 600) throw new ArgumentException("首响应超时应为 5–120 秒，总超时应介于首响应和 600 秒之间。");
         if (InstructionRole is not ("system" or "developer")) throw new ArgumentException("指令角色仅支持 system 或 developer。");
         if (ExcludedProcesses is null || ExcludedProcesses.Length > 100) throw new ArgumentException("排除项过多。");
-        return this with { BaseUrl = endpoint, Model = model, OnlineProfiles = profiles, TargetLanguage = target, ExcludedProcesses = ExcludedProcesses.Select(NormalizeProcess).Where(p => p.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToArray() };
+        if (SelectionRules is null || SelectionRules.Length > 100 || SelectionRules.Any(rule => rule is null || rule.Process is null || !Enum.IsDefined(rule.Mode)))
+            throw new ArgumentException("应用划词规则无效或超过 100 条。");
+        var rules = SelectionRules.Select(rule => rule with { Process = NormalizeProcess(rule.Process) }).ToArray();
+        if (rules.Any(rule => rule.Process.Length == 0) || rules.Select(rule => rule.Process).Distinct(StringComparer.OrdinalIgnoreCase).Count() != rules.Length)
+            throw new ArgumentException("每个应用只能保存一条划词规则，进程名称不能为空。");
+        return this with { BaseUrl = endpoint, Model = model, OnlineProfiles = profiles, TargetLanguage = target, ExcludedProcesses = ExcludedProcesses.Select(NormalizeProcess).Where(p => p.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToArray(), SelectionRules = rules };
     }
-    static string NormalizeProcess(string value)
+    internal static string NormalizeProcess(string value)
     {
         string name = value.Trim();
         if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) name = name[..^4];
         if (name.Length > 128 || name.Any(char.IsControl) || name.IndexOfAny(new[] { '\\', '/', ':', '*', '?', '"', '<', '>', '|' }) >= 0)
-            throw new ArgumentException("排除应用请填写进程名称，例如 msedge.exe，不要填写路径或通配符。");
+            throw new ArgumentException("请填写进程名称，例如 msedge.exe，不要填写路径或通配符。");
         return name;
     }
 }

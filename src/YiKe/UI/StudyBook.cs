@@ -24,6 +24,10 @@ internal sealed class StudyBook : Window
     string FilePath => UsesLanguagePack ? LanguageFile(baseFile(),pack.Code) : baseFile();
     string? Details(string word) => UsesLanguagePack ? pack.Find(word)?.Card(word) : BundledEnglishDictionary.Details(word);
     readonly ListBox words = new();
+    readonly TextBox filter = new() { ToolTip = "筛选当前收藏本" };
+    readonly Button reviewAction;
+    List<string> savedWords = new();
+    string[]? review;
     readonly TextBlock definition = Ui.Text("", 15);
     readonly TextBlock status = Ui.Text("", 12, "Muted");
     internal static List<string> Read(string path) => File.Exists(path)
@@ -114,15 +118,34 @@ internal sealed class StudyBook : Window
         });
         DockPanel.SetDock(buttons,Dock.Top); root.Children.Add(buttons);
         status.TextWrapping = TextWrapping.Wrap; DockPanel.SetDock(status,Dock.Bottom); root.Children.Add(status);
-        words.Width = 150; DockPanel.SetDock(words,Dock.Left); root.Children.Add(words);
+        var list = new DockPanel { Width = 150 };
+        System.Windows.Automation.AutomationProperties.SetName(filter, "筛选收藏词");
+        System.Windows.Automation.AutomationProperties.SetName(words, "收藏词列表");
+        DockPanel.SetDock(filter, Dock.Top); list.Children.Add(filter);
+        reviewAction = Ui.Button("随机复习 10 个", () =>
+        {
+            if (review is null)
+            {
+                var candidates = FilteredWords().ToArray();
+                Random.Shared.Shuffle(candidates);
+                review = candidates.Take(10).ToArray();
+            }
+            else review = null;
+            ShowWords();
+        });
+        DockPanel.SetDock(reviewAction, Dock.Top); list.Children.Add(reviewAction);
+        filter.TextChanged += (_, _) => { review = null; ShowWords(); };
+        list.Children.Add(words); DockPanel.SetDock(list, Dock.Left); root.Children.Add(list);
         definition.Margin = new Thickness(16); definition.TextWrapping = TextWrapping.Wrap;
         root.Children.Add(new ScrollViewer { Content = definition, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
         words.SelectionChanged += (_,_) => definition.Text = words.SelectedItem is string word ? word + "\n\n先回想词义，再点「显示释义」。" : "";
         Content = root; Run(Reload);
     }
-    internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status,bool compact = false)
+    internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status, bool compact = false,
+        Func<IProgress<StudyDownloadProgress>, System.Threading.CancellationToken, System.Threading.Tasks.Task>? download = null)
     {
-        string Label() => compact ? (pack.Installed ? "已安装" : "下载") : pack.InstallLabel;
+        System.Threading.CancellationTokenSource? active = null;
+        string Label() => compact ? (pack.NeedsRepair ? "重装" : pack.Installed ? "已安装" : "下载") : pack.InstallLabel;
         var starter = new Button { Content = Label() };
         if (compact)
         {
@@ -132,27 +155,48 @@ internal sealed class StudyBook : Window
         starter.IsEnabled = pack.Count == 0;
         starter.Click += async (_,_) =>
         {
-            starter.IsEnabled = false;
+            if (active is not null) { active.Cancel(); starter.IsEnabled = false; return; }
+            using var request = new System.Threading.CancellationTokenSource();
+            active = request;
+            starter.Content = "取消"; starter.ToolTip = "取消下载";
             try
             {
                 status.Text = "正在下载并校验"+pack.Name+"词典…";
-                await pack.DownloadOfficial();
-                starter.Content = Label(); status.Text = "词典已安装。研习开关请点击「保存设置」生效。";
+                var progress = new Progress<StudyDownloadProgress>(value =>
+                {
+                    if (active != request || request.IsCancellationRequested) return;
+                    string percent = value.TotalBytes is > 0 ? $"（{Math.Min(1d, value.ReceivedBytes / (double)value.TotalBytes.Value):P0}）" : "";
+                    status.Text = $"已下载{pack.Name}词典 {value.ReceivedBytes:N0} 字节{percent}，正在下载或校验…";
+                });
+                await (download ?? pack.DownloadOfficial)(progress, request.Token);
+                status.Text = "词典已安装。研习开关请点击「保存设置」生效。";
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException or OperationCanceledException)
+            catch (OperationCanceledException) { status.Text = request.IsCancellationRequested ? "已取消下载，现有词包已保留。" : "下载超时，请重试。"; }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException or System.Net.Http.HttpRequestException)
             { status.Text = "安装失败：" + ex.Message; }
-            finally { starter.IsEnabled = pack.Count == 0; }
+            finally { active = null; Refresh(); }
         };
-        void Refresh() { starter.Content = Label(); starter.IsEnabled = pack.Count == 0;
-            if (pack.Installed && pack.Count == 0) starter.ToolTip = "已安装自选词包，点击下载完整"+pack.Name+"词典。"; }
+        void Refresh() { if (active is not null) return; starter.Content = Label(); starter.IsEnabled = pack.Count == 0;
+            starter.ToolTip = pack.NeedsRepair ? "词典无法读取，点击重新安装。" : pack.Installed && pack.Count == 0 ? "已安装自选词包，点击下载完整"+pack.Name+"词典。" : pack.Name+"词典"; }
         starter.Loaded += (_,_) => { Refresh(); pack.InstallationChanged += Refresh; };
         starter.Unloaded += (_,_) => pack.InstallationChanged -= Refresh;
         return starter;
     }
     void Reload()
     {
-        words.ItemsSource = Read(FilePath); words.SelectedIndex = 0;
-        status.Text = words.Items.Count + " 个单词 · " + FilePath;
+        savedWords = Read(FilePath); review = null; ShowWords();
+    }
+    IEnumerable<string> FilteredWords()
+    {
+        var query = filter.Text.Trim();
+        return savedWords.Where(word => word.Contains(query, StringComparison.OrdinalIgnoreCase));
+    }
+    void ShowWords()
+    {
+        words.ItemsSource = review ?? FilteredWords().ToArray(); words.SelectedIndex = 0;
+        reviewAction.Content = review is null ? "随机复习 10 个" : "结束复习";
+        reviewAction.IsEnabled = words.Items.Count > 0;
+        status.Text = review is null ? words.Items.Count + " 个单词 · " + FilePath : "本轮复习 " + words.Items.Count + " 个单词";
     }
     void Run(Action action)
     {

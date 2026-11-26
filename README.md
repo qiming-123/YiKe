@@ -64,6 +64,8 @@ Windows 划词翻译工具。默认只翻译，不保存历史；设置和密钥
 
 固定 .NET SDK 10.0.402、Inno Setup 7.1.0，另需 Node.js 运行词库构建/适配器测试。
 
+常规 `dotnet build` 生成的试用版在设置窗口标为 `2.0.0-dev`。反馈试用问题时可附上 `git rev-parse --short HEAD` 的提交号。下方发布命令使用指定的三段式正式版本号。
+
 ```powershell
 ./scripts/bootstrap-tools.ps1
 ./scripts/bootstrap-dictionary.ps1

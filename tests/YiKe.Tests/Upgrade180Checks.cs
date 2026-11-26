@@ -18,6 +18,13 @@ internal static class Upgrade180Checks
             foreach (var text in new[] { "git commit\n--amend", "var a = 1;\nreturn a;", "1. First\n2. Second", "-12\n-34", "a\tb\nc\td" }) if (PdfText.Clean(text) != text) throw new Exception("Changed structured text");
             if (BundledEnglishDictionary.Details("hello") is not { Length: > 0 }) throw new Exception("Dictionary"); return Task.CompletedTask;
         });
+        await check("PDF cleanup joins prose around code and tables without changing their line endings", () => {
+            const string preserved = "```\r\nfirst\r\nsecond\r\n\r\nthird\r\nfourth\r\n```\r\n\r\nname  count\r\nitem  four\r\n\r\na\tb\r\nc\td";
+            string original = "This sentence\r\ncontinues here.\r\n\r\n" + preserved + "\r\n\r\nThe next\r\nparagraph ends here.";
+            string expected = "This sentence continues here.\r\n\r\n" + preserved + "\r\n\r\nThe next paragraph ends here.";
+            if (PdfText.Clean(original) != expected) throw new Exception("Mixed PDF blocks were changed or left unjoined.");
+            return Task.CompletedTask;
+        });
         await check("180 DeepL uses its dedicated protocol and never retries a billable request", async () => {
             var handler=new DeepLHttp(); using var provider=new DeepLProvider(handler);
             var s=new AppSettings { TranslationMode="online", Preset="DeepL", BaseUrl="https://api-free.deepl.com/v2", Model="DeepL" };

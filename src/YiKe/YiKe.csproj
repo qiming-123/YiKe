@@ -6,7 +6,7 @@
     <SelfContained>true</SelfContained><RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile><IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PublishTrimmed>false</PublishTrimmed><DebugType>embedded</DebugType>
-    <Version>2.0.0</Version><Company>opens</Company><Authors>opens</Authors><AssemblyName>YiKe</AssemblyName><RootNamespace>YiKe</RootNamespace>
+    <Version>2.0.0-dev</Version><Company>opens</Company><Authors>opens</Authors><AssemblyName>YiKe</AssemblyName><RootNamespace>YiKe</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest><ApplicationIcon>../../assets/yike.ico</ApplicationIcon>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>

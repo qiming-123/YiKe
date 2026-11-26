@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -70,6 +71,7 @@ public static class UiRegressionChecks
                     {
                         var window = new ManualWindow(new AppSettings { LearnEnglish = true }); window.Show(); await Idle();
                         var input = Find<TextBox>(window,"原文"); input.Text = "read the book"; input.Select(0,4);
+                        await Idle();
                         Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("英文释义")));
                         string saved = ""; window.FavoriteRequested += w => saved = w;
                         FindButton(window,"收藏单词").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Assert(saved == "read");
@@ -229,6 +231,192 @@ public static class UiRegressionChecks
                         bool opened = false; int requests = 0; window.ServiceChangeRequested += () => opened = true; window.Requested += _ => requests++; window.ContextRequested += (_,_) => requests++;
                         FindButton(window,"切换翻译服务").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         Assert(opened && requests == 0); window.Close();
+                    });
+                    await Check("Manual shortcuts leave normal Enter and IME keys alone and cancel an active request", async () =>
+                    {
+                        var config = new AppSettings();
+                        var window = new ManualWindow(config); window.Show(); await Idle();
+                        var source = Find<TextBox>(window, "原文");
+                        source.Text = "line one\r\nline two";
+                        int submissions = 0, cancellations = 0;
+                        window.Requested += text => { Assert(text == source.Text); submissions++; window.Begin(config); };
+                        window.CancelRequested += () => cancellations++;
+                        Assert(source.AcceptsReturn && !window.HandleShortcut(System.Windows.Input.Key.Enter, System.Windows.Input.ModifierKeys.None));
+                        Assert(!window.HandleShortcut(System.Windows.Input.Key.ImeProcessed, System.Windows.Input.ModifierKeys.Control));
+                        Assert(window.HandleShortcut(System.Windows.Input.Key.Enter, System.Windows.Input.ModifierKeys.Control));
+                        Assert(source.IsReadOnly && submissions == 1 && !window.HandleShortcut(System.Windows.Input.Key.Enter, System.Windows.Input.ModifierKeys.Control));
+                        Assert(window.HandleShortcut(System.Windows.Input.Key.Escape, System.Windows.Input.ModifierKeys.None));
+                        Assert(!source.IsReadOnly && cancellations == 1 && !window.HandleShortcut(System.Windows.Input.Key.Escape, System.Windows.Input.ModifierKeys.None));
+                        window.Close();
+                    });
+                    await Check("Tray tooltip and menu reflect paused and resumed automatic translation", () =>
+                    {
+                        using var tray = new System.Windows.Forms.NotifyIcon();
+                        using var action = new System.Windows.Forms.ToolStripMenuItem();
+                        YiKe.YiKeApplication.UpdateTrayState(tray, action, false);
+                        Assert(tray.Text.Contains("已暂停") && action.Text == "恢复自动翻译");
+                        YiKe.YiKeApplication.UpdateTrayState(tray, action, true);
+                        Assert(tray.Text.Contains("划词即译") && action.Text == "暂停自动翻译");
+                        return Task.CompletedTask;
+                    });
+                    await Check("A corrupt dictionary keeps other languages working and offers reinstall", async () =>
+                    {
+                        var folder = Path.Combine(root, "corrupt-dictionary");
+                        Directory.CreateDirectory(Path.Combine(folder, "packs"));
+                        File.WriteAllText(Path.Combine(folder, "packs", "ja.ykdict"), "corrupt fixture");
+                        var japanese = new StudyDictionaryPack(folder);
+                        var korean = new StudyDictionaryPack(folder, "ko", "韩语");
+                        korean.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "study-packs", "ko-starter.json")));
+                        Assert(japanese.Find("食べた") is null && korean.Find("읽어요") is not null);
+                        var status = new TextBlock();
+                        var install = StudyBook.InstallButton(japanese, status);
+                        var window = new Window { Content = install }; window.Show(); await Idle();
+                        Assert(install.IsEnabled && (string)install.Content == "重新安装日语词典"); window.Close();
+                    });
+                    await Check("Manual and popup word lookup share Japanese and Korean word boundaries", async () =>
+                    {
+                        var config = new AppSettings();
+                        var manual = new ManualWindow(config); manual.Show(); await Idle();
+                        const string translated = "食べた、읽어요、l’été.";
+                        manual.Begin(config); manual.Update(new(1, translated, true));
+                        var result = Find<TextBox>(manual, "译文");
+                        Assert(manual.SelectResultWord(1) && result.SelectedText == "食べた");
+                        result.Select(4, 0);
+                        Assert(manual.SelectResultWord(5) && result.SelectedText == "읽어요");
+                        result.Select(0, 7); Assert(!manual.SelectResultWord(1) && result.SelectedText == "食べた、읽어요");
+                        manual.Close();
+                        var popup = new PopupWindow(); popup.Begin("fixture", config, 300, 250, 0);
+                        popup.Update(new(1, translated, true)); await Idle();
+                        var words = Walk(popup).OfType<TextBlock>().SelectMany(t => t.Inlines.OfType<System.Windows.Documents.Hyperlink>())
+                            .Select(link => ((System.Windows.Documents.Run)link.Inlines.FirstInline).Text);
+                        Assert(words.SequenceEqual(new[] { "食べた", "읽어요", "l’été" }));
+                        popup.Close();
+                    });
+                    await Check("VS Code diagnostics show hotkey status and open manual translation", async () =>
+                    {
+                        Assert(VsCodeTerminalHotkey.DescribeRegistration(true, true).Contains("已注册"));
+                        Assert(VsCodeTerminalHotkey.DescribeRegistration(false, true).Contains("最近一次注册成功"));
+                        Assert(VsCodeTerminalHotkey.DescribeRegistration(false, null).Contains("尚未尝试"));
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "terminal-diagnostics"));
+                        var window = new SettingsWindow(() => new AppSettings(), (_, _) => { }, store,
+                            new CredentialStore(store.UserDirectory), () => VsCodeTerminalHotkey.DescribeRegistration(false, false));
+                        bool opened = false; window.ManualRequested += () => opened = true;
+                        window.Show(); await Idle();
+                        FindButton(window, "数据与迁移").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Idle();
+                        Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("最近一次注册失败")));
+                        FindButton(window, "打开手动翻译").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(opened); window.Close();
+                    });
+                    await Check("Dictionary download reports bytes and cancel allows retry without replacing the installed pack", async () =>
+                    {
+                        var pack = new StudyDictionaryPack(Path.Combine(root, "cancel-pack"), "ko", "韩语");
+                        var original = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "study-packs", "ko-starter.json"));
+                        pack.Install(original);
+                        var status = new TextBlock();
+                        int requests = 0;
+                        var install = StudyBook.InstallButton(pack, status, download: (progress, token) =>
+                            pack.Download("https://fixture.invalid/ko.json", progress: progress, token: token,
+                                handler: new StudyDownloadFixture(original, ++requests == 1)));
+                        var window = new Window { Content = install }; window.Show(); await Idle();
+                        install.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Until(() => status.Text.Contains("字节") && status.Text.Contains('%'));
+                        Assert((string)install.Content == "取消");
+                        install.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Until(() => status.Text.Contains("已取消下载"));
+                        Assert(pack.Find("읽어요") is not null && install.IsEnabled);
+                        install.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Until(() => status.Text.Contains("词典已安装"));
+                        Assert(requests == 2 && pack.Find("읽어요") is not null); window.Close();
+                    });
+                    await Check("Study book filters saved words and samples ten without modifying storage", async () =>
+                    {
+                        string path = Path.Combine(root, "filtered-book", "YiKe-vocabulary.json");
+                        var saved = Enumerable.Range(1, 14).Select(n => $"word{n:D2}").ToArray();
+                        AtomicFile.Write(path, System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(saved));
+                        var window = new StudyBook(() => path, _ => { }, Array.Empty<StudyDictionaryPack>(), new AppSettings());
+                        window.Show(); await Idle();
+                        var words = Find<ListBox>(window, "收藏词列表");
+                        var filter = Find<TextBox>(window, "筛选收藏词");
+                        filter.Text = "WORD1";
+                        Assert(words.Items.Count == 5 && words.Items[0] as string == "word10");
+                        filter.Clear();
+                        var review = FindButton(window, "随机复习 10 个");
+                        review.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(words.Items.Count == 10 && words.Items.Cast<string>().Distinct().Count() == 10);
+                        Assert(words.Items.Cast<string>().All(saved.Contains) && StudyBook.Read(path).SequenceEqual(saved));
+                        review.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(words.Items.Count == 14); window.Close();
+                    });
+                    await Check("Manual long text identifies the limit and explicitly submits only the selected part", async () =>
+                    {
+                        var window = new ManualWindow(new AppSettings()); window.Show(); await Idle();
+                        var source = Find<TextBox>(window, "原文");
+                        source.Text = string.Concat(Enumerable.Repeat("😀", TextLimit.Maximum));
+                        Assert(!Walk(window).OfType<TextBlock>().Any(t => t.IsVisible && t.Text.Contains("第 2,001")));
+                        source.AppendText("😀");
+                        Assert(Walk(window).OfType<TextBlock>().Any(t => t.IsVisible && t.Text.Contains("第 2,001")));
+                        source.Select(TextLimit.Maximum * 2, 2);
+                        string? submitted = null; window.Requested += text => submitted = text;
+                        var partial = FindButton(window, "翻译选中部分"); Assert(partial.IsVisible);
+                        partial.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(submitted == "😀" && TextLimit.Count(source.Text) == TextLimit.Maximum + 1); window.Close();
+                    });
+                    await Check("VS Code installation selects a specific edition and reports which to restart", async () =>
+                    {
+                        var stable = new VsCodeInstallTarget(@"C:\fixture\Code.exe", "stable-cli.js");
+                        var insiders = new VsCodeInstallTarget(@"C:\fixture\Code - Insiders.exe", "insiders-cli.js");
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "terminal-target"));
+                        VsCodeInstallTarget? selected = null;
+                        var window = new SettingsWindow(() => new AppSettings { GuideSeen = true }, (_, _) => { }, store,
+                            new CredentialStore(store.UserDirectory), () => "fixture")
+                        {
+                            FindVsCodeTargets = () => new[] { stable, insiders },
+                            InstallVsCodeTarget = target => { selected = target; return Task.FromResult("请重启 " + target.Product); }
+                        };
+                        window.Show(); await Idle();
+                        FindButton(window, "外观与行为").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Idle();
+                        var choices = Find<ComboBox>(window, "VS Code 安装目标");
+                        Assert(choices.Items.Count == 2 && stable.Label.Contains(stable.Executable) && insiders.Label.Contains("Insiders"));
+                        choices.SelectedItem = insiders;
+                        FindButton(window, "安装 / 更新 VS Code 适配").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Until(() => window.StatusText.Contains("请重启 VS Code Insiders"));
+                        Assert(selected == insiders); window.Close();
+                    });
+                    await Check("Behavior settings add a distinct selection action from running applications", async () =>
+                    {
+                        var saved = new AppSettings { GuideSeen = true };
+                        var store = new SettingsStore(userDirectory: Path.Combine(root, "per-app-selection"));
+                        var window = new SettingsWindow(() => saved, (draft, _) => saved = draft, store, new CredentialStore(store.UserDirectory),
+                            () => "fixture", localHardware: () => new(16 * LocalHardware.GiB, 8 * LocalHardware.GiB, 8, true))
+                        { FindRunningApplications = () => new[] { "Code", "wps" } };
+                        window.Show(); await Idle();
+                        FindButton(window, "外观与行为").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Idle();
+                        var running = Find<ComboBox>(window, "正在运行的应用");
+                        running.IsDropDownOpen = true; await Idle(); running.SelectedItem = "Code"; running.IsDropDownOpen = false;
+                        Find<ComboBox>(window, "应用划词方式").SelectedItem = "先显示图标";
+                        FindButton(window, "添加应用规则").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(Find<TextBox>(window, "按应用设置划词").Text == "Code=先显示图标");
+                        window.SaveSettings(); Assert(saved.SelectionRules.Single() == new AppSelectionRule("Code", AppSelectionMode.Icon));
+                        window.Close();
+                    });
+                    await Check("Manual editing coalesces repeated searches with all five study packs enabled", async () =>
+                    {
+                        var folder = Path.Combine(root, "lookup-coalescing");
+                        var packs = StudyDictionaryPack.Languages.Select(language => new StudyDictionaryPack(folder, language.Code, language.Name)).ToArray();
+                        foreach (var pack in packs) pack.Install(File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "study-packs", pack.Code + "-starter.json")));
+                        string favorites = Path.Combine(folder, "YiKe-vocabulary.json");
+                        StudyBook.Add(StudyBook.LanguageFile(favorites, "ja"), "食べた");
+                        int favoriteReads = 0;
+                        var window = new ManualWindow(new AppSettings { LearnEnglish = true, LearnJapanese = true }, packs[0], packs)
+                        {
+                            IsSaved = (code, word) => { favoriteReads++; return StudyBook.Contains(favorites, code, word); }
+                        };
+                        window.Show(); await Idle();
+                        var source = Find<TextBox>(window, "原文");
+                        source.Text = "食べた"; source.Select(0, source.Text.Length);
+                        await Idle();
+                        Assert(favoriteReads == 1, $"Expected one favorites read, got {favoriteReads}.");
+                        Assert(Walk(window).OfType<TextBlock>().Any(t => t.Text.Contains("食べる"))); window.Close();
                     });
                     await Check("Manual window keeps source editable after failures and cancellation", async () =>
                     {
@@ -435,6 +623,33 @@ public static class UiRegressionChecks
                         finally { File.SetAttributes(fixture.Store.UserFile, FileAttributes.Normal); }
                         window.SaveSettings(); Assert(fixture.Config.OnlineProfiles.Length == 2 && fixture.Credentials.Read(fixture.Config) == "fake-new-b");
                         Assert(fixture.Credentials.Read(OnlineProfiles.Select(fixture.Config, original)) == "fake-replacement-a");
+                    });
+                    await Check("Closing settings protects edits after switching API profiles", async () =>
+                    {
+                        using var fixture = new EditorFixture(root, "close-api-drafts");
+                        var window = fixture.Window; window.Show(); await Idle();
+                        Guid original = fixture.Config.ActiveOnlineProfileId;
+                        window.AddOnlineProfile();
+                        var selector = Find<ComboBox>(window, "在线 API 配置");
+                        Guid second = (Guid)selector.SelectedValue;
+                        var model = Find<ComboBox>(window, "模型名称");
+                        model.Text = "second-model"; window.SaveSettings();
+                        selector.SelectedValue = original; window.SaveSettings();
+                        Assert(!window.HasUnsavedChanges());
+                        model.Text = "unsaved-a"; selector.SelectedValue = second;
+                        Assert(window.HasUnsavedChanges() && fixture.Config.OnlineProfiles.Single(p => p.Id == original).Model == "original-model");
+                        window.ConfirmUnsavedChanges = () => MessageBoxResult.Cancel;
+                        window.Close(); Assert(window.IsVisible);
+                        window.ConfirmUnsavedChanges = () => MessageBoxResult.Yes;
+                        window.Close();
+                        Assert(!window.IsVisible && fixture.Config.ActiveOnlineProfileId == second && fixture.Config.OnlineProfiles.Single(p => p.Id == original).Model == "unsaved-a");
+
+                        using var discard = new EditorFixture(root, "discard-api-drafts");
+                        discard.Window.Show(); await Idle();
+                        Find<ComboBox>(discard.Window, "模型名称").Text = "discarded";
+                        discard.Window.ConfirmUnsavedChanges = () => MessageBoxResult.No;
+                        discard.Window.Close();
+                        Assert(!discard.Window.IsVisible && discard.Config.Model == "original-model");
                     });
                     await Check("Removing one API commits its deletion without removing another credential", async () =>
                     {
@@ -938,6 +1153,26 @@ sealed class LatencyFixtureProvider(TaskCompletionSource<long> ready) : ITransla
         yield return "明天早上九点开会。";
         await Finish.Task.WaitAsync(token);
         yield return "请准时到场。";
+    }
+}
+
+sealed class StudyDownloadFixture(byte[] bytes, bool stall) : HttpMessageHandler
+{
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+    {
+        var content = new StreamContent(stall ? new PartialDownload(bytes) : new MemoryStream(bytes));
+        content.Headers.ContentLength = bytes.Length;
+        return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK) { Content = content });
+    }
+
+    sealed class PartialDownload(byte[] bytes) : MemoryStream(bytes)
+    {
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken token = default)
+        {
+            if (Position == 0) return await base.ReadAsync(buffer[..1], token);
+            await Task.Delay(Timeout.Infinite, token);
+            return 0;
+        }
     }
 }
 

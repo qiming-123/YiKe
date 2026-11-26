@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using Microsoft.Win32;
 using YiKe.Core;
 using YiKe.Data;
+using YiKe.Selection;
 using YiKe.Translation;
 
 namespace YiKe.UI;
@@ -31,10 +32,13 @@ public sealed class SettingsWindow : Window
     readonly ComboBox profileChoice = new() { DisplayMemberPath = nameof(OnlineProfile.Name), SelectedValuePath = nameof(OnlineProfile.Id) };
     readonly TextBox profileName = new() { MaxLength = 60 };
     AppSettings onlineDraft = new();
+    string savedEditorState = "";
     readonly Dictionary<Guid, string> pendingKeys = new();
     readonly ComboBox model = new() { IsEditable = true, IsTextSearchEnabled = false, StaysOpenOnEdit = true },
         target = new() { IsEditable = true, IsTextSearchEnabled = false, StaysOpenOnEdit = true };
-    readonly TextBox exclusions = new() { MaxLength = 16384 }, first = new() { MaxLength = 3 }, total = new() { MaxLength = 3 };
+    readonly TextBox exclusions = new() { MaxLength = 16384 }, applicationRules = new() { MaxLength = 16384, AcceptsReturn = true, Height = 84, VerticalScrollBarVisibility = ScrollBarVisibility.Auto },
+        first = new() { MaxLength = 3 }, total = new() { MaxLength = 3 };
+    static readonly string[] SelectionModes = { "自动翻译", "先显示图标", "暂停" };
     readonly PasswordBox key = new() { MaxLength = 8192 };
     readonly CheckBox stream = new() { Content = "逐步显示译文" }, startup = new() { Content = "登录 Windows 时启动译刻" };
     readonly CheckBox copiedPdf = new() { Content = "WPS / Edge PDF 自动划词翻译（保留 Ctrl+C 兼容方式）" };
@@ -87,6 +91,10 @@ public sealed class SettingsWindow : Window
         messageStyle.Triggers.Add(empty); message.Style = messageStyle;
     }
     public event Action? ManualRequested, StudyRequested, GuideDismissed;
+    internal Func<VsCodeInstallTarget[]> FindVsCodeTargets { get; init; } = VsCodeIntegration.FindInstallTargets;
+    internal Func<VsCodeInstallTarget, Task<string>> InstallVsCodeTarget { get; init; } = VsCodeIntegration.InstallAsync;
+    internal Func<string[]> FindRunningApplications { get; init; } = RunningApplications;
+    internal Func<MessageBoxResult>? ConfirmUnsavedChanges { get; set; }
     public SettingsWindow(Func<AppSettings> get, Action<AppSettings, string?> commit, SettingsStore store,
         CredentialStore credentials, Func<string> diagnostics, Action? credentialDeleted = null, ITranslationProvider? testProvider = null, IModelCatalog? modelCatalog = null, Func<LocalHardwareSnapshot>? localHardware = null)
     {
@@ -216,6 +224,14 @@ public sealed class SettingsWindow : Window
         learnEnglish.Click += (_,_) => { if (learnEnglish.IsChecked == true) FeatureHelp(learnEnglish,1,"选中英语单词或词组查看本地释义，点星标加入单词收藏本。"); };
         programming.Click += (_,_) => { if (programming.IsChecked == true) FeatureHelp(programming,2,"计算机释义会在译文下方补充术语作用、用法和示例。"); };
         Loaded += (_, _) => ScheduleModels();
+        Closing += (_, e) =>
+        {
+            if (ConfirmUnsavedChanges is null || !HasUnsavedChanges()) return;
+            var choice = ConfirmUnsavedChanges();
+            if (choice == MessageBoxResult.No) return;
+            e.Cancel = true;
+            if (choice == MessageBoxResult.Yes) Guard(() => e.Cancel = !SaveEdits());
+        };
         Closed += (_, _) => { closed = true; CancelModels(); connectionTests.Dispose(); if (ownsTestProvider) (this.testProvider as IDisposable)?.Dispose(); (this.modelCatalog as IDisposable)?.Dispose(); key.Clear(); pendingKeys.Clear(); Theme.Apply(get().Theme); };
         feedback.Text = (IsLocal ? null : credentialNotice) ?? store.Notice ?? "";
     }
@@ -242,6 +258,7 @@ public sealed class SettingsWindow : Window
             preset.SelectedIndex = settings.Preset == "OpenAI" ? 0 : settings.Preset == "DeepL" ? 2 : 1;
             url.Text = settings.BaseUrl; model.Text = settings.Model; target.Text = settings.TargetLanguage;
             exclusions.Text = string.Join(Environment.NewLine, settings.ExcludedProcesses);
+            ShowRules(settings.SelectionRules);
             first.Text = settings.FirstResponseSeconds.ToString(CultureInfo.InvariantCulture);
             total.Text = settings.TotalSeconds.ToString(CultureInfo.InvariantCulture);
             theme.SelectedIndex = settings.Theme == "light" ? 1 : 0;
@@ -263,6 +280,7 @@ public sealed class SettingsWindow : Window
         finally { loading = false; }
         LoadOnlineProfile();
         ApplyMode();
+        savedEditorState = EditorState();
         RefreshDiagnostics();
         if (IsLoaded) ScheduleModels();
     }
@@ -437,15 +455,43 @@ public sealed class SettingsWindow : Window
         pages.Children.Add(iconMode); pages.Children.Add(cleanPdf);
         exclusions.AcceptsReturn = true; exclusions.Height = 114; exclusions.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         Field("在这些应用中暂停划词", exclusions, "例如填入 Code 后，在 VS Code 里选中文字不会弹出图标或自动翻译。每行一个进程名，留空表示所有支持的应用均可划词。"); pages.Children.Add(startup);
+        Field("按应用设置划词", applicationRules, "每行填写进程名=自动翻译／先显示图标／暂停，也可从下方选择。上面的暂停名单优先。");
+        var runningApps = new ComboBox { MinWidth = 144 };
+        System.Windows.Automation.AutomationProperties.SetName(runningApps, "正在运行的应用");
+        runningApps.DropDownOpened += (_, _) =>
+        {
+            string? selected = runningApps.SelectedItem as string;
+            runningApps.ItemsSource = FindRunningApplications(); runningApps.SelectedItem = selected;
+        };
+        var responseMode = new ComboBox { ItemsSource = SelectionModes, SelectedIndex = 0, MinWidth = 112 };
+        System.Windows.Automation.AutomationProperties.SetName(responseMode, "应用划词方式");
+        var rulesPanel = new WrapPanel { Children = { runningApps, responseMode, Ui.Button("添加应用规则", () => Guard(() =>
+        {
+            if (runningApps.SelectedItem is not string app) throw new ArgumentException("请先选择正在运行的应用。");
+            var rule = new AppSelectionRule(app, (AppSelectionMode)responseMode.SelectedIndex);
+            ShowRules(ReadRules().Where(item => !item.Process.Equals(app, StringComparison.OrdinalIgnoreCase)).Append(rule));
+        })) } };
+        pages.Children.Add(rulesPanel);
         copiedPdf.Margin = new Thickness(0, 14, 0, 6); pages.Children.Add(copiedPdf);
         System.Windows.Automation.AutomationProperties.SetName(copiedPdf, "WPS PDF 复制后翻译");
         pages.Children.Add(new Expander { Header = "PDF 取词说明", Content = Ui.Text("WPS 或 Edge 的 .pdf 文档划选正文后自动取词，按所选响应模式翻译或显示图标。直接取词不可用时执行一次复制，并尽量恢复原剪贴板；其他应用已复制新内容时不覆盖。特殊格式或超过 64 MiB 的剪贴板保留手动 Ctrl+C 方式。暂停、固定及排除应用时不取词。扫描图片仍需先识别文字。", 11, "Muted") });
+        var targets = FindVsCodeTargets();
+        var vsCode = new ComboBox { ItemsSource = targets, DisplayMemberPath = nameof(VsCodeInstallTarget.Label), SelectedIndex = 0 };
+        var targetField = new StackPanel { Visibility = targets.Length > 0 ? Visibility.Visible : Visibility.Collapsed };
+        Field("VS Code 安装目标", vsCode, container: targetField); pages.Children.Add(targetField);
         var adapter = Ui.Button("安装 / 更新 VS Code 适配", async () =>
         {
             if (adapting) return;
+            if (vsCode.SelectedItem is not VsCodeInstallTarget target)
+            {
+                var discovered = FindVsCodeTargets();
+                if (discovered.Length > 0) { vsCode.ItemsSource = discovered; vsCode.SelectedIndex = 0; targetField.Visibility = Visibility.Visible; feedback.Text = "已发现 VS Code，请选择目标后安装。"; }
+                else feedback.Text = "未找到 VS Code 桌面版。启动 VS Code 后重试；网页版暂不支持。";
+                return;
+            }
             adapting = true;
             feedback.Text = "正在安装 VS Code 本机选区适配…";
-            try { feedback.Text = await System.Threading.Tasks.Task.Run(YiKe.Selection.VsCodeIntegration.InstallAsync); }
+            try { feedback.Text = await Task.Run(() => InstallVsCodeTarget(target)); }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or TimeoutException) { feedback.Text = ex.Message; }
             finally { adapting = false; }
         });
@@ -454,6 +500,25 @@ public sealed class SettingsWindow : Window
         var detail = Ui.Text("仅在确认实际非空文字选区后显示翻译；空选区保持安静。\n自动选区上限：2,000 个 Unicode 码点。\n固定浮窗后暂停接收新划词，关闭或暂停会取消请求。\n不支持自动取词时，可从托盘打开“粘贴文本翻译”。", 12, "Muted");
         detail.LineHeight = 23; detail.Margin = new Thickness(0, 20, 0, 0); pages.Children.Add(detail);
     }
+    static string[] RunningApplications()
+    {
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var process in System.Diagnostics.Process.GetProcesses())
+            using (process)
+            {
+                try { if (process.Id != Environment.ProcessId && process.MainWindowHandle != IntPtr.Zero) names.Add(process.ProcessName); }
+                catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception) { }
+            }
+        return names.OrderBy(name => name, StringComparer.OrdinalIgnoreCase).ToArray();
+    }
+    void ShowRules(IEnumerable<AppSelectionRule> rules) => applicationRules.Text = string.Join(Environment.NewLine, rules.Select(rule => $"{rule.Process}={SelectionModes[(int)rule.Mode]}"));
+    AppSelectionRule[] ReadRules() => applicationRules.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(line =>
+    {
+        int split = line.LastIndexOf('=');
+        int mode = split < 1 ? -1 : Array.IndexOf(SelectionModes, line[(split + 1)..].Trim());
+        if (mode < 0) throw new ArgumentException("应用规则应填写为进程名=自动翻译／先显示图标／暂停。");
+        return new AppSelectionRule(AppSettings.NormalizeProcess(line[..split]), (AppSelectionMode)mode);
+    }).ToArray();
     void DataPage()
     {
         var location = Ui.Text("数据目录：" + store.UserDirectory, 12, "Muted"); location.TextWrapping = TextWrapping.Wrap; pages.Children.Add(location);
@@ -491,6 +556,7 @@ public sealed class SettingsWindow : Window
         });
         diagnosticsText = Ui.Text("", 11, "Muted"); diagnosticsText.Margin = new Thickness(0, 20, 0, 0); diagnosticsText.LineHeight = 20;
         pages.Children.Add(diagnosticsText); RefreshDiagnostics();
+        AddAction("打开手动翻译", () => ManualRequested?.Invoke());
     }
     internal void ApplyImported(AppSettings settings, string? secret, Dictionary<Guid, string>? profileKeys = null)
     {
@@ -611,6 +677,7 @@ public sealed class SettingsWindow : Window
         ExplainProgrammingTerms = programming.IsChecked == true,
         SupplementTechnicalTerms = supplement.IsChecked == true,
         ExcludedProcesses = exclusions.Text.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries),
+        SelectionRules = ReadRules(),
         FirstResponseSeconds = IsLocal ? onlineDraft.FirstResponseSeconds : int.Parse(first.Text, CultureInfo.InvariantCulture), TotalSeconds = IsLocal ? onlineDraft.TotalSeconds : int.Parse(total.Text, CultureInfo.InvariantCulture),
         InstructionRole = (string)role.SelectedItem
     }).Validate(true);
@@ -620,7 +687,20 @@ public sealed class SettingsWindow : Window
         catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or CryptographicException or FormatException or OverflowException or SecurityException)
         { feedback.Text = ex is FormatException or OverflowException ? "请检查超时秒数等数字设置。" : ex.Message; }
     }
-    internal void SaveSettings() => Guard(() =>
+    internal bool HasUnsavedChanges() => pendingKeys.Count > 0 || replaceKey && key.Password.Length > 0 || EditorState() != savedEditorState;
+    string EditorState() => System.Text.Json.JsonSerializer.Serialize(new
+    {
+        Profiles = onlineDraft.OnlineProfiles, Profile = onlineDraft.ActiveOnlineProfileId, Name = profileName.Text,
+        Mode = mode.SelectedIndex, Engine = localEngine.SelectedIndex, Preset = preset.SelectedIndex, Url = url.Text, Model = model.Text,
+        Target = target.Text, First = first.Text, Total = total.Text, Role = role.SelectedItem as string,
+        Theme = theme.SelectedIndex, Font = font.SelectedItem, Stream = stream.IsChecked, Startup = startup.IsChecked,
+        PdfCopy = copiedPdf.IsChecked, PdfCleanup = cleanPdf.IsChecked, Icon = iconMode.IsChecked, Exclusions = exclusions.Text, Rules = applicationRules.Text,
+        Programming = programming.IsChecked, Supplement = supplement.IsChecked, English = learnEnglish.IsChecked, Multilingual = learnJapanese.IsChecked,
+        Languages = StudyDictionaryPack.Languages.Select(language => languageChoices.TryGetValue(language.Code, out var choice)
+            ? choice.IsChecked == true : !onlineDraft.DisabledStudyLanguages.Contains(language.Code)).ToArray()
+    });
+    internal void SaveSettings() => Guard(() => SaveEdits());
+    bool SaveEdits()
     {
         var draft = Draft(); bool startWithWindows = startup.IsChecked == true;
         if (IsLocal && localEngine.SelectedIndex != 0 && LocalHardware.Evaluate(localHardware()) is { Permanent: true } unsupported) throw new ArgumentException(unsupported.Error);
@@ -639,10 +719,12 @@ public sealed class SettingsWindow : Window
         ReloadFromSaved();
         try { if (startWithWindows != StartupRegistration.Enabled) StartupRegistration.Set(startWithWindows); startup.IsChecked = StartupRegistration.Enabled; }
         catch (Exception ex) when (ex is SecurityException or UnauthorizedAccessException or IOException)
-        { feedback.Text = "翻译设置已保存，但开机启动设置失败；请检查当前用户的注册表权限。"; return; }
+        { startup.IsChecked = startWithWindows; feedback.Text = "翻译设置已保存，但开机启动设置失败；请检查当前用户的注册表权限。"; return false; }
+        savedEditorState = EditorState();
         feedback.Text = IsLocal ? store.Notice ?? "已保存，使用本地离线翻译；无需 API Key。" : credentialNotice ?? store.Notice ?? (hasKey ? "已保存，下次启动自动使用。" : "设置已保存；请填写 API Key 后开始翻译。");
         if (cleanupFailed) feedback.Text += " 部分已删除配置的旧密钥文件未能清理；配置删除已生效。";
-    });
+        return true;
+    }
     void DraftChanged()
     {
         if (loading || closed) return;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -31,7 +32,7 @@ public sealed class OpenAiCompatibleProvider : ITranslationProvider, IDisposable
 {
     public bool CanExplainAnyWord(AppSettings settings) => true;
     readonly HttpClient client;
-    DateTimeOffset cooldown;
+    readonly ConcurrentDictionary<Uri, long> cooldowns = new();
     public OpenAiCompatibleProvider(HttpMessageHandler? handler = null)
     {
         client = new HttpClient(handler ?? new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = Timeout.InfiniteTimeSpan };
@@ -40,19 +41,26 @@ public sealed class OpenAiCompatibleProvider : ITranslationProvider, IDisposable
     public async IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, [EnumeratorCancellation] CancellationToken token)
     {
         key = CredentialStore.ValidateSecret(key);
-        if (DateTimeOffset.UtcNow < cooldown) throw new TranslationException("cooldown", "服务正在限流，请稍后主动重试。");
+        var endpoint = Endpoint.Completions(settings.BaseUrl);
+        if (cooldowns.TryGetValue(endpoint, out long until) && Environment.TickCount64 < until)
+            throw new TranslationException("cooldown", "服务正在限流，请稍后主动重试。");
         using var total = CancellationTokenSource.CreateLinkedTokenSource(token); total.CancelAfter(TimeSpan.FromSeconds(settings.TotalSeconds));
         using var first = CancellationTokenSource.CreateLinkedTokenSource(total.Token); first.CancelAfter(TimeSpan.FromSeconds(settings.FirstResponseSeconds));
-        using var message = new HttpRequestMessage(HttpMethod.Post, Endpoint.Completions(settings.BaseUrl));
+        using var message = new HttpRequestMessage(HttpMethod.Post, endpoint);
         message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
         message.Content = new StringContent(JsonSerializer.Serialize(new { model = request.Model, stream = settings.Stream, messages = new[] { new { role = settings.InstructionRole, content = (request.SourceLanguage == "auto" ? "" : "Source language: " + request.SourceLanguage + ". ") + (request.Context.Length > 0 ? request.ContextInstruction : request.NotesOnly ? ComputingWordNotes.Instruction : request.ExplainTechnical ? TechnicalOutput.For(request) : Instruction(request.TargetLanguage)) }, new { role = "user", content = request.UserContent } } }), Encoding.UTF8, "application/json");
         using var response = await client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, first.Token).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
         {
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                long now = Environment.TickCount64;
+                foreach (var entry in cooldowns) if (entry.Value <= now) cooldowns.TryRemove(entry);
+                cooldowns.AddOrUpdate(endpoint, now + 10_000, (_, previous) => Math.Max(previous, now + 10_000));
+            }
             string code = "";
             // Parse only structured error codes. Provider message bodies may contain submitted text or credentials.
             try { var b = await ReadBounded(response.Content, first.Token, 65536).ConfigureAwait(false); using var d = JsonDocument.Parse(b); if (d.RootElement.ValueKind == JsonValueKind.Object && d.RootElement.TryGetProperty("error", out var e) && e.ValueKind == JsonValueKind.Object && e.TryGetProperty("code", out var c) && c.ValueKind == JsonValueKind.String) code = c.GetString() ?? ""; } catch (Exception ex) when (ex is JsonException or InvalidDataException) { }
-            if (response.StatusCode == HttpStatusCode.TooManyRequests) cooldown = DateTimeOffset.UtcNow.AddSeconds(10);
             throw MapError(response.StatusCode, code);
         }
         if (!settings.Stream)

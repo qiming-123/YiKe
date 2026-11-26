@@ -121,10 +121,11 @@ public sealed class YiKeApplication : Application
         });
         popup.PinChanged += pinned => { pdfCopy?.Clear(); session.SetPinned(pinned); selecting?.Cancel(); };
         coordinator = new(provider, u => Dispatcher.BeginInvoke(() => { if (manual is not null && u.Sequence == coordinator!.Sequence) manual.Update(u); else if (session.AcceptsTranslation(u.Sequence, coordinator!.Sequence) && popup.IsVisible) popup.Update(u); }));
-        var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(config.Enabled ? "暂停自动翻译" : "恢复自动翻译"); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
+        var menu = new Forms.ContextMenuStrip(); enabledItem = new Forms.ToolStripMenuItem(); enabledItem.Click += (_, _) => Toggle(); menu.Items.Add(enabledItem);
         menu.Items.Add("设置", null, (_, _) => OpenSettings()); menu.Items.Add("手动翻译", null, (_, _) => Paste()); menu.Items.Add(new Forms.ToolStripSeparator()); menu.Items.Add("退出译刻", null, (_, _) => Shutdown());
         using var iconStream = typeof(Program).Assembly.GetManifestResourceStream("YiKe.icon")!;
-        tray = new Forms.NotifyIcon { Icon = new System.Drawing.Icon(iconStream), Text = "译刻 · 划词即译", Visible = true, ContextMenuStrip = menu }; tray.DoubleClick += (_, _) => OpenSettings();
+        tray = new Forms.NotifyIcon { Icon = new System.Drawing.Icon(iconStream), ContextMenuStrip = menu };
+        UpdateTrayState(tray, enabledItem, config.Enabled); tray.Visible = true; tray.DoubleClick += (_, _) => OpenSettings();
         try { monitor = new(Dispatcher); monitor.MouseDown += OnMouseDown; monitor.Selected += OnGesture; monitor.Unselected += OnUnselected; }
         catch (Exception ex) { diagnostic = "鼠标监听未启动：" + ex.GetType().Name; tray.ShowBalloonTip(6000, "译刻", "无法启动自动划词，可从托盘粘贴文本翻译。", Forms.ToolTipIcon.Warning); }
         terminalHotkey = new(); terminalHotkey.Requested += OnTerminal;
@@ -180,11 +181,13 @@ public sealed class YiKeApplication : Application
     {
         if (!AcceptSelection || g.ProcessId == Environment.ProcessId) return;
         string sourceName;
+        AppSelectionMode response;
         try
         {
             using var process = Process.GetProcessById(g.ProcessId);
             sourceName = process.ProcessName;
-            if (config.ExcludedProcesses.Contains(process.ProcessName, StringComparer.OrdinalIgnoreCase)) { coordinator!.Invalidate(); diagnostic = "已跳过排除应用。"; return; }
+            response = config.SelectionModeFor(sourceName);
+            if (response == AppSelectionMode.Pause) { coordinator!.Invalidate(); diagnostic = "已跳过暂停划词的应用。"; return; }
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { coordinator!.Invalidate(); diagnostic = "来源应用已关闭或不可访问。"; return; }
         selecting?.Cancel(); selecting?.Dispose(); selecting = new(); var ct = selecting.Token; long epoch = session.BeginSelection();
@@ -199,7 +202,7 @@ public sealed class YiKeApplication : Application
             diagnostic = $"来源进程：{sourceName} · 取词状态：{result.Status} · 耗时 {sw.ElapsedMilliseconds} ms · {DateTime.Now:HH:mm:ss}";
             pdfCopy?.CompleteRead(g, result.Status);
             var action = AutomaticSelectionPolicy.Decide(result);
-            if (action == AutomaticSelectionAction.Translate) PresentSelection(new(g.Sequence, g.Window, g.ProcessId, (config.CleanPdfText && PdfCopyFallback.IsPdfWindow(g) ? PdfText.Clean(result.Text!) : result.Text!), g.X, g.Y, g.Time, result.Text));
+            if (action == AutomaticSelectionAction.Translate) PresentSelection(new(g.Sequence, g.Window, g.ProcessId, (config.CleanPdfText && PdfCopyFallback.IsPdfWindow(g) ? PdfText.Clean(result.Text!) : result.Text!), g.X, g.Y, g.Time, result.Text), response);
             else
             {
                 coordinator!.Invalidate();
@@ -210,10 +213,10 @@ public sealed class YiKeApplication : Application
         catch (OperationCanceledException) { }
         catch (Exception ex) { diagnostic = "取词失败：" + ex.GetType().Name; }
     }
-    void PresentSelection(SelectionSnapshot snapshot)
+    void PresentSelection(SelectionSnapshot snapshot, AppSelectionMode response)
     {
 
-        if (config.SelectionIconMode) { coordinator!.Invalidate(); session.SetCurrent(snapshot); selectionIcon!.Present(snapshot); }
+        if (response == AppSelectionMode.Icon) { coordinator!.Invalidate(); session.SetCurrent(snapshot); selectionIcon!.Present(snapshot); }
         else Translate(snapshot);
     }
     void Translate(SelectionSnapshot snapshot, bool force = false)
@@ -239,17 +242,20 @@ public sealed class YiKeApplication : Application
             failed(ex is CryptographicException ? "本机密钥无法解密，请在设置中重新填写密钥。" : ex is ArgumentException ? ex.Message : "无法读取服务配置，请检查配置目录的访问权限。");
         }
     }
-    bool IsExcluded(int processId)
+    bool IsExcluded(int processId) => SelectionModeFor(processId) == AppSelectionMode.Pause;
+    AppSelectionMode SelectionModeFor(int processId)
     {
-        try { using var process = Process.GetProcessById(processId); return config.ExcludedProcesses.Contains(process.ProcessName, StringComparer.OrdinalIgnoreCase); }
-        catch (Exception error) when (error is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return true; }
+        try { using var process = Process.GetProcessById(processId); return config.SelectionModeFor(process.ProcessName); }
+        catch (Exception error) when (error is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return AppSelectionMode.Pause; }
     }
     void OnPdfCopied(Gesture gesture, SelectionReadResult result)
     {
-        if (!AcceptSelection || !config.TranslateCopiedPdf || IsExcluded(gesture.ProcessId)) return;
+        if (!AcceptSelection || !config.TranslateCopiedPdf) return;
+        var response = SelectionModeFor(gesture.ProcessId);
+        if (response == AppSelectionMode.Pause) return;
         selecting?.Cancel(); session.BeginSelection();
         diagnostic = "来源：PDF · 已读取本次新复制的文字 · " + DateTime.Now.ToString("HH:mm:ss");
-        if (result.Status == ReadStatus.Success && TextLimit.Allowed(result.Text ?? "")) PresentSelection(new(gesture.Sequence, gesture.Window, gesture.ProcessId, (config.CleanPdfText ? PdfText.Clean(result.Text!) : result.Text!), gesture.X, gesture.Y, DateTimeOffset.UtcNow, result.Text));
+        if (result.Status == ReadStatus.Success && TextLimit.Allowed(result.Text ?? "")) PresentSelection(new(gesture.Sequence, gesture.Window, gesture.ProcessId, (config.CleanPdfText ? PdfText.Clean(result.Text!) : result.Text!), gesture.X, gesture.Y, DateTimeOffset.UtcNow, result.Text), response);
         else if (result.Status == ReadStatus.TooLong)
         {
             coordinator!.Invalidate(); session.SetCurrent(new(gesture.Sequence, gesture.Window, gesture.ProcessId, "", gesture.X, gesture.Y, gesture.Time));
@@ -258,9 +264,7 @@ public sealed class YiKeApplication : Application
     }
     async void OnTerminal(Gesture gesture)
     {
-        if (!AcceptSelection) return;
-        try { using var source = Process.GetProcessById(gesture.ProcessId); if (config.ExcludedProcesses.Contains(source.ProcessName, StringComparer.OrdinalIgnoreCase)) return; }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or System.ComponentModel.Win32Exception) { return; }
+        if (!AcceptSelection || IsExcluded(gesture.ProcessId)) return;
         selecting?.Cancel(); selecting?.Dispose(); selecting = new(); var ct = selecting.Token;
         long epoch = session.BeginSelection(); coordinator!.Invalidate();
         try
@@ -280,12 +284,17 @@ public sealed class YiKeApplication : Application
         catch (Exception ex) { diagnostic = "终端取词失败：" + ex.GetType().Name; }
     }
     void Cancel() { selectionIcon?.Clear(); selectionOptions = null; popup?.StopSpeech(); pdfCopy?.Clear(); session.Close(); selecting?.Cancel(); if (manual is null) coordinator?.Invalidate(); }
+    internal static void UpdateTrayState(Forms.NotifyIcon icon, Forms.ToolStripMenuItem action, bool enabled)
+    {
+        icon.Text = enabled ? "译刻 · 划词即译" : "译刻 · 自动翻译已暂停";
+        action.Text = enabled ? "暂停自动翻译" : "恢复自动翻译";
+    }
     void Toggle()
     {
         bool enabled = !session.Enabled;
         session.SetEnabled(enabled);
         config = config with { Enabled = enabled };
-        enabledItem!.Text = enabled ? "暂停自动翻译" : "恢复自动翻译";
+        UpdateTrayState(tray!, enabledItem!, enabled);
         if (!enabled) popup!.Dismiss(); // Stop now even if the disk is full or the settings file is read-only.
         try { config = store.Save(config); }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
@@ -298,7 +307,7 @@ public sealed class YiKeApplication : Application
         config = ConfigurationService.Commit(config, value, key, store, credentials);
         var draft = manual?.CaptureDraft();
         manual?.Close();
-        session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); enabledItem!.Text = config.Enabled ? "暂停自动翻译" : "恢复自动翻译";
+        session.SetEnabled(config.Enabled); Theme.Apply(config.Theme); popup!.Dismiss(); UpdateTrayState(tray!, enabledItem!, config.Enabled);
         if (draft is not null) ShowManualWindow(draft);
     }
     string StudyFile => Path.Combine(string.IsNullOrEmpty(config.StudyDirectory) ? store.UserDirectory : config.StudyDirectory, "YiKe-vocabulary.json");
@@ -310,7 +319,13 @@ public sealed class YiKeApplication : Application
     public void OpenSettings()
     {
         if (settings is not null) { settings.Activate(); return; }
-        popup?.Dismiss(); settings = new(() => config, Commit, store, credentials, () => diagnostic, () => popup!.Dismiss(), testProvider: provider); foreach (var pack in packs) settings.ShowPackInstaller(pack); settings.ManualRequested += Paste;
+        popup?.Dismiss();
+        settings = new(() => config, Commit, store, credentials, () => diagnostic + "\n" + terminalHotkey?.RegistrationStatus, () => popup!.Dismiss(), testProvider: provider)
+        {
+            ConfirmUnsavedChanges = () => MessageBox.Show(settings!, "设置有未保存的修改。选择“是”保存并关闭，选择“否”放弃修改，或取消以继续编辑。", "译刻 · 未保存的设置", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
+        };
+        foreach (var pack in packs) settings.ShowPackInstaller(pack);
+        settings.ManualRequested += Paste;
         settings.StudyRequested += () => new StudyBook(() => StudyFile, folder => config = store.Save(config with { StudyDirectory = folder }), packs,config) { Owner = settings }.ShowDialog();
         settings.TipShown += RememberTip;
         settings.GuideDismissed += () =>
@@ -333,7 +348,7 @@ public sealed class YiKeApplication : Application
         window.LanguageFavoriteRequested += (code,word) => StudyBook.Add(StudyBook.LanguageFile(StudyFile,code),word);
         window.FavoriteRequested += word => StudyBook.Add(StudyFile, word);
         manual = window;
-        window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options); Submit(text, options, false, _ => { }, window.Error, window.From); };
+        window.Requested += text => { var options = config with { TargetLanguage = window.To }; window.Begin(options,text); Submit(text, options, false, _ => { }, window.Error, window.From); };
         window.ContextRequested += (term,context) =>
         {
             var options = config with { TargetLanguage = window.To, ExplainProgrammingTerms = false };

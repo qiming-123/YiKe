@@ -15,14 +15,24 @@ internal sealed class VsCodeTerminalHotkey : IDisposable
     const int Id = 0x594B;
     readonly HwndSource source = new(new HwndSourceParameters("YiKe terminal shortcut") { ParentWindow = new IntPtr(-3) });
     bool registered, disposed;
+    bool? lastRegistration;
     internal bool IsRegistered => registered;
+    internal string RegistrationStatus => DescribeRegistration(registered, lastRegistration);
+    internal static string DescribeRegistration(bool registered, bool? lastRegistration) => "VS Code 终端 Ctrl+Alt+Y：" + (registered
+        ? "已注册。"
+        : lastRegistration switch
+        {
+            false => "最近一次注册失败，可改用手动翻译。",
+            true => "最近一次注册成功，等待 VS Code 回到前台。",
+            null => "尚未尝试注册，在启用划词且 VS Code 位于前台时尝试。"
+        });
     public event Action<Gesture>? Requested;
     public VsCodeTerminalHotkey() { source.AddHook(Message); }
     public void Update(bool enabled)
     {
         if (disposed) return;
         bool wanted = enabled && IsCodeForeground(out _, out _);
-        if (wanted && !registered) registered = RegisterHotKey(source.Handle, Id, 0x4000 | 0x0001 | 0x0002, 0x59);
+        if (wanted && !registered) lastRegistration = registered = RegisterHotKey(source.Handle, Id, 0x4000 | 0x0001 | 0x0002, 0x59);
         else if (!wanted && registered) { UnregisterHotKey(source.Handle, Id); registered = false; }
     }
     static bool IsCodeForeground(out IntPtr window, out int pid)

@@ -1,6 +1,8 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using YiKe.Core;
 
 namespace YiKe.UI;
@@ -13,7 +15,7 @@ public sealed class ManualWindow : Window
     readonly ComboBox from = new(), to = new();
     public string From => from.SelectedIndex == 0 ? "auto" : (string)from.SelectedItem;
     public string To => (string)to.SelectedItem;
-    readonly Button translate, cancel;
+    readonly Button translate, cancel, partial;
     internal Func<string,string,bool>? IsSaved { get; set; }
     public event Action<string>? Requested;
     internal event Action<string,string>? ContextRequested;
@@ -29,10 +31,24 @@ public sealed class ManualWindow : Window
         var grid = new Grid { Margin = new Thickness(20) };
         foreach (var height in new[] { GridLength.Auto, new GridLength(1, GridUnitType.Star), GridLength.Auto, GridLength.Auto, new GridLength(1, GridUnitType.Star), GridLength.Auto })
             grid.RowDefinitions.Add(new RowDefinition { Height = height });
-        var actions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 8, 0, 8) };
+        var actions = new WrapPanel { Margin = new Thickness(0, 8, 0, 8) };
+        var limitHint = Ui.Text("第 2,001 个码点起超出整段翻译上限。可选中一部分翻译。", 12, "Muted");
+        limitHint.Visibility = Visibility.Collapsed;
+        var actionArea = new StackPanel(); actionArea.Children.Add(actions); actionArea.Children.Add(limitHint);
         translate = Ui.Button("翻译", () => Requested?.Invoke(source.Text), true);
         cancel = Ui.Button("取消", () => { CancelRequested?.Invoke(); Finish("已取消"); });
+        translate.ToolTip = "翻译（Ctrl+Enter）"; cancel.ToolTip = "取消（Esc）";
+        PreviewKeyDown += (_, e) => { if (!e.IsRepeat && HandleShortcut(e.Key, e.KeyboardDevice.Modifiers)) e.Handled = true; };
         cancel.IsEnabled = false; actions.Children.Add(translate); actions.Children.Add(cancel);
+        partial = Ui.Button("翻译选中部分", () => { if (TextLimit.Allowed(source.SelectedText)) Requested?.Invoke(source.SelectedText); });
+        partial.Visibility = Visibility.Collapsed; actions.Children.Add(partial);
+        void UpdatePartial() => partial.Visibility = limitHint.Visibility == Visibility.Visible && TextLimit.Allowed(source.SelectedText) ? Visibility.Visible : Visibility.Collapsed;
+        source.TextChanged += (_, _) =>
+        {
+            limitHint.Visibility = source.Text.Length > TextLimit.Maximum && TextLimit.Count(source.Text) > TextLimit.Maximum ? Visibility.Visible : Visibility.Collapsed;
+            UpdatePartial();
+        };
+        source.SelectionChanged += (_, _) => UpdatePartial();
         var direction = new WrapPanel { Margin = new Thickness(0,0,0,8) };
         bool restricted = settings.TranslationMode == "local" && settings.LocalEngine == "nmt";
         var contextAction = Ui.Button("按原句译选词", () => ContextRequested?.Invoke(source.SelectedText,SelectionSentence.Extract(source.Text,source.SelectionStart,source.SelectionLength)));
@@ -78,21 +94,26 @@ public sealed class ManualWindow : Window
             if (study.IsExpanded) hint.Text = card.Lookup(term,dictionaries) ? "" : "输入或选中原文、译文中的单词或词组。当前词典未命中。";
         }
         void SourceLookup() => Lookup(source.SelectionLength > 0 ? source.SelectedText : source.Text);
-        study.Expanded += (_,_) => SourceLookup(); study.Collapsed += (_,_) => card.Stop();
-        source.TextChanged += (_,_) => SourceLookup(); source.SelectionChanged += (_,_) => SourceLookup();
-        result.SelectionChanged += (_,_) => { if (result.SelectionLength > 0) { study.IsExpanded = true; Lookup(result.SelectedText); alternatives.ShowTerm(result.SelectedText,To,dictionaries); } };
-        result.PreviewMouseLeftButtonUp += (_, e) =>
+        DispatcherOperation? sourceLookup = null;
+        void ScheduleSourceLookup()
         {
-            if (result.SelectionLength > 0) return;
-            int index = result.GetCharacterIndexFromPoint(e.GetPosition(result), false);
-            foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(result.Text, @"[\p{L}\p{M}]+(?:['’-][\p{L}\p{M}]+)*"))
-                if (index >= match.Index && index < match.Index + match.Length) { result.Select(match.Index, match.Length); break; }
+            if (!study.IsExpanded || sourceLookup?.Status == DispatcherOperationStatus.Pending) return;
+            sourceLookup = Dispatcher.InvokeAsync(SourceLookup, DispatcherPriority.DataBind);
+        }
+        study.Expanded += (_,_) => ScheduleSourceLookup(); study.Collapsed += (_,_) => { sourceLookup?.Abort(); card.Stop(); };
+        source.TextChanged += (_,_) => ScheduleSourceLookup(); source.SelectionChanged += (_,_) => ScheduleSourceLookup();
+        result.SelectionChanged += (_,_) =>
+        {
+            if (result.SelectionLength == 0) return;
+            study.IsExpanded = true; sourceLookup?.Abort();
+            Lookup(result.SelectedText); alternatives.ShowTerm(result.SelectedText,To,dictionaries);
         };
-        Closed += (_,_) => card.DisposeSpeech(); SourceLookup();
+        result.PreviewMouseLeftButtonUp += (_, e) => SelectResultWord(result.GetCharacterIndexFromPoint(e.GetPosition(result), false));
+        Closed += (_,_) => { sourceLookup?.Abort(); card.DisposeSpeech(); }; SourceLookup();
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         source.TextChanged += (_,_) => alternatives.Clear();
-        var controls = new UIElement[] { direction, source, actions, Ui.Text("译文", 16), result, alternatives, study, status };
+        var controls = new UIElement[] { direction, source, actionArea, Ui.Text("译文", 16), result, alternatives, study, status };
         for (int i = 0; i < controls.Length; i++) { Grid.SetRow(controls[i], i); grid.Children.Add(controls[i]); }
         status.Text = settings.ServiceLabel + " → " + settings.TargetLanguage; Content = grid; Loaded += (_, _) => source.Focus();
         System.Windows.Automation.AutomationProperties.SetName(source, "原文");
@@ -100,6 +121,22 @@ public sealed class ManualWindow : Window
     }
     readonly AlternateMeanings alternatives = new();
     readonly YiKe.Data.StudyDictionaryPack[] dictionaries;
+    internal bool SelectResultWord(int index)
+    {
+        if (index < 0 || result.SelectionLength > 0) return false;
+        foreach (System.Text.RegularExpressions.Match word in StudyWords.Find(result.Text))
+            if (index >= word.Index && index < word.Index + word.Length) { result.Select(word.Index, word.Length); return true; }
+        return false;
+    }
+    internal bool HandleShortcut(Key key, ModifierKeys modifiers)
+    {
+        if (key == Key.Enter && modifiers == ModifierKeys.Control && translate.IsEnabled)
+            translate.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        else if (key == Key.Escape && modifiers == ModifierKeys.None && cancel.IsEnabled)
+            cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        else return false;
+        return true;
+    }
     internal sealed record Draft(string Text, int SelectionStart, int SelectionLength, double VerticalOffset);
     internal Draft CaptureDraft() => new(source.Text, source.SelectionStart, source.SelectionLength, source.VerticalOffset);
     internal void RestoreDraft(Draft draft)
@@ -111,7 +148,7 @@ public sealed class ManualWindow : Window
             Loaded -= RestoreSelection;
             source.Select(draft.SelectionStart, draft.SelectionLength);
             // WPF brings the restored selection into view during layout.
-            Dispatcher.InvokeAsync(() => source.ScrollToVerticalOffset(draft.VerticalOffset), System.Windows.Threading.DispatcherPriority.Background);
+            Dispatcher.InvokeAsync(() => source.ScrollToVerticalOffset(draft.VerticalOffset), DispatcherPriority.Background);
         }
     }
     string submittedTerm = "", submittedFrom = "", submittedTo = "", service = "";
@@ -120,7 +157,7 @@ public sealed class ManualWindow : Window
         alternatives.Clear(); submittedTerm = term ?? source.Text; submittedFrom = From; submittedTo = To;
         service = settings.ServiceLabel + " → " + settings.TargetLanguage;
         from.IsHitTestVisible = to.IsHitTestVisible = false; from.Focusable = to.Focusable = false;
-        source.IsReadOnly = true; result.Clear(); translate.IsEnabled = false; cancel.IsEnabled = true;
+        source.IsReadOnly = true; result.Clear(); translate.IsEnabled = partial.IsEnabled = false; cancel.IsEnabled = true;
         status.Text = service + " · 准备引擎";
     }
     public void Error(string message) => Finish("失败 · 原文未发送。" + message);
@@ -138,6 +175,6 @@ public sealed class ManualWindow : Window
     void Finish(string label)
     {
         from.IsHitTestVisible = to.IsHitTestVisible = true; from.Focusable = to.Focusable = true;
-        source.IsReadOnly = false; translate.IsEnabled = true; cancel.IsEnabled = false; status.Text = service + " · " + label;
+        source.IsReadOnly = false; translate.IsEnabled = partial.IsEnabled = true; cancel.IsEnabled = false; status.Text = service + " · " + label;
     }
 }

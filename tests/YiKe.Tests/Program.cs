@@ -55,6 +55,7 @@ if(args.Length==4&&args[0]=="--word-live")return await WordTranslationLiveCheck.
 if(args.Length==4&&args[0]=="--any-word-live")return await AnyWordNotesLiveCheck.Run(args[1],args[2],args[3]=="light");
 if(args.Length==4&&args[0]=="--latency-live")return await ResponseLatencyLiveCheck.Run(args[1],args[2],args[3]=="light");
 if(args.Length==3&&args[0]=="--selection-latency")return SelectionLatencyCheck.Run(args[1],args[2]);
+if(args.Length==2&&args[0]=="--semantic-live")return await TranslationMeaningChecks.Run(args[1]);
 if(args.Length==3&&args[0]=="--word-probe")return await WordTranslationLiveCheck.Run(args[1],args[2],false,true);
 if(args.Length==3&&args[0]=="--local-parent-fixture")return await LocalModelLiveCheck.ParentFixture(args[1], args[2]);
 if(args.Length==3&&args[0]=="--local-parent-light")return await LocalModelLiveCheck.ParentFixture(args[1], args[2], true);
@@ -103,18 +104,88 @@ await ModelCatalogChecks.Run(Check);
 await LocalModelChecks.Run(Check, scratch);
 await LocalInstallationChecks.Run(Check, scratch);
 await ProgrammingGlossaryChecks.Run(Check);
+await Check("HTTP 429 only cools down the normalized endpoint that returned it", async () =>
+{
+    var handler = new EndpointRateLimitHttp();
+    using var provider = new OpenAiCompatibleProvider(handler);
+    async Task<string> Call(string address)
+    {
+        try
+        {
+            var answer = new StringBuilder();
+            await foreach (var delta in provider.TranslateAsync(req, s with { BaseUrl = address, Stream = false }, "fixture-key", default)) answer.Append(delta);
+            return answer.ToString();
+        }
+        catch (TranslationException error) { return error.Code; }
+    }
+    Assert(await Call("https://example.test/v1") == "rate_limit");
+    Assert(await Call("https://EXAMPLE.test:443/v1/") == "cooldown");
+    Assert(await Call("https://example.test/other/v1") == "你好");
+    Assert(await Call("https://independent.test/v1") == "你好" && handler.Calls == 3);
+});
 await ComputerTermsChecks.Run(Check);
 await GlossaryExampleChecks.Run(Check);
 await TerminalCommandChecks.Run(Check);
 await TranslationQualityChecks.Run(Check);
+await TranslationMeaningChecks.CheckFixtures(Check);
+await Check("Data directory relocation preflights all books and rolls back its files if commit fails", () =>
+{
+    string original = Path.Combine(scratch, "relocation-original"), target = Path.Combine(scratch, "relocation-target");
+    Directory.CreateDirectory(original); Directory.CreateDirectory(target);
+    var store = new SettingsStore(userDirectory: original);
+    string english = "YiKe-vocabulary.json", japanese = "YiKe-vocabulary-ja.json";
+    File.WriteAllText(Path.Combine(original, english), "[\"test\"]");
+    File.WriteAllText(Path.Combine(original, japanese), "[\"食べた\"]");
+    string conflict = Path.Combine(target, japanese);
+    File.WriteAllText(conflict, "[\"既存\"]");
+    Throws<IOException>(() => store.ChangeDirectory(target, s));
+    Assert(!File.Exists(Path.Combine(target, english)) && File.ReadAllText(conflict) == "[\"既存\"]");
+    File.Move(conflict, Path.Combine(scratch, "preserved-conflict.json"));
+    string pointer = Path.Combine(original, "data-location.txt");
+    Directory.CreateDirectory(pointer);
+    Throws<IOException>(() => store.ChangeDirectory(target, s));
+    Assert(store.UserDirectory == original && !Directory.EnumerateFileSystemEntries(target).Any());
+    Directory.Move(pointer, Path.Combine(scratch, "pointer-obstruction"));
+    store.ChangeDirectory(target, s);
+    Assert(store.UserDirectory == target && File.ReadAllText(Path.Combine(target, japanese)) == "[\"食べた\"]" && File.Exists(Path.Combine(original, english)));
+    return Task.CompletedTask;
+});
 await AnyWordNotesChecks.Run(Check);
 await ResponseLatencyChecks.Run(Check);
 await AutomaticSelectionChecks.Run(Check);
+await Check("Per-app selection rules roundtrip and preserve old pause rules and global defaults", () =>
+{
+    Assert(JsonSerializer.Deserialize<AppSettings>("{}")!.SelectionRules.Length == 0);
+    var rules = new AppSettings
+    {
+        SelectionIconMode = true, ExcludedProcesses = new[] { "legacy.exe" },
+        SelectionRules = new[] { new AppSelectionRule(" CODE.exe ", AppSelectionMode.Translate), new("legacy", AppSelectionMode.Translate), new("WPS", AppSelectionMode.Pause) }
+    };
+    string file = Path.Combine(scratch, "application-rules.json");
+    SettingsStore.Export(file, rules);
+    var read = SettingsStore.Import(file);
+    Assert(read.SelectionModeFor("code") == AppSelectionMode.Translate && read.SelectionModeFor("legacy") == AppSelectionMode.Pause);
+    Assert(read.SelectionModeFor("wps") == AppSelectionMode.Pause && read.SelectionModeFor("another") == AppSelectionMode.Icon);
+    Throws<ArgumentException>(() => (rules with { SelectionRules = new[] { new AppSelectionRule("CODE", AppSelectionMode.Icon), new("Code.exe", AppSelectionMode.Pause) } }).Validate());
+    return Task.CompletedTask;
+});
 await OnlineProfileChecks.Run(Check, scratch);
 await PdfCopyChecks.Run(Check, scratch);
 Console.WriteLine($"RESULT {passed} passed, {failed} failed");
 Directory.Delete(scratch,true);
 return failed == 0 ? 0 : 1;
+
+sealed class EndpointRateLimitHttp : HttpMessageHandler
+{
+    public int Calls { get; private set; }
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+    {
+        Calls++;
+        bool limited = request.RequestUri!.AbsoluteUri == "https://example.test/v1/chat/completions";
+        return Task.FromResult(new HttpResponseMessage(limited ? HttpStatusCode.TooManyRequests : HttpStatusCode.OK)
+        { Content = new StringContent(limited ? "{}" : "{\"choices\":[{\"finish_reason\":\"stop\",\"message\":{\"content\":\"你好\"}}]}") });
+    }
+}
 
 sealed class FakeHttp(HttpStatusCode status,string body,bool sse,int block) : HttpMessageHandler
 {

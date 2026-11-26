@@ -10,11 +10,12 @@ namespace YiKe.Data;
 
 public static class AtomicFile
 {
-    public static void Write(string path, byte[] bytes)
+    public static void Write(string path, byte[] bytes) => Write(path, bytes, true);
+    internal static void Write(string path, byte[] bytes, bool overwrite)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         string temp = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try { using (var s = new FileStream(temp, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { s.Write(bytes); s.Flush(true); } File.Move(temp, path, true); }
+        try { using (var s = new FileStream(temp, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { s.Write(bytes); s.Flush(true); } File.Move(temp, path, overwrite); }
         finally { if (File.Exists(temp)) File.Delete(temp); }
     }
 }
@@ -41,20 +42,37 @@ public sealed class SettingsStore
     {
         if (string.Equals(folder, UserDirectory, StringComparison.OrdinalIgnoreCase)) return;
         var destination = Path.Combine(folder, "settings.json");
-        if (File.Exists(destination)) throw new IOException("该目录已有设置，请选择空目录。");
-        Directory.CreateDirectory(folder);
-        foreach (var book in StudyDictionaryPack.Languages.Select(l => $"YiKe-vocabulary-{l.Code}.json").Prepend("YiKe-vocabulary.json"))
+        if (File.Exists(destination) || Directory.Exists(destination)) throw new IOException("该目录已有设置，请选择空目录。");
+        var books = (string.IsNullOrEmpty(current.StudyDirectory)
+            ? StudyDictionaryPack.Languages.Select(l => $"YiKe-vocabulary-{l.Code}.json").Prepend("YiKe-vocabulary.json")
+            : Enumerable.Empty<string>())
+            .Select(name => (Source: Path.Combine(UserDirectory, name), Target: Path.Combine(folder, name)))
+            .Where(book => File.Exists(book.Source)).ToArray();
+        if (books.Any(book => File.Exists(book.Target) || Directory.Exists(book.Target)))
+            throw new IOException("目标目录已有收藏本，请选择空目录。");
+        var created = new System.Collections.Generic.List<string>();
+        try
         {
-        string sourceBook = Path.Combine(UserDirectory, book);
-        if (string.IsNullOrEmpty(current.StudyDirectory) && File.Exists(sourceBook))
+            foreach (var book in books)
+            {
+                AtomicFile.Write(book.Target, File.ReadAllBytes(book.Source), false);
+                created.Add(book.Target);
+            }
+            AtomicFile.Write(destination, JsonSerializer.SerializeToUtf8Bytes(current, Json), false);
+            created.Add(destination);
+            AtomicFile.Write(Path.Combine(DefaultDirectory, "data-location.txt"), Encoding.UTF8.GetBytes(folder));
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {
-            string nextBook = Path.Combine(folder, book);
-            if (File.Exists(nextBook)) throw new IOException("目标目录已有收藏本，请选择空目录。");
-            File.Copy(sourceBook, nextBook);
+            bool rollbackFailed = false;
+            foreach (string file in created)
+            {
+                try { File.Delete(file); }
+                catch (Exception rollback) when (rollback is IOException or UnauthorizedAccessException or System.Security.SecurityException) { rollbackFailed = true; }
+            }
+            if (rollbackFailed) throw new IOException("迁移未生效，且目标目录有未清理的迁移文件。请检查目录权限后重试。", error);
+            throw new IOException("迁移未生效，原数据已保留。请解决目标目录问题后重试。", error);
         }
-        }
-        AtomicFile.Write(destination, JsonSerializer.SerializeToUtf8Bytes(current, Json));
-        AtomicFile.Write(Path.Combine(DefaultDirectory, "data-location.txt"), Encoding.UTF8.GetBytes(folder));
         UserDirectory = folder;
     }
     AppSettings? Read(string? path)

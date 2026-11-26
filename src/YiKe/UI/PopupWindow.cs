@@ -114,7 +114,7 @@ public sealed class PopupWindow : Window
         if (!u.Running && u.Error is null && u.Text.Length > 0)
         {
             if (!alternatives.ShowTerm(submittedTerm,"auto",activePacks)) alternatives.ShowTerm(u.Text,options!.TargetLanguage,activePacks);
-            var matches = System.Text.RegularExpressions.Regex.Matches(u.Text, @"[A-Za-zÀ-ž]+(?:['’-][A-Za-zÀ-ž]+)*");
+            var matches = StudyWords.Find(u.Text);
             if (matches.Count > 0)
             {
                 translation.Inlines.Clear(); int end = 0;
