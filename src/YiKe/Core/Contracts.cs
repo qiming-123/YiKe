@@ -6,7 +6,10 @@ using System.Text;
 namespace YiKe.Core;
 
 public enum ReadStatus { Success, NoSelection, Unsupported, Timeout, AccessDenied, TargetGone, TooLong, NotTextSelection }
-public sealed record Gesture(long Sequence, long Window, int ProcessId, int X, int Y, int StartX, int StartY, DateTimeOffset Time, DateTimeOffset? StartedAt = null);
+public sealed record Gesture(long Sequence, long Window, int ProcessId, int X, int Y, int StartX, int StartY, DateTimeOffset Time, DateTimeOffset? StartedAt = null)
+{
+    internal long ReleasedTimestamp { get; init; }
+}
 public sealed record SelectionSnapshot(long Sequence, long Window, int ProcessId, string Text, int X, int Y, DateTimeOffset Time, string? OriginalText = null);
 public sealed record SelectionReadResult
 {

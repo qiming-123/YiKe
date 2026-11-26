@@ -48,6 +48,24 @@ public static class UiRegressionChecks
                         var picker = Find<ComboBox>(window, "视觉风格"); picker.SelectedIndex = 1;
                         Assert(!Theme.Dark); window.SaveSettings(); Assert(fixture.Config.Theme == "light");
                     });
+                    await Check("Selection latency measures read, engine readiness and first rendered translation", async () =>
+                    {
+                        var ready = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
+                        var popup = new PopupWindow();
+                        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                        var gesture = new Gesture(1, 0, Environment.ProcessId, 300, 250, 250, 250, DateTimeOffset.UtcNow)
+                        { ReleasedTimestamp = System.Diagnostics.Stopwatch.GetTimestamp() };
+                        var provider = new LatencyFixtureProvider(ready);
+                        var measuring = SelectionLatencyCheck.Measure(gesture, popup, (_, _) =>
+                            Task.FromResult(new SelectionReadResult(ReadStatus.Success, SelectionLatencyCheck.SampleText)), provider, ready.Task, timeout.Token);
+                        try { await Until(() => popup.IsVisible && Walk(popup).OfType<TextBlock>().Any(t => t.Text == "明天早上九点开会。")); }
+                        finally { provider.Finish.TrySetResult(); }
+                        var timing = await measuring
+                            ?? throw new InvalidOperationException("The fixture selection was rejected.");
+                        Assert(timing.SelectionReadMs > 0 && timing.EngineReadyMs >= timing.SelectionReadMs);
+                        Assert(timing.FirstVisibleMs >= timing.EngineReadyMs && popup.IsVisible && provider.Calls == 1);
+                        popup.Close();
+                    });
                     await Check("Manual English study looks up and collects a selected word", async () =>
                     {
                         var window = new ManualWindow(new AppSettings { LearnEnglish = true }); window.Show(); await Idle();
@@ -906,6 +924,21 @@ sealed class FakePdfCopySource : IPdfCopySource
     public Task<SelectionReadResult?> Read(Gesture gesture, string title, uint baseline, uint sequence)
     { Reads++; return Reply?.Invoke(Reads) ?? Task.FromResult<SelectionReadResult?>(new(ReadStatus.Success, "new PDF selection")); }
     public Task<SelectionReadResult?> Copy(Gesture gesture,string title,Func<bool> active,IntPtr owner) {Copies++;return AutoReply?.Invoke(active) ?? Task.FromResult<SelectionReadResult?>(null);}
+}
+
+sealed class LatencyFixtureProvider(TaskCompletionSource<long> ready) : ITranslationProvider
+{
+    public int Calls { get; private set; }
+    public TaskCompletionSource Finish { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    public async IAsyncEnumerable<string> TranslateAsync(TranslationRequest request, AppSettings settings, string key, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken token)
+    {
+        Calls++;
+        await Task.Yield();
+        ready.TrySetResult(System.Diagnostics.Stopwatch.GetTimestamp());
+        yield return "明天早上九点开会。";
+        await Finish.Task.WaitAsync(token);
+        yield return "请准时到场。";
+    }
 }
 
 sealed class BlockingConnectionProvider(bool fail = false) : ITranslationProvider

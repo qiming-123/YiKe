@@ -41,6 +41,7 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
         idle = new(_ => ReleaseIdle(), null, TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(15));
     }
     internal int EngineProcessId { get { lock (processGate) return engine?.Process.Id ?? 0; } }
+    internal Action? EngineReady { get; init; }
     internal LocalRunProfile? ActiveProfile => profile;
     internal int VerificationPasses { get; private set; }
     public string CacheIdentity(AppSettings settings)
@@ -161,6 +162,7 @@ public sealed class LocalTranslationProvider : ITranslationProvider, IDisposable
         {
             await EnsureReady(total.Token).ConfigureAwait(false);
             lock (processGate) if (engine is null || engine.Process.HasExited || !OwnedLocalProcess.OwnsPort(port, engine.Process.Id)) throw new TranslationException("local-owner", "本地引擎连接已失效，请重试。");
+            EngineReady?.Invoke();
             if (request.NotesOnly && profile!.ModelId != LocalModelPackage.ModelId) throw new TranslationException("local-notes-profile", "当前轻量模型使用本机离线说明。");
             bool technical = !request.NotesOnly && request.ExplainTechnical && profile!.ModelId == LocalModelPackage.ModelId && !request.RefineTranslation;
             bool vocabulary = (request.SourceLanguage == "auto" || request.SourceLanguage.StartsWith("英语")) && !request.NotesOnly && !technical && TranslationQuality.IsVocabulary(request.Text, request.KnownTechnicalTerms);
