@@ -1,4 +1,21 @@
-# 译刻 YiKe 2.0.0
+<p align="center">
+  <img src="assets/yike-icon-preview.png" width="96" alt="译刻 YiKe 图标">
+</p>
+<h1 align="center">译刻 YiKe</h1>
+<p align="center"><strong>Windows 划词翻译工具，支持本地离线模型与可选在线服务。</strong></p>
+<p align="center">
+  <strong>简体中文</strong> · <a href="docs/README.en.md">English</a>
+</p>
+<p align="center">
+  <a href="https://github.com/qiming-123/YiKe/releases/latest"><strong>下载最新版</strong></a> ·
+  <a href="docs/QUICK_START.md">快速入门</a> ·
+  <a href="docs/USER_GUIDE.md">用户手册</a> ·
+  <a href="https://github.com/qiming-123/YiKe/issues">问题反馈</a>
+</p>
+
+---
+
+## 版本概览
 
 首次正式发行。日、韩、法、德、西五种研习词典均可独立下载。安装包和主程序未签名。
 
@@ -39,7 +56,7 @@ Windows 划词翻译工具。默认只翻译，不保存历史；设置和密钥
 
 节能引擎仅英译简中，不支持中译外或繁体目标；单行最多512个模型 token，应用选区上限2000个Unicode码点，超限报错而不静默截断。通用轻量模型需约1.25 GiB空闲内存，标准模型约5 GiB；单独保留一个模型时仍需满足门槛。详细 [本地引擎说明](docs/LOCAL_MODEL.md)。
 
-Windows 11 x64（内部版本 22631 或更新）。`YiKe-Portable-2.0.0-win-x64.zip` 是完整便携包，另含旧通用双模型，体积仍较大。首次启动不联网下载；便携模式会将配置保存到自己的 data 目录。不要把带个人配置的便携目录公开分发。
+已发布的 2.0.0 安装包要求 Windows 11 x64（内部版本 22631 或更新）。主线源码中的安装器最低要求为 Windows 10 22H2 x64（内部版本 19045）。`YiKe-Portable-2.0.0-win-x64.zip` 是完整便携包，另含旧通用双模型，体积仍较大。首次启动不联网下载；便携模式会将配置保存到自己的 data 目录。不要把带个人配置的便携目录公开分发。
 
 当前构建未签名：交接中没有原 opens 签名私钥，未创建替代证书或修改系统信任。当前验证范围见 [测试报告](docs/TEST_REPORT.md)，历史报告明确保留版本号。
 
