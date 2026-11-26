@@ -78,7 +78,8 @@ public sealed class SelectionMonitor : IDisposable
                 var window = Native.GetForegroundWindow();
                 if (tracker.Release(window.ToInt64(), p.X, p.Y, Environment.TickCount64, Native.GetDoubleClickTime(), out var start) && window == Native.GetForegroundWindow() && !dispatcher.HasShutdownStarted)
                 {
-                    var gesture = new Gesture(++sequence, window.ToInt64(), Native.ProcessId(window), p.X, p.Y, start.X, start.Y, DateTimeOffset.UtcNow, pressedAt);
+                    var gesture = new Gesture(++sequence, window.ToInt64(), Native.ProcessId(window), p.X, p.Y, start.X, start.Y, DateTimeOffset.UtcNow, pressedAt)
+                    { ReleasedTimestamp = System.Diagnostics.Stopwatch.GetTimestamp() };
                     Post(() => Selected?.Invoke(gesture));
                 }
                 else { int pid = Native.ProcessId(window); Post(() => Unselected?.Invoke(pid, true)); }

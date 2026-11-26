@@ -54,6 +54,7 @@ if(args.Length==4&&args[0]=="--technical-live")return await TechnicalLiveCheck.R
 if(args.Length==4&&args[0]=="--word-live")return await WordTranslationLiveCheck.Run(args[1],args[2],args[3]=="light");
 if(args.Length==4&&args[0]=="--any-word-live")return await AnyWordNotesLiveCheck.Run(args[1],args[2],args[3]=="light");
 if(args.Length==4&&args[0]=="--latency-live")return await ResponseLatencyLiveCheck.Run(args[1],args[2],args[3]=="light");
+if(args.Length==3&&args[0]=="--selection-latency")return SelectionLatencyCheck.Run(args[1],args[2]);
 if(args.Length==3&&args[0]=="--word-probe")return await WordTranslationLiveCheck.Run(args[1],args[2],false,true);
 if(args.Length==3&&args[0]=="--local-parent-fixture")return await LocalModelLiveCheck.ParentFixture(args[1], args[2]);
 if(args.Length==3&&args[0]=="--local-parent-light")return await LocalModelLiveCheck.ParentFixture(args[1], args[2], true);
