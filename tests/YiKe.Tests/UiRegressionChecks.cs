@@ -198,6 +198,20 @@ public static class UiRegressionChecks
                         }
                         finally { current.Close(); }
                     });
+                    await Check("NMT manual window explains locked languages and opens service selection", async () =>
+                    {
+                        var config = new AppSettings { LocalEngine = "nmt", LearnEnglish = false };
+                        var window = new ManualWindow(config); window.Show(); await Idle();
+                        var limit = Find<TextBlock>(window,"节能引擎限制");
+                        Assert(limit.IsVisible && limit.Text.Contains("仅支持英语 → 简体中文"));
+                        Assert(!Find<ComboBox>(window,"源语言").IsEnabled && !Find<ComboBox>(window,"目标语言").IsEnabled);
+                        Assert(window.From.StartsWith("英语",StringComparison.Ordinal) && window.To == TranslationLanguages.Default);
+                        var input = Find<TextBox>(window,"原文"); input.Text = "I called my bank. They sat on the bank of the river."; input.Select(12,4); await Idle();
+                        Assert(!FindButton(window,"按原句译选词").IsVisible);
+                        bool opened = false; int requests = 0; window.ServiceChangeRequested += () => opened = true; window.Requested += _ => requests++; window.ContextRequested += (_,_) => requests++;
+                        FindButton(window,"切换翻译服务").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Assert(opened && requests == 0); window.Close();
+                    });
                     await Check("Manual window keeps source editable after failures and cancellation", async () =>
                     {
                         var config = new AppSettings { LocalEngine = "nmt" };

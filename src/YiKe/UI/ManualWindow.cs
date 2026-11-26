@@ -19,6 +19,7 @@ public sealed class ManualWindow : Window
     internal event Action<string,string>? ContextRequested;
     public event Func<string,string>? FavoriteRequested;
     public event Action? CancelRequested;
+    public event Action? ServiceChangeRequested;
     internal event Func<string,string,string>? LanguageFavoriteRequested;
     public ManualWindow(AppSettings settings) : this(settings,null) { }
     internal ManualWindow(AppSettings settings, YiKe.Data.StudyDictionaryPack? pack, YiKe.Data.StudyDictionaryPack[]? packs = null)
@@ -58,6 +59,13 @@ public sealed class ManualWindow : Window
         from.SelectedIndex = restricted ? 1 : 0; to.SelectedItem = restricted ? TranslationLanguages.Default : settings.TargetLanguage;
         from.IsEnabled = to.IsEnabled = !restricted;
         direction.Children.Add(from); direction.Children.Add(Ui.Text("  →  ",16)); direction.Children.Add(to);
+        if (restricted)
+        {
+            var limit = Ui.Text("节能引擎仅支持英语 → 简体中文。",12,"Muted"); limit.Margin = new Thickness(12,0,12,0); limit.VerticalAlignment = VerticalAlignment.Center;
+            System.Windows.Automation.AutomationProperties.SetName(limit,"节能引擎限制");
+            direction.Children.Add(limit); direction.Children.Add(Ui.Button("切换翻译服务",() => ServiceChangeRequested?.Invoke()));
+            from.ToolTip = to.ToolTip = "其他语言方向请先切换翻译服务。";
+        }
         System.Windows.Automation.AutomationProperties.SetName(from,"源语言"); System.Windows.Automation.AutomationProperties.SetName(to,"目标语言");
         dictionaries = YiKe.Data.StudyDictionaryPack.Selected(packs ?? (pack == null ? Array.Empty<YiKe.Data.StudyDictionaryPack>() : new[] { pack }),settings);
         var card = new DictionaryCard { IsSaved = (code,word) => IsSaved?.Invoke(code,word) == true };
