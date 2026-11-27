@@ -75,9 +75,9 @@ dotnet build   src/YiKe/YiKe.csproj -c Release --no-restore
 
 # 测试（控制台可执行，参数即测试集）——按改动范围选最小集
 $tests = "./tests/YiKe.Tests/bin/Release/net10.0-windows/win-x64/YiKe.Tests.exe"
-& $tests                      # 核心回归：任何改动至少跑这个
-& $tests --ui-regression      # 动到 UI/弹窗/设置窗口必跑
-& $tests --visual             # 动到布局必跑
+& $tests                      # 核心回归：按改动范围选用
+& $tests --ui-regression      # UI、弹窗和设置窗口行为
+& $tests --visual             # 布局改动的视觉检查
 & $tests --local-live <local-runtime> <out.json>            # 改选区/翻译链路：真实标准模型实测
 & $tests --local-live-light <local-runtime> <out.json>      # 同上，轻量模型
 node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配必跑
@@ -101,6 +101,14 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 - 选区与翻译链路禁止读取剪贴板（`PdfCopyFallback` 是唯一例外，且必须能区分"本次新复制"）；禁止自动重发可能已计费的在线请求
 - 字符串面向中文用户；错误消息要说明"原文是否已发送"
 - `AppSettings` 新增字段：给出默认值（旧配置自动兼容）、在 `Validate()` 中加校验、确认导出/导入/迁移路径不丢字段
+- 外部数据在入口校验一次，内部传递已确定类型的值。避免重复判空和滥用 `try/catch`，在能够恢复或给出明确反馈的边界处理异常。
+- 主函数按正常业务流程编排。校验或细节较长时再抽取有明确职责的子函数，避免为一次性的短逻辑提前抽象。
+
+## 已确认的产品约定
+
+- 保留免费本地词库，在线句子翻译服务由用户选择配置。额外研习词包按需下载，只下载用户选中的语言。随包提供固定版本、来源和校验值的清单。
+- 划词、手动翻译和从译文查词共用查词及收藏规则。一个已安装词典命中时直接展示，多个命中时用语言标签供用户选择，收藏按选中的语言归档到「单词收藏本」。
+- 深浅主题共用布局，深色采用赛博朋克风格，浅色采用 Y2K 风格。划词图标和桌面图标分别维护。改动界面或划词图标时沿用已确认的桌面图标，桌面图标变更需用户明确提出。
 
 ## 权限边界：自动执行 vs 先问再做
 
@@ -108,9 +116,9 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 
 **必须先征得用户明确同意**：`git commit`/`push`/`reset`/`rebase` 等改写历史的操作、删除文件或目录、安装系统级工具、运行完整发布或安装测试、下载大体积运行时/模型、读取或改动 `settings.json`/`credentials/`（用户私有数据，且禁止提交）、向仓库添加新依赖。
 
-## 测试纪律（不可妥协）
+## 测试范围
 
-1. 任何改动至少跑 `& $tests` 和 `& $tests --ui-regression`；动到 UI 的还要跑 `--visual`
+1. 验证范围随改动调整。仅改文档时检查文档与 diff。只做系统兼容调整时，可做有针对性的轻量检查，例如安装、启动、划词和离线翻译。少量代码修改只检查受影响的路径，有必要时再跑相应回归。完整发布走发布脚本的验证流程。
 2. 改了选区/翻译链路：跑对应的 live 实测（有模型环境时）
 3. 改了设置结构：确认 `Upgrade180Checks` 等升级测试仍过，旧 `settings.json` 能读
 4. **所有 UI 行为变化都要在 UI 回归测试里留下断言**——外观、弹窗、设置窗口的现有用例就是范例
@@ -121,10 +129,19 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 - **每次动手前先完成「云端对齐检查」（见文件顶部第一节），未对齐时停止并等用户确认**
 - **每次提交必须经用户确认：先列出待提交文件清单与改动摘要，用户明确同意后才能 `git commit`；用户未确认前不得提交任何文件、不得用 `git add -A` 之类的宽匹配**
 - **禁止直接向 `main` 推送任何提交**：所有改动从 `main` 切 `feature/<主题>` 或 `fix/<主题>` 分支开发，push 到远端同名分支后开 PR 合回 `main`（仓库用 merge commit）；唯一例外是仓库所有者明确指示直接推 `main`
-- 提交信息用中文一句话概括"做了什么、为什么"；一个提交只做一件事
+- 每次 `git push` 都须经用户针对本批改动明确确认。提交与推送各自确认。日常默认在本机开发、验证和部署。
+- **手写提交标题统一使用 `译刻 YiKe <版本>：<本次改动摘要>`**。开发提交标注开发阶段，例如 `译刻 YiKe 2.0.0-dev：保留手动翻译草稿`。摘要用中文概括，一个提交聚焦一件事。GitHub 自动生成的 PR 合并提交可保留默认标题。
+- 同一批未推送的改动沿用当前 dev 编号。本地修订、测试和桌面部署均沿用同一编号。
 - 禁止提交：密钥/证书私钥、`settings.json`/`credentials/`、模型与运行时（`local-runtime/`、`translation-runtime/`）、构建产物（`dist/`、`artifacts/`、`bin/`、`obj/`）
 - 发布版本相关的文档（`RELEASE_NOTES.md`、`docs/*RESULTS*`、视觉截图）由 `build-release.ps1` 自动刷新，**不要手工伪造**
-- 版本号提升 = 走完整 `build-release.ps1 -Version x.y.z` 并更新 `RELEASE_NOTES.md`；不要把未发布代码标成已发布版本
+- 正式发行须经用户明确确认，再运行 `build-release.ps1 -Version x.y.z`、更新发行说明、创建标签和 GitHub Release。日常提交、推送、合并和桌面部署属于开发流程。
+- 用户要求将验收标准提供给协作者时，将其放在仓库开发文档中供协作者核对，排除在正式发行包之外。
+
+## 本机桌面部署
+
+- 用户要求更新本机译刻时，验证通过后，将验证过的构建部署到桌面「译刻」快捷方式实际指向的安装位置。
+- 部署前备份旧程序，保留设置、模型和快捷方式。部署后核对安装文件哈希，并验证词典及离线翻译。
+- 交付时分别报告本机部署和仓库推送结果。
 
 ## 安全与隐私红线
 
@@ -162,4 +179,3 @@ node --test tests/vscode-selection.test.cjs                 # 改 VS Code 适配
 - 修改 UI 外观前先读 `src/YiKe/UI/Theme.cs`（资源键与 `Apply`）、`CyberPrism.cs`（`PrismPanel` 卡片/霓虹效果）、`MaterialMark.cs`（自绘图标）、`SettingsWindow.cs`（窗口内容在构造函数里代码构建），理解主题与玻璃质感如何实现
 - WPF 模板工厂（`FrameworkElementFactory`）只接受可视元素；Transform 等需用 `EventSetter` 或代码后置处理
 - 窗口显示后不可再改 `AllowsTransparency`/`WindowStyle`；重建窗口内容前先摘除元素的逻辑父级（参考 `Detach`）
-- 开发提交标题及桌面试用版编号遵循 docs/COLLABORATION.md 的「首次正式发行目标与开发编号」
