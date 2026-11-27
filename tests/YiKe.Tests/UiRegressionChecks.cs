@@ -796,6 +796,39 @@ public static class UiRegressionChecks
                         Assert(reopened.Installed && reopened.Find("pain")?.Meaning == "面包" && reopened.InstallLabel.Contains("已安装"));
                         host.Close();
                     });
+                    await Check("Damaged study packs preserve other lookups and offer reinstall", async () =>
+                    {
+                        string dir = Path.Combine(root,"damaged-pack");
+                        string packsDir = Directory.CreateDirectory(Path.Combine(dir,"packs")).FullName;
+                        File.WriteAllText(Path.Combine(packsDir,"ja.json"),"{");
+                        string binary = Path.Combine(packsDir,"fr.ykdict");
+                        using (var writer = new BinaryWriter(File.Create(binary)))
+                        {
+                            writer.Write(System.Text.Encoding.ASCII.GetBytes("YIKELEX1fr"));
+                            writer.Write(1); writer.Write(1); writer.Write(22u);
+                            writer.Write(int.MaxValue); writer.Write(0u); writer.Write(1);
+                        }
+                        var packs = StudyDictionaryPack.Languages.Select(l => new StudyDictionaryPack(dir,l.Code,l.Name)).ToArray();
+                        var japanese = packs.Single(p => p.Code == "ja");
+                        Assert(!japanese.Installed && japanese.NeedsReinstall);
+                        var french = packs.Single(p => p.Code == "fr");
+                        french.Install(System.Text.Encoding.UTF8.GetBytes("""{"Language":"fr","Entries":[{"Headword":"bonjour","Reading":"bɔ̃ʒuʁ","Meaning":"你好","Example":"","Forms":[]}]}"""));
+                        var status = new TextBlock();
+                        var compact = StudyBook.InstallButton(french,status,true);
+                        var full = StudyBook.InstallButton(french,status);
+                        var row = new StackPanel(); row.Children.Add(compact); row.Children.Add(full);
+                        var host = new Window { Content = row }; host.Show(); await Idle();
+                        try
+                        {
+                            Assert(french.Find("bonjour")?.Meaning == "你好");
+                            Assert(french.Count == 0 && french.Installed && french.NeedsReinstall);
+                            Assert(compact.IsEnabled && (string)compact.Content == "重装");
+                            Assert(full.IsEnabled && (string)full.Content == "重新安装法语词典");
+                            japanese.Install(System.Text.Encoding.UTF8.GetBytes("""{"Language":"ja","Entries":[{"Headword":"学校","Reading":"がっこう","Meaning":"学校","Example":"","Forms":[]}]}"""));
+                            Assert(!japanese.NeedsReinstall && japanese.Find("学校")?.Meaning == "学校");
+                        }
+                        finally { host.Close(); }
+                    });
                     await Check("Study switches keep streaming text without requesting another translation", async () =>
                     {
                         var popup = new PopupWindow();

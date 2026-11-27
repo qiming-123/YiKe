@@ -122,7 +122,7 @@ internal sealed class StudyBook : Window
     }
     internal static Button InstallButton(StudyDictionaryPack pack, TextBlock status,bool compact = false)
     {
-        string Label() => compact ? (pack.Installed ? "已安装" : "下载") : pack.InstallLabel;
+        string Label() => compact ? (pack.NeedsReinstall ? "重装" : pack.Installed ? "已安装" : "下载") : pack.InstallLabel;
         var starter = new Button { Content = Label() };
         if (compact)
         {
@@ -143,8 +143,13 @@ internal sealed class StudyBook : Window
             { status.Text = "安装失败：" + ex.Message; }
             finally { starter.IsEnabled = pack.Count == 0; }
         };
-        void Refresh() { starter.Content = Label(); starter.IsEnabled = pack.Count == 0;
-            if (pack.Installed && pack.Count == 0) starter.ToolTip = "已安装自选词包，点击下载完整"+pack.Name+"词典。"; }
+        void Refresh()
+        {
+            starter.Content = Label(); starter.IsEnabled = pack.Count == 0;
+            starter.ToolTip = pack.NeedsReinstall ? "词包读取失败，点击重新安装"+pack.Name+"词典。"
+                : pack.Installed && pack.Count == 0 ? "已安装自选词包，点击下载完整"+pack.Name+"词典。"
+                : compact ? pack.Name+"词典" : null;
+        }
         starter.Loaded += (_,_) => { Refresh(); pack.InstallationChanged += Refresh; };
         starter.Unloaded += (_,_) => pack.InstallationChanged -= Refresh;
         return starter;
