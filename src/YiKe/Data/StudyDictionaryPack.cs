@@ -35,7 +35,8 @@ internal sealed class StudyDictionaryPack
     internal event Action? InstallationChanged;
     internal int Count { get; private set; }
     internal bool Installed => Count > 0 || index.Count > 0;
-    internal string InstallLabel => Installed ? $"已安装{Name}词典" : $"下载{Name}词典";
+    internal bool NeedsReinstall { get; private set; }
+    internal string InstallLabel => NeedsReinstall ? $"重新安装{Name}词典" : Installed ? $"已安装{Name}词典" : $"下载{Name}词典";
     static int ReadHeader(BinaryReader r, string code, out int keys)
     {
         if (System.Text.Encoding.ASCII.GetString(r.ReadBytes(10)) != "YIKELEX1"+code) throw new InvalidDataException("词典语言或格式不匹配。");
@@ -49,7 +50,7 @@ internal sealed class StudyDictionaryPack
         int count = ReadHeader(reader,Code,out _);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         string tmp = DictionaryPath+"."+Guid.NewGuid()+".tmp";
-        try { File.Copy(source,tmp); File.Move(tmp,DictionaryPath,true); Count=count; InstallationChanged?.Invoke(); } finally { File.Delete(tmp); }
+        try { File.Copy(source,tmp); File.Move(tmp,DictionaryPath,true); Count=count; NeedsReinstall=false; InstallationChanged?.Invoke(); } finally { File.Delete(tmp); }
     }
     internal static StudyDictionaryPack[] Selected(StudyDictionaryPack[] packs, YiKe.Core.AppSettings settings) =>
         settings.LearnJapanese ? Array.FindAll(packs,p => !settings.DisabledStudyLanguages.Contains(p.Code)) : Array.Empty<StudyDictionaryPack>();
@@ -60,19 +61,44 @@ internal sealed class StudyDictionaryPack
     internal StudyDictionaryPack(string directory,string code="ja",string name="日语")
     {
         Code = code; Name = name; path = Path.Combine(directory, "packs", code+".json");
-        if (File.Exists(DictionaryPath)) { using var reader = new BinaryReader(File.OpenRead(DictionaryPath)); Count = ReadHeader(reader,Code,out _); }
-        if (File.Exists(path)) index = Parse(File.ReadAllBytes(path));
+        try
+        {
+            if (File.Exists(DictionaryPath))
+            {
+                using var reader = new BinaryReader(File.OpenRead(DictionaryPath));
+                Count = ReadHeader(reader,Code,out _);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        { NeedsReinstall = true; }
+
+        try { if (File.Exists(path)) index = Parse(File.ReadAllBytes(path)); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or JsonException)
+        { NeedsReinstall = Count == 0; }
     }
     internal StudyDictionaryEntry? Find(string word)
     {
         word = word.Trim();
-        if (Count == 0 || word.Length == 0 || word.Length > 256) return index.GetValueOrDefault(word);
+        if (Count > 0 && word.Length is > 0 and <= 256)
+        {
+            try { return FindDictionaryEntry(word) ?? index.GetValueOrDefault(word); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or JsonException)
+            {
+                Count = 0;
+                NeedsReinstall = true;
+                InstallationChanged?.Invoke();
+            }
+        }
+        return index.GetValueOrDefault(word);
+    }
+    StudyDictionaryEntry? FindDictionaryEntry(string word)
+    {
+        byte[] key = System.Text.Encoding.UTF8.GetBytes(word.Normalize().ToLowerInvariant());
         if (Code == "fr")
         {
             var entry = Array.Find(FrenchCorrections.Value, e => e.Headword.Equals(word,StringComparison.OrdinalIgnoreCase) || e.Forms.Contains(word,StringComparer.OrdinalIgnoreCase));
             if (entry != null) return entry;
         }
-        byte[] key = System.Text.Encoding.UTF8.GetBytes(word.Normalize().ToLowerInvariant());
         using var reader = new BinaryReader(File.OpenRead(DictionaryPath));
         ReadHeader(reader,Code,out int keys);
         int lo=0, hi=keys-1;
@@ -81,12 +107,21 @@ internal sealed class StudyDictionaryPack
             int mid = lo+(hi-lo)/2; reader.BaseStream.Position=18L+4L*mid;
             reader.BaseStream.Position=reader.ReadUInt32();
             int length=reader.ReadInt32(); uint pos=reader.ReadUInt32(); int size=reader.ReadInt32();
+            if (length <= 0 || length > reader.BaseStream.Length - reader.BaseStream.Position || size <= 0 || (long)pos + size > reader.BaseStream.Length)
+                throw new InvalidDataException("词典记录不完整。");
             int cmp=key.AsSpan().SequenceCompareTo(reader.ReadBytes(length));
             if (cmp < 0) hi=mid-1;
             else if (cmp > 0) lo=mid+1;
-            else { reader.BaseStream.Position=pos; var entry = JsonSerializer.Deserialize<StudyDictionaryEntry>(reader.ReadBytes(size)); return entry is null ? null : entry with { Meaning = entry.Meaning.Replace("unknown · ", "") }; }
+            else
+            {
+                reader.BaseStream.Position=pos;
+                var entry = JsonSerializer.Deserialize<StudyDictionaryEntry>(reader.ReadBytes(size));
+                if (entry is not { Headword.Length: > 0, Reading: not null, Meaning.Length: > 0, Forms: not null })
+                    throw new InvalidDataException("词典词条缺少必要字段。");
+                return entry with { Meaning = entry.Meaning.Replace("unknown · ", "") };
+            }
         }
-        return index.GetValueOrDefault(word);
+        return null;
     }
     Dictionary<string,StudyDictionaryEntry> Parse(byte[] bytes)
     {
@@ -104,7 +139,9 @@ internal sealed class StudyDictionaryPack
     }
     internal void Install(byte[] bytes)
     {
-        var parsed = Parse(bytes); AtomicFile.Write(path, bytes); index = parsed; InstallationChanged?.Invoke();
+        var parsed = Parse(bytes); AtomicFile.Write(path, bytes); index = parsed;
+        NeedsReinstall = Count == 0 && File.Exists(DictionaryPath);
+        InstallationChanged?.Invoke();
     }
     internal async Task Download(string address, string? expectedHash = null)
     {
